@@ -29,9 +29,11 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 ">
-      <h1 className="text-2xl font-bold mb-4">デッキコード入力</h1>
+      <h1 className="text-2xl font-bold mb-4">デッキエディタ</h1>
       <Card>
-        <CardHeader></CardHeader>
+        <CardHeader>
+          <h1 className="text-2xl font-bold">デッキコード入力</h1>
+        </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -50,6 +52,16 @@ export default function Home() {
               表示する
             </Button>
           </form>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <h1 className="text-2xl font-bold">デッキ新規作成</h1>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => router.push("/new")} className="w-full">
+            新規作成
+          </Button>
         </CardContent>
       </Card>
     </div>
