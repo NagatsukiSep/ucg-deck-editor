@@ -2,9 +2,10 @@
 
 import { CardDetail } from "@/types/deckCard";
 import { get } from "@/utils/request";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 
-export default function Home({ params }: { params: { deckCode: string } }) {
+export default function Home(props: { params: Promise<{ deckCode: string }> }) {
+  const params = use(props.params);
   const { deckCode } = params;
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
