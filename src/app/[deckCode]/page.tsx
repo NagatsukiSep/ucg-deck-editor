@@ -1,17 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CardDetail } from "@/types/deckCard";
 import { get } from "@/utils/request";
+import { useEffect, useState } from "react";
 
-export default function Home() {
-  const [deckCode, setDeckCode] = useState("");
+export default function Home({ params }: { params: { deckCode: string } }) {
+  const { deckCode } = params;
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
-
   async function parseDeckCards(data: string) {
     setLoadingDetails(true);
     const parts = data.split("-");
@@ -32,33 +28,17 @@ export default function Home() {
     return;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function getDeckData() {
     const data = await get(`/deck?deck_code=${deckCode}`);
     await parseDeckCards(data[0].deck_cards);
-  };
+  }
+
+  useEffect(() => {
+    getDeckData();
+  }, [deckCode]);
 
   return (
     <div className="container mx-auto p-4 ">
-      <h1 className="text-2xl font-bold mb-4">デッキコード入力</h1>
-      <p className="text-gray-600 mb-6">デッキコードを入力してください。</p>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="deckCode" className="text-sm font-medium">
-            デッキコード
-          </Label>
-          <Input
-            id="deckCode"
-            placeholder="デッキコードを入力"
-            value={deckCode}
-            onChange={(e) => setDeckCode(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        <Button type="submit" className="w-full">
-          送信
-        </Button>
-      </form>
       <div className="w-full h-0.5 bg-gray-200 my-6"></div>
       {deckCards.length > 0 && (
         <div className="mt-6">

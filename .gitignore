@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# carddata
+carddata/output/insert_cards_part_*.sql
+carddata/data.json
