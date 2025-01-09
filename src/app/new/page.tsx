@@ -24,7 +24,7 @@ type UltraHeroSearchQuery = {
   round: string;
 };
 
-const perPage = 200;
+const perPage = 20;
 
 export default function Home() {
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
@@ -70,6 +70,7 @@ export default function Home() {
     round: "none",
   });
 
+  const [searchedCardsCount, setSearchedCardsCount] = useState(0);
   const [searchedCards, setSearchedCards] = useState<CardDetail[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -83,7 +84,7 @@ export default function Home() {
             )
           );
           break;
-        case "ultra-kaiju":
+        case "kaiju":
           setSearchedCards(
             await get(
               `search_kaiju?level=${searchQuery.level}&type=${searchQuery.type}&per_page=${perPage}&page_number=0`
@@ -216,8 +217,8 @@ export default function Home() {
                   <Label htmlFor="ultra-hero">ウルトラマン</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="ultra-kaiju" id="ultra-kaiju" />
-                  <Label htmlFor="ultra-kaiju">ウルトラ怪獣</Label>
+                  <RadioGroupItem value="kaiju" id="kaiju" />
+                  <Label htmlFor="kaiju">ウルトラ怪獣</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scene" id="scene" />
@@ -254,7 +255,7 @@ export default function Home() {
                 )}
 
                 {(selectedGenre === "ultra-hero" ||
-                  selectedGenre === "ultra-kaiju") && (
+                  selectedGenre === "kaiju") && (
                   <Select
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, level: value })
@@ -276,7 +277,7 @@ export default function Home() {
                 )}
 
                 {(selectedGenre === "ultra-hero" ||
-                  selectedGenre === "ultra-kaiju") && (
+                  selectedGenre === "kaiju") && (
                   <Select
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, type: value })
