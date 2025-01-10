@@ -16,6 +16,15 @@ import { useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -70,37 +79,51 @@ export default function Home() {
     round: "none",
   });
 
+  const searchQueryMap: Record<string, string> = {
+    "ultra-hero": "ultra_hero",
+    kaiju: "kaiju",
+    scene: "scene",
+  };
+
   const [searchedCardsCount, setSearchedCardsCount] = useState(0);
+  const [searchedCardsPage, setSearchedCardsPage] = useState(0);
   const [searchedCards, setSearchedCards] = useState<CardDetail[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      switch (selectedGenre) {
-        case "ultra-hero":
-          setSearchedCards(
-            await get(
-              `search_hero?character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&per_page=${perPage}&page_number=0`
-            )
-          );
-          break;
-        case "kaiju":
-          setSearchedCards(
-            await get(
-              `search_kaiju?level=${searchQuery.level}&type=${searchQuery.type}&per_page=${perPage}&page_number=0`
-            )
-          );
-          break;
-        case "scene":
-          setSearchedCards(
-            await get(
-              `search_scene?round=${searchQuery.round}&per_page=${perPage}&page_number=0`
-            )
-          );
-          break;
-        default:
-          break;
-      }
+      setSearchedCardsPage(0);
+      setSearchedCards(
+        await get(
+          `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&per_page=${perPage}&offset=0`
+        )
+      );
+      const data = await get(
+        `/search_count?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}`
+      );
+      setSearchedCardsCount(data[0].total_count);
+    } catch (error) {
+      console.error("Error fetching searched ultra hero list:", error);
+    }
+  };
+
+  const movePage = async (page: number) => {
+    if (page < 0 || page > searchedCardsCount / perPage) {
+      return;
+    }
+    try {
+      setSearchedCardsPage(page);
+      setSearchedCards(
+        await get(
+          `/search?feature_value=${
+            searchQueryMap[selectedGenre]
+          }&character_name=${searchQuery.characterName}&level=${
+            searchQuery.level
+          }&type=${searchQuery.type}&round=${
+            searchQuery.round
+          }&per_page=${perPage}&offset=${page * perPage}`
+        )
+      );
     } catch (error) {
       console.error("Error fetching searched ultra hero list:", error);
     }
@@ -340,6 +363,63 @@ export default function Home() {
               <Search className="w-4 h-4 mr-2" />
               検索
             </Button>
+            <p>検索結果: {searchedCardsCount}件</p>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => {
+                      movePage(searchedCardsPage - 1);
+                    }}
+                  />
+                </PaginationItem>
+                {searchedCardsPage > 1 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                {searchedCardsPage > 0 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => {
+                        movePage(searchedCardsPage - 1);
+                      }}
+                    >
+                      {searchedCardsPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                <PaginationItem>
+                  <PaginationLink isActive={true}>
+                    {searchedCardsPage + 1}
+                  </PaginationLink>
+                </PaginationItem>
+                {searchedCardsPage < searchedCardsCount / perPage - 1 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => {
+                        movePage(searchedCardsPage + 1);
+                      }}
+                    >
+                      {searchedCardsPage + 2}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                {searchedCardsPage < searchedCardsCount / perPage - 2 && (
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => {
+                      movePage(searchedCardsPage + 1);
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {searchedCards.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-4 m-4 mx-auto">

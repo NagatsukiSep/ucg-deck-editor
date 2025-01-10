@@ -48,6 +48,35 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     getDeckData();
   }, [deckCode]);
 
+  const [imagePaths, setImagePaths] = useState<string[]>([]);
+
+  const handleGenerateCollage = async () => {
+    setImagePaths(deckCards.map((card) => card.image_url));
+
+    try {
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          images: imagePaths.map((path) => ({ path })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate collage");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate collage");
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-bold mb-4">デッキ表示</h1>
@@ -79,9 +108,17 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               onClick={() => {
                 navigator.clipboard.writeText(deckCode);
               }}
-              className=""
+              className="m-2"
             >
               デッキコードをコピー
+            </Button>
+            <Button
+              onClick={() => {
+                handleGenerateCollage();
+              }}
+              className="m-2"
+            >
+              デッキ画像を表示
             </Button>
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>
