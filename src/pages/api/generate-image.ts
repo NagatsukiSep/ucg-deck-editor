@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sharp from "sharp";
 import axios from "axios";
+import path from "path";
 
 interface ImageInput {
-  path: string; // URLまたはローカルパス
+  imagePath: string; // URLまたはローカルパス
 }
 
 interface GenerateCollageRequest extends NextApiRequest {
@@ -93,37 +94,28 @@ export default async function handler(
     const row = cardsPerRow(images.length);
 
     // URLまたはローカルパスから画像を取得してリサイズ
-    const fetchImage = async (path: string): Promise<Buffer> => {
-      if (path.startsWith("http://") || path.startsWith("https://")) {
-        const response = await axios.get(path, { responseType: "arraybuffer" });
+    const fetchImage = async (imagePath: string): Promise<Buffer> => {
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+        const response = await axios.get(imagePath, { responseType: "arraybuffer" });
         return sharp(Buffer.from(response.data))
           .resize(CARD_WIDTH, CARD_HEIGHT)
           .toBuffer();
       } else {
-        return sharp(path).resize(CARD_WIDTH, CARD_HEIGHT).toBuffer();
+        return sharp(imagePath).resize(CARD_WIDTH, CARD_HEIGHT).toBuffer();
       }
     };
 
     // カード画像と枚数のテキストを重ねて作成
     const cardWithText = await Promise.all(
-      images.map(async ({ path }, index) => {
-        const cardImage = await fetchImage(path);
-
-        // テキスト画像を生成
-        const textOverlay = Buffer.from(
-          `<svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}">
-          <!-- 背景の矩形 -->
-          <rect x="50%" y="${CARD_HEIGHT - 30}" width="20" height="20" fill="black" rx="5" ry="5" transform="translate(-10, 0)"/>
-          <!-- 数字のテキスト -->
-          <text x="50%" y="${CARD_HEIGHT - 15}" font-size="16" fill="white" text-anchor="middle">
-            ${count[index]}
-          </text>
-        </svg>`
-        );
+      images.map(async ({ imagePath }, index) => {
+        const cardImage = await fetchImage(imagePath);
+        const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count[index]}.png`))
+          .resize(20, 20)
+          .toBuffer()
 
         // テキストを重ねたカード画像を作成
         return sharp(cardImage)
-          .composite([{ input: textOverlay, top: 0, left: 0 }])
+          .composite([{ input: overlayImage, top: CARD_HEIGHT - 25, left: CARD_WIDTH / 2 - 10 }])
           .toBuffer();
       })
     );
@@ -155,7 +147,7 @@ export default async function handler(
     res.send(collageBuffer);
   } catch (error) {
     if (error instanceof Error) {
-      console.error("Error processing images:", error.message);
+      console.error("Error processing images:", error);
     } else {
       console.error("Error processing images:", error);
     }
