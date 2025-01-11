@@ -198,6 +198,7 @@ export default function Home() {
               }}
               className="w-full"
               type="submit"
+              disabled={cardCount !== 50}
             >
               デッキコード生成
             </Button>
