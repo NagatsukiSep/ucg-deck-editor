@@ -20,7 +20,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     for (let i = 0; i < parts.length; i += 2) {
       const id = parts[i];
       const count = parseInt(parts[i + 1], 10);
-      const data = await get(`/card?id=${id}`);
+      const data = await get<{ detail_name: string; image_url: string }>(
+        `/card?id=${id}`
+      );
       const deckCard = {
         id: id,
         detail_name: data[0].detail_name,
@@ -34,7 +36,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   }
 
   async function getDeckData() {
-    const data = await get(`/deck?deck_code=${deckCode}`);
+    const data = await get<{ deck_cards: string }>(
+      `/deck?deck_code=${deckCode}`
+    );
     if (data.length === 0) {
       setIs404(true);
       return;

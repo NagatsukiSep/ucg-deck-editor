@@ -98,7 +98,7 @@ export default function Home() {
           `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&per_page=${perPage}&offset=0`
         )
       );
-      const data = await get(
+      const data = await get<{ total_count: number }>(
         `/search_count?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}`
       );
       setSearchedCardsCount(data[0].total_count);
@@ -143,10 +143,11 @@ export default function Home() {
     console.log(hyphenCode);
     const data = {
       deck_cards: hyphenCode,
-      description: "test",
-      name: "test",
     };
-    const response = await post("new_deck", data);
+    const response = await post<{ deck_code: string }, typeof data>(
+      "new_deck",
+      data
+    );
     setDeckCode(response[0].deck_code);
     return;
   };
