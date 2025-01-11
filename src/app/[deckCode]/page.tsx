@@ -39,11 +39,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     getDeckData();
   }, [deckCode]);
 
-  const [imagePaths, setImagePaths] = useState<string[]>([]);
-
   const handleGenerateCollage = async () => {
-    setImagePaths(deckCards.map((card) => card.image_url));
-
     try {
       const response = await fetch("/api/generate-image", {
         method: "POST",
@@ -51,7 +47,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          images: imagePaths.map((imagePath) => ({ imagePath })),
+          images: deckCards.map((card) => ({ imagePath: card.image_url })),
           count: deckCards.map((card) => card.count),
         }),
       });
