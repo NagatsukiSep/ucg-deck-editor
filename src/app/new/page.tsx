@@ -25,6 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useRouter } from "next/navigation";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -102,7 +103,6 @@ export default function Home() {
     }
   };
   const [cardCount, setCardCount] = useState(0);
-  const [deckCode, setDeckCode] = useState("");
 
   const [selectedGenre, setSelectedGenre] = useState("ultra-hero");
   const [searchQuery, setSearchQuery] = useState<UltraHeroSearchQuery>({
@@ -162,6 +162,8 @@ export default function Home() {
     }
   };
 
+  const router = useRouter();
+
   const generateDeckCode = async () => {
     if (cardCount !== 50) {
       alert("デッキは50枚でなければなりません。");
@@ -174,7 +176,7 @@ export default function Home() {
       "new_deck",
       data
     );
-    setDeckCode(response[0].deck_code);
+    router.push(`/${response[0].deck_code}`);
     return;
   };
 
@@ -199,7 +201,6 @@ export default function Home() {
             >
               デッキコード生成
             </Button>
-            <div>{deckCode}</div>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
               <div className="flex flex-wrap mt-4">
