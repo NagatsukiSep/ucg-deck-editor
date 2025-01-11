@@ -46,31 +46,31 @@ function cardsPerRow(cardCount: number) {
 function cardWidth(cardCount: number): { width: number, height: number } {
   if (cardCount <= 21) {
     const height = Math.floor((BG_HEIGHT - PADDING * 2) / 3);
-    return { width: Math.floor(height * 66 / 88), height };
+    return { width: Math.floor(height * 143 / 200), height };
   }
   else if (cardCount <= 24) {
     const height = Math.floor((BG_HEIGHT - PADDING * 2) / 3);
-    return { width: Math.floor(height * 66 / 88), height };
+    return { width: Math.floor(height * 143 / 200), height };
   }
   else if (cardCount <= 27) {
     const width = Math.floor((BG_WIDTH - PADDING * 2) / 9);
-    return { width, height: Math.floor(width * 88 / 66) };
+    return { width, height: Math.floor(width * 200 / 143) };
   }
   else if (cardCount <= 40) {
     const height = Math.floor((BG_HEIGHT - PADDING * 2) / 4);
-    return { width: Math.floor(height * 66 / 88), height };
+    return { width: Math.floor(height * 143 / 200), height };
   }
   else if (cardCount <= 44) {
     const height = Math.floor((BG_HEIGHT - PADDING * 2) / 4);
-    return { width: Math.floor(height * 66 / 88), height };
+    return { width: Math.floor(height * 143 / 200), height };
   }
   else if (cardCount <= 48) {
     const width = Math.floor((BG_WIDTH - PADDING * 2) / 12);
-    return { width, height: Math.floor(width * 88 / 66) };
+    return { width, height: Math.floor(width * 200 / 143) };
   }
   else {
     const width = Math.floor((BG_WIDTH - PADDING * 2) / 13);
-    return { width, height: Math.floor(width * 88 / 66) };
+    return { width, height: Math.floor(width * 200 / 143) };
   }
 }
 
