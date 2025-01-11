@@ -115,7 +115,7 @@ export default async function handler(
           <!-- 背景の矩形 -->
           <rect x="50%" y="${CARD_HEIGHT - 30}" width="20" height="20" fill="black" rx="5" ry="5" transform="translate(-10, 0)"/>
           <!-- 数字のテキスト -->
-          <text x="50%" y="${CARD_HEIGHT - 15}" font-size="16" font-family="Arial" fill="white" text-anchor="middle">
+          <text x="50%" y="${CARD_HEIGHT - 15}" font-size="16" font-family="Arial, sans-serif" fill="white" text-anchor="middle">
             ${count[index]}
           </text>
         </svg>`
