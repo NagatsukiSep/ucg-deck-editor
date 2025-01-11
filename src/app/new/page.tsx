@@ -206,35 +206,37 @@ export default function Home() {
             {deckCards.length > 0 ? (
               <div className="flex flex-wrap mt-4">
                 {deckCards.map((card) => (
-                  <div key={card.id} className="relative w-32 m-2">
-                    <img
-                      src={card.image_url}
-                      alt={card.detail_name}
-                      className="w-full h-auto"
-                    />
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center">
-                      <Button
-                        onClick={() => {
-                          removeCard(card);
-                        }}
-                        className="w-2 m-1"
-                        type="submit"
-                      >
-                        -
-                      </Button>
-                      <div className="bg-[#171717] text-center rounded-sm w-8 m-1 flex items-center justify-center">
-                        <div className="text-white">{card.count}</div>
-                      </div>
+                  <div key={card.id} className="w-1/2 md:w-32">
+                    <div className="relative w-full p-2">
+                      <img
+                        src={card.image_url}
+                        alt={card.detail_name}
+                        className="w-full h-auto"
+                      />
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
+                        <Button
+                          onClick={() => {
+                            removeCard(card);
+                          }}
+                          className="w-2 m-1"
+                          type="submit"
+                        >
+                          -
+                        </Button>
+                        <div className="bg-[#171717] text-center rounded-sm w-8 m-1 flex items-center justify-center">
+                          <div className="text-white">{card.count}</div>
+                        </div>
 
-                      <Button
-                        onClick={() => {
-                          addCard(card);
-                        }}
-                        className="w-2 m-1"
-                        type="submit"
-                      >
-                        +
-                      </Button>
+                        <Button
+                          onClick={() => {
+                            addCard(card);
+                          }}
+                          className="w-2 m-1"
+                          type="submit"
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
