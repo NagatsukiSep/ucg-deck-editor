@@ -35,6 +35,39 @@ type UltraHeroSearchQuery = {
 
 const perPage = 20;
 
+function CardComponent({
+  card,
+  addCard,
+}: {
+  card: CardDetail;
+  addCard: (card: CardDetail) => void;
+}) {
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleClick = () => {
+    addCard(card);
+    setIsAdded(true);
+
+    // 一定時間後にスタイルをリセットする例
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 500); // 1秒後にリセット
+  };
+
+  return (
+    <img
+      src={card.image_url}
+      alt={card.detail_name}
+      className={`w-32 h-auto mx-auto cursor-pointer rounded-md transition-all duration-300 ${
+        isAdded
+          ? "outline outline-3 outline-[#171717] shadow-[0_0_15px_5px_rgba(81,81,81,0.5)] scale-105"
+          : ""
+      }`}
+      onClick={handleClick}
+    />
+  );
+}
+
 export default function Home() {
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const addCard = (card: CardDetail) => {
@@ -180,24 +213,25 @@ export default function Home() {
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center">
                       <Button
                         onClick={() => {
-                          addCard(card);
-                        }}
-                        className="w-2 m-1"
-                        type="submit"
-                      >
-                        +
-                      </Button>
-                      <div className="bg-white text-center rounded-sm px-2 my-auto ">
-                        <div className="my-auto">{card.count}</div>
-                      </div>
-                      <Button
-                        onClick={() => {
                           removeCard(card);
                         }}
                         className="w-2 m-1"
                         type="submit"
                       >
                         -
+                      </Button>
+                      <div className="bg-[#171717] text-center rounded-sm w-8 m-1 flex items-center justify-center">
+                        <div className="text-white">{card.count}</div>
+                      </div>
+
+                      <Button
+                        onClick={() => {
+                          addCard(card);
+                        }}
+                        className="w-2 m-1"
+                        type="submit"
+                      >
+                        +
                       </Button>
                     </div>
                   </div>
@@ -419,14 +453,7 @@ export default function Home() {
               <div className="grid grid-cols-2 md:grid-cols-4 m-4 mx-auto">
                 {searchedCards.map((card) => (
                   <div key={card.id} className="m-2">
-                    <img
-                      src={card.image_url}
-                      alt={card.detail_name}
-                      className="w-32 h-auto mx-auto"
-                      onClick={() => {
-                        addCard(card);
-                      }}
-                    />
+                    <CardComponent card={card} addCard={addCard} />
                   </div>
                 ))}
               </div>

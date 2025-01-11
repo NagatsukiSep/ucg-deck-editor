@@ -123,8 +123,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                       alt={card.detail_name}
                       className="w-full h-auto"
                     />
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-white text-center rounded-sm px-2 py-1 mb-2">
-                      {card.count}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-[#171717] text-center rounded-sm px-2 py-1 mb-2 w-8">
+                      <div className="text-white">{card.count}</div>
                     </div>
                   </div>
                 ))}
