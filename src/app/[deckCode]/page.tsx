@@ -13,6 +13,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [is404, setIs404] = useState(false);
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   async function getDeckData() {
     setLoadingDetails(true);
@@ -25,12 +27,13 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     }
 
     try {
-      setDeckCards(JSON.parse(data[0].deck_cards));
+      const parsed = JSON.parse(data[0].deck_cards);
+      setDeckCards(parsed);
+      generateCollage(parsed);
     } catch (error) {
       console.error("Failed to parse JSON:", error);
     }
     setLoadingDetails(false);
-    // await parseDeckCards(data[0].deck_cards);
   }
 
   useEffect(() => {
@@ -39,7 +42,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     getDeckData();
   }, [deckCode]);
 
-  const handleGenerateCollage = async () => {
+  const generateCollage = async (cards: CardDetail[]) => {
+    setIsGeneratingImage(true);
     try {
       const response = await fetch("/api/generate-image", {
         method: "POST",
@@ -47,8 +51,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          images: deckCards.map((card) => ({ imagePath: card.image_url })),
-          count: deckCards.map((card) => card.count),
+          images: cards.map((card) => ({ imagePath: card.image_url })),
+          count: cards.map((card) => card.count),
         }),
       });
 
@@ -57,8 +61,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       }
 
       const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      window.open(url, "_blank");
+      setImageUrl(URL.createObjectURL(blob));
+      setIsGeneratingImage(false);
     } catch (error) {
       console.error(error);
       alert("Failed to generate collage");
@@ -102,11 +106,12 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </Button>
             <Button
               onClick={() => {
-                handleGenerateCollage();
+                window.open(imageUrl, "_blank");
               }}
               className="m-2"
+              disabled={isGeneratingImage}
             >
-              デッキ画像を表示
+              {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
             </Button>
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>
