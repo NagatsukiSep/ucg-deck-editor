@@ -61,6 +61,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
         },
         body: JSON.stringify({
           images: imagePaths.map((path) => ({ path })),
+          count: deckCards.map((card) => card.count),
         }),
       });
 

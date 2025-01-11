@@ -9,13 +9,14 @@ interface ImageInput {
 interface GenerateCollageRequest extends NextApiRequest {
   body: {
     images: ImageInput[];
+    count: number[];
   };
 }
 
 
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
-const PADDING = 32;
+const PADDING = 24;
 
 function cardsPerRow(cardCount: number) {
   if (cardCount <= 21) {
@@ -67,8 +68,8 @@ function cardWidth(cardCount: number): { width: number, height: number } {
     return { width, height: Math.floor(width * 88 / 66) };
   }
   else {
-    const height = Math.floor((BG_HEIGHT - PADDING * 2) / 5);
-    return { width: Math.floor(height * 66 / 88), height };
+    const width = Math.floor((BG_WIDTH - PADDING * 2) / 13);
+    return { width, height: Math.floor(width * 88 / 66) };
   }
 }
 
@@ -80,10 +81,10 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { images } = req.body;
+  const { images, count } = req.body;
 
-  if (!images || !Array.isArray(images)) {
-    return res.status(400).json({ error: "Invalid images data" });
+  if (!images || !Array.isArray(images) || !count || !Array.isArray(count)) {
+    return res.status(400).json({ error: "Invalid request data" });
   }
 
   try {
@@ -94,27 +95,44 @@ export default async function handler(
     // URLまたはローカルパスから画像を取得してリサイズ
     const fetchImage = async (path: string): Promise<Buffer> => {
       if (path.startsWith("http://") || path.startsWith("https://")) {
-        // URLの場合はaxiosで画像を取得
         const response = await axios.get(path, { responseType: "arraybuffer" });
         return sharp(Buffer.from(response.data))
           .resize(CARD_WIDTH, CARD_HEIGHT)
           .toBuffer();
       } else {
-        // ローカルパスの場合
         return sharp(path).resize(CARD_WIDTH, CARD_HEIGHT).toBuffer();
       }
     };
 
-    // すべての画像を取得してリサイズ
-    const cardImages = await Promise.all(
-      images.map(({ path }) => fetchImage(path))
+    // カード画像と枚数のテキストを重ねて作成
+    const cardWithText = await Promise.all(
+      images.map(async ({ path }, index) => {
+        const cardImage = await fetchImage(path);
+
+        // テキスト画像を生成
+        const textOverlay = Buffer.from(
+          `<svg width="${CARD_WIDTH}" height="${CARD_HEIGHT}">
+          <!-- 背景の矩形 -->
+          <rect x="50%" y="${CARD_HEIGHT - 30}" width="20" height="20" fill="black" rx="5" ry="5" transform="translate(-10, 0)"/>
+          <!-- 数字のテキスト -->
+          <text x="50%" y="${CARD_HEIGHT - 15}" font-size="16" font-family="Arial" fill="white" text-anchor="middle">
+            ${count[index]}
+          </text>
+        </svg>`
+        );
+
+        // テキストを重ねたカード画像を作成
+        return sharp(cardImage)
+          .composite([{ input: textOverlay, top: 0, left: 0 }])
+          .toBuffer();
+      })
     );
 
     // 背景画像サイズを計算
     const rows = Math.ceil(images.length / row);
 
-    // 画像を配置する位置を計算
-    const compositeData = cardImages.map((buffer, index) => {
+    // カードを配置する位置を計算
+    const compositeData = cardWithText.map((buffer, index) => {
       const x = (index % row) * CARD_WIDTH;
       const y = Math.floor(index / row) * CARD_HEIGHT;
       return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + (BG_HEIGHT - CARD_HEIGHT * rows) / 2 };
@@ -144,3 +162,4 @@ export default async function handler(
     res.status(500).json({ error: "Failed to generate collage" });
   }
 }
+
