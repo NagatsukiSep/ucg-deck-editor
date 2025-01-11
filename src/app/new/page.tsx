@@ -130,7 +130,7 @@ export default function Home() {
   };
 
   const generateDeckCode = async () => {
-    if (deckCards.length !== 50) {
+    if (cardCount !== 50) {
       alert("デッキは50枚でなければなりません。");
       return;
     }
