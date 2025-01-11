@@ -13,29 +13,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [is404, setIs404] = useState(false);
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
-  async function parseDeckCards(data: string) {
-    setLoadingDetails(true);
-    const parts = data.split("-");
-
-    for (let i = 0; i < parts.length; i += 2) {
-      const id = parts[i];
-      const count = parseInt(parts[i + 1], 10);
-      const data = await get<{ detail_name: string; image_url: string }>(
-        `/card?id=${id}`
-      );
-      const deckCard = {
-        id: id,
-        detail_name: data[0].detail_name,
-        image_url: data[0].image_url,
-        count,
-      };
-      setDeckCards((prev) => [...prev, deckCard]);
-    }
-    setLoadingDetails(false);
-    return;
-  }
 
   async function getDeckData() {
+    setLoadingDetails(true);
     const data = await get<{ deck_cards: string }>(
       `/deck?deck_code=${deckCode}`
     );
@@ -43,7 +23,14 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       setIs404(true);
       return;
     }
-    await parseDeckCards(data[0].deck_cards);
+
+    try {
+      setDeckCards(JSON.parse(data[0].deck_cards));
+    } catch (error) {
+      console.error("Failed to parse JSON:", error);
+    }
+    setLoadingDetails(false);
+    // await parseDeckCards(data[0].deck_cards);
   }
 
   useEffect(() => {

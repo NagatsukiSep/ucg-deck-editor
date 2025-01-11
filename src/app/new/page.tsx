@@ -134,15 +134,8 @@ export default function Home() {
       alert("デッキは50枚でなければなりません。");
       return;
     }
-    const hyphenCode = deckCards
-      .map((card) => {
-        const count = card.count ? card.count : 1;
-        return `${card.id.toString()}-${count.toString()}`;
-      })
-      .join("-");
-    console.log(hyphenCode);
     const data = {
-      deck_cards: hyphenCode,
+      deck_cards: JSON.stringify(deckCards),
     };
     const response = await post<{ deck_code: string }, typeof data>(
       "new_deck",
