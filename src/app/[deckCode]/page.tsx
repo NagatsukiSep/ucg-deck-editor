@@ -123,7 +123,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                       <img
                         src={card.image_url}
                         alt={card.detail_name}
-                        className="w-full h-auto"
+                        className="w-full h-auto aspect-[143/200]"
                       />
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-[#171717] text-center rounded-sm px-2 py-1 mb-2 w-8">
                         <div className="text-white">{card.count}</div>

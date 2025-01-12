@@ -59,7 +59,7 @@ function CardComponent({
     <img
       src={card.image_url}
       alt={card.detail_name}
-      className={`w-32 h-auto mx-auto cursor-pointer rounded-md transition-all duration-300 ${
+      className={`w-32 h-auto mx-auto cursor-pointer rounded-md  aspect-[143/200] transition-all duration-300 ${
         isAdded
           ? "outline outline-3 outline-[#171717] shadow-[0_0_15px_5px_rgba(81,81,81,0.5)] scale-105"
           : ""
@@ -211,7 +211,7 @@ export default function Home() {
                       <img
                         src={card.image_url}
                         alt={card.detail_name}
-                        className="w-full h-auto"
+                        className="w-full h-auto aspect-[143/200]"
                       />
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
                         <Button
