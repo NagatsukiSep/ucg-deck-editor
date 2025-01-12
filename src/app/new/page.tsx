@@ -302,6 +302,7 @@ export default function Home() {
                       <SelectItem value="ゼロ">ゼロ</SelectItem>
                       <SelectItem value="ダイナ">ダイナ</SelectItem>
                       <SelectItem value="ティガ">ティガ</SelectItem>
+                      <SelectItem value="デッカー">デッカー</SelectItem>
                       <SelectItem value="トリガー">トリガー</SelectItem>
                       <SelectItem value="ブレーザー">ブレーザー</SelectItem>
                       <SelectItem value="メビウス">メビウス</SelectItem>
