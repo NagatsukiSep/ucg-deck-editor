@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardDetail } from "@/types/deckCard";
@@ -120,10 +121,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-1/2 md:w-48">
                     <div className="relative w-full p-2">
-                      <img
+                      <ImageWithSkeleton
                         src={card.image_url}
                         alt={card.detail_name}
-                        className="w-full h-auto aspect-[143/200]"
                       />
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-[#171717] text-center rounded-sm px-2 py-1 mb-2 w-8">
                         <div className="text-white">{card.count}</div>
