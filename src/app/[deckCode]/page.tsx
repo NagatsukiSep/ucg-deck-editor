@@ -97,23 +97,37 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(deckCode);
-              }}
-              className="m-2"
-            >
-              デッキコードをコピー
-            </Button>
-            <Button
-              onClick={() => {
-                window.open(imageUrl, "_blank");
-              }}
-              className="m-2"
-              disabled={isGeneratingImage}
-            >
-              {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
-            </Button>
+            <div className="flex flex-col md:flex-row">
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(deckCode);
+                  alert("デッキコードをコピーしました。");
+                }}
+                className="m-2"
+              >
+                デッキコードをコピー
+              </Button>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/${deckCode}`
+                  );
+                  alert("デッキコードをURL付きでコピーしました。");
+                }}
+                className="m-2"
+              >
+                デッキコードをURL付きでコピー
+              </Button>
+              <Button
+                onClick={() => {
+                  window.open(imageUrl, "_blank");
+                }}
+                className="m-2"
+                disabled={isGeneratingImage}
+              >
+                {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
+              </Button>
+            </div>
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>
             ) : (
