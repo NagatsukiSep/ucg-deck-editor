@@ -289,6 +289,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
+                    value={searchQuery.characterName}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="キャラクター名" />
@@ -316,6 +317,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, level: value })
                     }
+                    value={searchQuery.level}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="レベル" />
@@ -338,6 +340,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, type: value })
                     }
+                    value={searchQuery.type}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="TYPE" />
@@ -357,6 +360,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, round: value })
                     }
+                    value={searchQuery.round}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="ラウンド" />
