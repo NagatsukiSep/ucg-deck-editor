@@ -26,6 +26,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
+import { ImageWithSkeleton } from "@/components/image-with-skelton";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -56,16 +57,16 @@ function CardComponent({
   };
 
   return (
-    <img
-      src={card.image_url}
-      alt={card.detail_name}
-      className={`w-32 h-auto mx-auto cursor-pointer rounded-md  aspect-[143/200] transition-all duration-300 ${
+    <div
+      className={`w-32 h-auto mx-auto cursor-pointer rounded-md  transition-all duration-300 ${
         isAdded
           ? "outline outline-3 outline-[#171717] shadow-[0_0_15px_5px_rgba(81,81,81,0.5)] scale-105"
           : ""
       }`}
       onClick={handleClick}
-    />
+    >
+      <ImageWithSkeleton src={card.image_url} alt={card.detail_name} />
+    </div>
   );
 }
 
@@ -208,10 +209,9 @@ export default function Home() {
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-1/2 md:w-32">
                     <div className="relative w-full p-2">
-                      <img
+                      <ImageWithSkeleton
                         src={card.image_url}
                         alt={card.detail_name}
-                        className="w-full h-auto aspect-[143/200]"
                       />
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
                         <Button
@@ -289,6 +289,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
+                    value={searchQuery.characterName}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="キャラクター名" />
@@ -316,6 +317,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, level: value })
                     }
+                    value={searchQuery.level}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="レベル" />
@@ -338,6 +340,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, type: value })
                     }
+                    value={searchQuery.type}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="TYPE" />
@@ -357,6 +360,7 @@ export default function Home() {
                     onValueChange={(value) =>
                       setSearchQuery({ ...searchQuery, round: value })
                     }
+                    value={searchQuery.round}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="ラウンド" />
