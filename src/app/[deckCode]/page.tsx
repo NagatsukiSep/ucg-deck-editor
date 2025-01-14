@@ -109,7 +109,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    "https://ucg-deck-editor.innovatz.jp/" + deckCode
+                    `${window.location.origin}/${deckCode}`
                   );
                   alert("デッキコードをURL付きでコピーしました。");
                 }}
