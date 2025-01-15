@@ -297,7 +297,12 @@ export default function Home() {
                     <SelectContent>
                       <SelectItem value="none">キャラクター名</SelectItem>
                       <SelectItem value="アーク">アーク</SelectItem>
+                      <SelectItem value="アグル">アグル</SelectItem>
                       <SelectItem value="ガイア">ガイア</SelectItem>
+                      <SelectItem value="サトウ ケン">サトウ ケン</SelectItem>
+                      <SelectItem value="サトウ ハヤオ">
+                        サトウ ハヤオ
+                      </SelectItem>
                       <SelectItem value="ジード">ジード</SelectItem>
                       <SelectItem value="ゼット">ゼット</SelectItem>
                       <SelectItem value="ゼロ">ゼロ</SelectItem>
@@ -305,8 +310,11 @@ export default function Home() {
                       <SelectItem value="ティガ">ティガ</SelectItem>
                       <SelectItem value="デッカー">デッカー</SelectItem>
                       <SelectItem value="トリガー">トリガー</SelectItem>
+                      <SelectItem value="ヒカリ">ヒカリ</SelectItem>
+                      <SelectItem value="ブル">ブル</SelectItem>
                       <SelectItem value="ブレーザー">ブレーザー</SelectItem>
                       <SelectItem value="メビウス">メビウス</SelectItem>
+                      <SelectItem value="ロッソ">ロッソ</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -348,9 +356,12 @@ export default function Home() {
                     <SelectContent>
                       <SelectItem value="none">TYPE</SelectItem>
                       <SelectItem value="basic">基本</SelectItem>
-                      <SelectItem value="speed">敏速</SelectItem>
                       <SelectItem value="power">剛力</SelectItem>
+                      <SelectItem value="armed">武装</SelectItem>
+                      <SelectItem value="speed">敏速</SelectItem>
                       <SelectItem value="disaster">災禍</SelectItem>
+                      <SelectItem value="devastation">壊滅</SelectItem>
+                      <SelectItem value="invasion">侵略</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
