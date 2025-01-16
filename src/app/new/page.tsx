@@ -10,9 +10,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 // import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
+import { useAppContext } from "@/context/AppContext";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -71,7 +72,15 @@ function CardComponent({
 }
 
 export default function Home() {
+  const { originalDeckCards, setOriginalDeckCards } = useAppContext();
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
+
+  useEffect(() => {
+    setDeckCards(originalDeckCards);
+    setCardCount(50);
+    setOriginalDeckCards([]);
+  }, []);
+
   const addCard = (card: CardDetail) => {
     if (deckCards.some((c) => c.id === card.id)) {
       if (deckCards.some((c) => c.id === card.id && c.count === 4)) {
@@ -181,6 +190,46 @@ export default function Home() {
     return;
   };
 
+  const changeIndex = (id: string, order: "up" | "down") => {
+    const index = deckCards.findIndex((card) => card.id === id);
+    if (index === -1) {
+      return;
+    }
+    if (order === "up") {
+      if (index === 0) {
+        return;
+      }
+      const newDeckCards = [...deckCards];
+      newDeckCards[index] = deckCards[index - 1];
+      newDeckCards[index - 1] = deckCards[index];
+      setDeckCards(newDeckCards);
+    } else {
+      if (index === deckCards.length - 1) {
+        return;
+      }
+      const newDeckCards = [...deckCards];
+      newDeckCards[index] = deckCards[index + 1];
+      newDeckCards[index + 1] = deckCards[index];
+      setDeckCards(newDeckCards);
+    }
+  };
+  const isEdge = (id: string, order: "up" | "down") => {
+    const index = deckCards.findIndex((card) => card.id === id);
+    if (index === -1) {
+      return false;
+    }
+    if (order === "up") {
+      if (index === 0) {
+        return true;
+      }
+    } else {
+      if (index === deckCards.length - 1) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
@@ -213,6 +262,28 @@ export default function Home() {
                         src={card.image_url}
                         alt={card.detail_name}
                       />
+                      {!isEdge(card.id, "up") && (
+                        <div className="absolute bottom-1/2 translate-y-1/2 left-0 transform mb-2 p-2">
+                          <div className="text-white bg-[#171717] rounded-sm py-1">
+                            <ChevronLeft
+                              onClick={() => {
+                                changeIndex(card.id, "up");
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {!isEdge(card.id, "down") && (
+                        <div className="absolute bottom-1/2 translate-y-1/2 right-0 transform mb-2 p-2">
+                          <div className="text-white bg-[#171717] rounded-sm py-1">
+                            <ChevronRight
+                              onClick={() => {
+                                changeIndex(card.id, "down");
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
                         <Button
                           onClick={() => {
