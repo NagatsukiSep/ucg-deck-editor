@@ -76,9 +76,11 @@ export default function Home() {
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
 
   useEffect(() => {
-    setDeckCards(originalDeckCards);
-    setCardCount(50);
-    setOriginalDeckCards([]);
+    if (originalDeckCards.length > 0) {
+      setDeckCards(originalDeckCards);
+      setCardCount(50);
+      setOriginalDeckCards([]);
+    }
   }, []);
 
   const addCard = (card: CardDetail) => {
