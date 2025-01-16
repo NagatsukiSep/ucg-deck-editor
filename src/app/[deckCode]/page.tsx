@@ -3,8 +3,10 @@
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppContext } from "@/context/AppContext";
 import { CardDetail } from "@/types/deckCard";
 import { get } from "@/utils/request";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, use, useRef } from "react";
 
 export default function Home(props: { params: Promise<{ deckCode: string }> }) {
@@ -70,6 +72,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     }
   };
 
+  const { setOriginalDeckCards } = useAppContext();
+  const router = useRouter();
+
   return (
     <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-bold mb-4">デッキ表示</h1>
@@ -126,6 +131,15 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 disabled={isGeneratingImage}
               >
                 {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setOriginalDeckCards(deckCards);
+                  router.push("/new");
+                }}
+                className="m-2"
+              >
+                このデッキからデッキ作成
               </Button>
             </div>
             {loadingDetails ? (
