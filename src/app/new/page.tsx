@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 // import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
+import { useAppContext } from "@/context/AppContext";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -71,7 +72,15 @@ function CardComponent({
 }
 
 export default function Home() {
+  const { originalDeckCards, setOriginalDeckCards } = useAppContext();
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
+
+  useEffect(() => {
+    setDeckCards(originalDeckCards);
+    setCardCount(50);
+    setOriginalDeckCards([]);
+  }, []);
+
   const addCard = (card: CardDetail) => {
     if (deckCards.some((c) => c.id === card.id)) {
       if (deckCards.some((c) => c.id === card.id && c.count === 4)) {
