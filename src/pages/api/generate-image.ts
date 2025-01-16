@@ -105,17 +105,19 @@ export default async function handler(
       }
     };
 
+    const COUNT_WIDTH = 32;
+
     // カード画像と枚数のテキストを重ねて作成
     const cardWithText = await Promise.all(
       images.map(async ({ imagePath }, index) => {
         const cardImage = await fetchImage(imagePath);
         const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count[index]}.png`))
-          .resize(20, 20)
+          .resize(COUNT_WIDTH, COUNT_WIDTH)
           .toBuffer()
 
         // テキストを重ねたカード画像を作成
         return sharp(cardImage)
-          .composite([{ input: overlayImage, top: CARD_HEIGHT - 25, left: CARD_WIDTH / 2 - 10 }])
+          .composite([{ input: overlayImage, top: CARD_HEIGHT - COUNT_WIDTH - 5, left: CARD_WIDTH - COUNT_WIDTH - 5 }])
           .toBuffer();
       })
     );
