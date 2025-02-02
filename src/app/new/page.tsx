@@ -64,9 +64,12 @@ function CardComponent({
           ? "outline outline-3 outline-[#171717] shadow-[0_0_15px_5px_rgba(81,81,81,0.5)] scale-105"
           : ""
       }`}
-      onClick={handleClick}
     >
-      <ImageWithSkeleton src={card.image_url} alt={card.detail_name} />
+      <ImageWithSkeleton
+        src={card.image_url}
+        alt={card.detail_name}
+        onClick={handleClick}
+      />
     </div>
   );
 }
