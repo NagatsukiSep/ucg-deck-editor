@@ -4,9 +4,9 @@ const API_BASE_URL = process.env.API_BASE_URL as string;
 const API_PUBLIC_KEY = process.env.API_PUBLIC_KEY as string;
 const API_SECRET_KEY = process.env.API_SECRET_KEY as string;
 
-export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string }> }) {
   const searchParams = req.nextUrl.searchParams.toString(); 
-  const path = params.path; 
+  const path = (await params).path; 
 
   const response = await fetch(`${API_BASE_URL}/${path}?${searchParams}`, {
     method: "GET",
@@ -23,9 +23,9 @@ export async function GET(req: NextRequest, { params }: { params: { path: string
   return NextResponse.json(data);
 }
 
-export async function POST(req: NextRequest, { params }: { params: { path: string[] } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ path: string }> }) {
   const body = await req.json();
-  const path = params.path;
+  const path = (await params).path;
 
   const response = await fetch(`${API_BASE_URL}/${path}`, {
     method: "POST",
