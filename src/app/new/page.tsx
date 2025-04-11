@@ -374,7 +374,9 @@ export default function Home() {
                       <SelectItem value="none">キャラクター名</SelectItem>
                       <SelectItem value="アーク">アーク</SelectItem>
                       <SelectItem value="アグル">アグル</SelectItem>
+                      <SelectItem value="オーブ">オーブ</SelectItem>
                       <SelectItem value="ガイア">ガイア</SelectItem>
+                      <SelectItem value="ギンガ">ギンガ</SelectItem>
                       <SelectItem value="サトウ ケン">サトウ ケン</SelectItem>
                       <SelectItem value="サトウ ハヤオ">
                         サトウ ハヤオ
@@ -386,6 +388,7 @@ export default function Home() {
                       <SelectItem value="ティガ">ティガ</SelectItem>
                       <SelectItem value="デッカー">デッカー</SelectItem>
                       <SelectItem value="トリガー">トリガー</SelectItem>
+                      <SelectItem value="ネクサス">ネクサス</SelectItem>
                       <SelectItem value="ヒカリ">ヒカリ</SelectItem>
                       <SelectItem value="ブル">ブル</SelectItem>
                       <SelectItem value="ブレーザー">ブレーザー</SelectItem>
