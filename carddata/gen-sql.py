@@ -29,7 +29,7 @@ def generate_sql(data):
         # メインテーブル(cards)のINSERT文
         inserts.append(
             f"""
-        INSERT INTO cards (
+        INSERT IGNORE INTO cards (
             id, section, bundle_version, serial, branch, number, 
             rarity_value, rarity_description, round, level, 
             type_value, type_description, feature_value, feature_description, 
