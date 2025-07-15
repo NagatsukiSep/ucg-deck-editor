@@ -3,13 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 // import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -28,7 +21,8 @@ import {
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
-import { ultraCharacter } from "@/types/ultra-hero";
+import { cardTypes, ultraCharacter } from "@/types/cardElement";
+import { SearchSelect } from "@/components/searchSelect";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -44,12 +38,12 @@ function CardComponent({
   addCard,
 }: {
   card: CardDetail;
-  addCard: (card: CardDetail) => void;
+  addCard: (card: CardDetail, delta: number) => void;
 }) {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleClick = () => {
-    addCard(card);
+    addCard(card, 1);
     setIsAdded(true);
 
     // 一定時間後にスタイルをリセットする例
@@ -87,37 +81,38 @@ export default function Home() {
     }
   }, [originalDeckCards, setOriginalDeckCards]);
 
-  const addCard = (card: CardDetail) => {
-    if (deckCards.some((c) => c.id === card.id)) {
-      if (deckCards.some((c) => c.id === card.id && c.count === 4)) {
-        return;
+  const updateCardCount = (card: CardDetail, delta: number) => {
+    setDeckCards((prev) => {
+      const index = prev.findIndex((c) => c.id === card.id);
+      if (index === -1 && delta > 0) {
+        // 新規追加
+        return [...prev, { ...card, count: 1 }];
       }
-      setDeckCards(
-        deckCards.map((c) =>
-          c.id === card.id ? { ...c, count: c.count ? c.count + 1 : 2 } : c
-        )
-      );
-      setCardCount(cardCount + 1);
-    } else {
-      setDeckCards([...deckCards, { ...card, count: 1 }]);
-      setCardCount(cardCount + 1);
-    }
-  };
-  const removeCard = (card: CardDetail) => {
-    if (deckCards.some((c) => c.id === card.id)) {
-      if (deckCards.some((c) => c.id === card.id && c.count === 1)) {
-        setDeckCards(deckCards.filter((c) => c.id !== card.id));
-        setCardCount(cardCount - 1);
-      } else {
-        setDeckCards(
-          deckCards.map((c) =>
-            c.id === card.id ? { ...c, count: c.count ? c.count - 1 : 0 } : c
-          )
-        );
-        setCardCount(cardCount - 1);
+
+      if (index !== -1) {
+        const current = prev[index];
+        const newCount = (current.count || 1) + delta;
+
+        if (newCount > 4) return prev; // 上限
+        if (newCount <= 0) {
+          // 削除
+          return prev.filter((c) => c.id !== card.id);
+        }
+
+        const updated = [...prev];
+        updated[index] = { ...current, count: newCount };
+        return updated;
       }
-    }
+
+      return prev;
+    });
   };
+
+  useEffect(() => {
+    const total = deckCards.reduce((sum, card) => sum + (card.count || 0), 0);
+    setCardCount(total);
+  }, [deckCards]);
+
   const [cardCount, setCardCount] = useState(0);
 
   const [selectedGenre, setSelectedGenre] = useState("ultra-hero");
@@ -293,7 +288,7 @@ export default function Home() {
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
                         <Button
                           onClick={() => {
-                            removeCard(card);
+                            updateCardCount(card, -1);
                           }}
                           className="w-2 m-1"
                           type="submit"
@@ -306,7 +301,7 @@ export default function Home() {
 
                         <Button
                           onClick={() => {
-                            addCard(card);
+                            updateCardCount(card, 1);
                           }}
                           className="w-2 m-1"
                           type="submit"
@@ -362,93 +357,67 @@ export default function Home() {
             <div className="m-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {selectedGenre === "ultra-hero" && (
-                  <Select
-                    onValueChange={(value) =>
+                  <SearchSelect
+                    label="キャラクター名"
+                    value={searchQuery.characterName}
+                    onChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
-                    value={searchQuery.characterName}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="キャラクター名" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">キャラクター名</SelectItem>
-                      {ultraCharacter.map((name) => (
-                        <SelectItem key={name} value={name}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    options={[
+                      { value: "none", label: "キャラクター名" },
+                      ...ultraCharacter.map((name) => ({
+                        value: name,
+                        label: name,
+                      })),
+                    ]}
+                  />
                 )}
 
                 {(selectedGenre === "ultra-hero" ||
                   selectedGenre === "kaiju") && (
-                  <Select
-                    onValueChange={(value) =>
+                  <SearchSelect
+                    label="レベル"
+                    value={searchQuery.level}
+                    onChange={(value) =>
                       setSearchQuery({ ...searchQuery, level: value })
                     }
-                    value={searchQuery.level}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="レベル" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">レベル</SelectItem>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4</SelectItem>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="6">6</SelectItem>
-                      <SelectItem value="7">7</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    options={[
+                      { value: "none", label: "レベル" },
+                      ...Array.from({ length: 7 }, (_, i) => ({
+                        value: (i + 1).toString(),
+                        label: (i + 1).toString(),
+                      })),
+                    ]}
+                  />
                 )}
 
                 {(selectedGenre === "ultra-hero" ||
                   selectedGenre === "kaiju") && (
-                  <Select
-                    onValueChange={(value) =>
+                  <SearchSelect
+                    label="TYPE"
+                    value={searchQuery.type}
+                    onChange={(value) =>
                       setSearchQuery({ ...searchQuery, type: value })
                     }
-                    value={searchQuery.type}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="TYPE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">TYPE</SelectItem>
-                      <SelectItem value="basic">基本</SelectItem>
-                      <SelectItem value="power">剛力</SelectItem>
-                      <SelectItem value="armed">武装</SelectItem>
-                      <SelectItem value="speed">敏速</SelectItem>
-                      <SelectItem value="disaster">災禍</SelectItem>
-                      <SelectItem value="devastation">壊滅</SelectItem>
-                      <SelectItem value="invasion">侵略</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    options={[{ value: "none", label: "TYPE" }, ...cardTypes]}
+                  />
                 )}
 
                 {selectedGenre === "scene" && (
-                  <Select
-                    onValueChange={(value) =>
+                  <SearchSelect
+                    label="ラウンド"
+                    value={searchQuery.round}
+                    onChange={(value) =>
                       setSearchQuery({ ...searchQuery, round: value })
                     }
-                    value={searchQuery.round}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="ラウンド" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">ラウンド</SelectItem>
-                      <SelectItem value="0">0</SelectItem>
-                      <SelectItem value="1">1</SelectItem>
-                      <SelectItem value="2">2</SelectItem>
-                      <SelectItem value="3">3</SelectItem>
-                      <SelectItem value="4">4</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    options={[
+                      { value: "none", label: "ラウンド" },
+                      ...[0, 1, 2, 3, 4].map((num) => ({
+                        value: num.toString(),
+                        label: num.toString(),
+                      })),
+                    ]}
+                  />
                 )}
               </div>
             </div>
@@ -537,7 +506,10 @@ export default function Home() {
               <div className="grid grid-cols-2 md:grid-cols-4 m-4 mx-auto">
                 {searchedCards.map((card) => (
                   <div key={card.id} className="m-2">
-                    <CardComponent card={card} addCard={addCard} />
+                    <CardComponent
+                      card={card}
+                      addCard={(card, delta) => updateCardCount(card, delta)}
+                    />
                   </div>
                 ))}
               </div>
