@@ -28,6 +28,7 @@ import {
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
+import { ultraCharacter } from "@/types/ultra-hero";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -372,28 +373,11 @@ export default function Home() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">キャラクター名</SelectItem>
-                      <SelectItem value="アーク">アーク</SelectItem>
-                      <SelectItem value="アグル">アグル</SelectItem>
-                      <SelectItem value="オーブ">オーブ</SelectItem>
-                      <SelectItem value="ガイア">ガイア</SelectItem>
-                      <SelectItem value="ギンガ">ギンガ</SelectItem>
-                      <SelectItem value="サトウ ケン">サトウ ケン</SelectItem>
-                      <SelectItem value="サトウ ハヤオ">
-                        サトウ ハヤオ
-                      </SelectItem>
-                      <SelectItem value="ジード">ジード</SelectItem>
-                      <SelectItem value="ゼット">ゼット</SelectItem>
-                      <SelectItem value="ゼロ">ゼロ</SelectItem>
-                      <SelectItem value="ダイナ">ダイナ</SelectItem>
-                      <SelectItem value="ティガ">ティガ</SelectItem>
-                      <SelectItem value="デッカー">デッカー</SelectItem>
-                      <SelectItem value="トリガー">トリガー</SelectItem>
-                      <SelectItem value="ネクサス">ネクサス</SelectItem>
-                      <SelectItem value="ヒカリ">ヒカリ</SelectItem>
-                      <SelectItem value="ブル">ブル</SelectItem>
-                      <SelectItem value="ブレーザー">ブレーザー</SelectItem>
-                      <SelectItem value="メビウス">メビウス</SelectItem>
-                      <SelectItem value="ロッソ">ロッソ</SelectItem>
+                      {ultraCharacter.map((name) => (
+                        <SelectItem key={name} value={name}>
+                          {name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
