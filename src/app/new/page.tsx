@@ -84,7 +84,7 @@ export default function Home() {
       setCardCount(50);
       setOriginalDeckCards([]);
     }
-  }, []);
+  }, [originalDeckCards, setOriginalDeckCards]);
 
   const addCard = (card: CardDetail) => {
     if (deckCards.some((c) => c.id === card.id)) {

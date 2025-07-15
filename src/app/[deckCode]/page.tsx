@@ -7,7 +7,7 @@ import { useAppContext } from "@/context/AppContext";
 import { CardDetail } from "@/types/deckCard";
 import { get } from "@/utils/request";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, use, useRef } from "react";
+import { useEffect, useState, use, useRef, useCallback } from "react";
 
 export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const params = use(props.params);
@@ -19,7 +19,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [imageUrl, setImageUrl] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
-  async function getDeckData() {
+  const getDeckData = useCallback(async () => {
     setLoadingDetails(true);
     const data = await get<{ deck_cards: string }>(
       `/deck?deck_code=${deckCode}`
@@ -37,13 +37,13 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       console.error("Failed to parse JSON:", error);
     }
     setLoadingDetails(false);
-  }
+  }, [deckCode]);
 
   useEffect(() => {
     if (didRun.current) return; // 2回目以降はスキップ
     didRun.current = true;
     getDeckData();
-  }, [deckCode]);
+  }, [getDeckData]);
 
   const generateCollage = async (cards: CardDetail[]) => {
     setIsGeneratingImage(true);
