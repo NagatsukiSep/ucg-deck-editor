@@ -9,20 +9,13 @@ import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
 import { cardTypes, ultraCharacter } from "@/types/cardElement";
 import { SearchSelect } from "@/components/searchSelect";
+import { PaginationControls } from "@/components/paginationControls";
+import { CardComponent } from "@/components/cardComponent";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -32,42 +25,6 @@ type UltraHeroSearchQuery = {
 };
 
 const perPage = 20;
-
-function CardComponent({
-  card,
-  addCard,
-}: {
-  card: CardDetail;
-  addCard: (card: CardDetail, delta: number) => void;
-}) {
-  const [isAdded, setIsAdded] = useState(false);
-
-  const handleClick = () => {
-    addCard(card, 1);
-    setIsAdded(true);
-
-    // 一定時間後にスタイルをリセットする例
-    setTimeout(() => {
-      setIsAdded(false);
-    }, 500); // 1秒後にリセット
-  };
-
-  return (
-    <div
-      className={`w-32 h-auto mx-auto cursor-pointer rounded-md  transition-all duration-300 ${
-        isAdded
-          ? "outline outline-3 outline-[#171717] shadow-[0_0_15px_5px_rgba(81,81,81,0.5)] scale-105"
-          : ""
-      }`}
-    >
-      <ImageWithSkeleton
-        src={card.image_url}
-        alt={card.detail_name}
-        onClick={handleClick}
-      />
-    </div>
-  );
-}
 
 export default function Home() {
   const { originalDeckCards, setOriginalDeckCards } = useAppContext();
@@ -285,26 +242,29 @@ export default function Home() {
                           </div>
                         </div>
                       )}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex item-center mb-2">
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center justify-center mb-2">
                         <Button
-                          onClick={() => {
-                            updateCardCount(card, -1);
-                          }}
-                          className="w-2 m-1"
-                          type="submit"
+                          onClick={() => updateCardCount(card, -1)}
+                          className="w-6 h-6 text-lg m-1 p-0 pb-1 rounded-full"
+                          type="button"
+                          disabled={(card.count ?? 0) <= 0}
+                          variant="outline"
                         >
                           -
                         </Button>
-                        <div className="bg-[#171717] text-center rounded-sm w-8 m-1 flex items-center justify-center">
-                          <div className="text-white">{card.count}</div>
+
+                        <div className="bg-[#171717] text-white text-center rounded-sm w-8 h-8 m-1 flex items-center justify-center text-sm">
+                          {card.count ?? 0}
                         </div>
 
                         <Button
-                          onClick={() => {
-                            updateCardCount(card, 1);
-                          }}
-                          className="w-2 m-1"
-                          type="submit"
+                          onClick={() => updateCardCount(card, 1)}
+                          className="w-6 h-6 text-lg m-1 p-0 rounded-full"
+                          type="button"
+                          disabled={(card.count ?? 0) >= 4}
+                          variant={
+                            (card.count ?? 0) >= 4 ? "secondary" : "outline"
+                          }
                         >
                           +
                         </Button>
@@ -445,61 +405,12 @@ export default function Home() {
               検索
             </Button>
             <p>検索結果: {searchedCardsCount}件</p>
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => {
-                      movePage(searchedCardsPage - 1);
-                    }}
-                  />
-                </PaginationItem>
-                {searchedCardsPage > 1 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-                {searchedCardsPage > 0 && (
-                  <PaginationItem>
-                    <PaginationLink
-                      onClick={() => {
-                        movePage(searchedCardsPage - 1);
-                      }}
-                    >
-                      {searchedCardsPage}
-                    </PaginationLink>
-                  </PaginationItem>
-                )}
-                <PaginationItem>
-                  <PaginationLink isActive={true}>
-                    {searchedCardsPage + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                {searchedCardsPage < searchedCardsCount / perPage - 1 && (
-                  <PaginationItem>
-                    <PaginationLink
-                      onClick={() => {
-                        movePage(searchedCardsPage + 1);
-                      }}
-                    >
-                      {searchedCardsPage + 2}
-                    </PaginationLink>
-                  </PaginationItem>
-                )}
-                {searchedCardsPage < searchedCardsCount / perPage - 2 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => {
-                      movePage(searchedCardsPage + 1);
-                    }}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <PaginationControls
+              currentPage={searchedCardsPage}
+              totalCount={searchedCardsCount}
+              perPage={perPage}
+              onPageChange={movePage}
+            />
 
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {searchedCards.length > 0 ? (

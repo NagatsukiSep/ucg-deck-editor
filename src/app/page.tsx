@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,12 +27,27 @@ export default function Home() {
     }
   };
 
+  type ChangelogEntry = {
+    date: string;
+    message: string;
+  };
+
+  const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
+
+  useEffect(() => {
+    fetch("/changelog.json")
+      .then((res) => res.json())
+      .then((data: ChangelogEntry[]) => setChangelog(data))
+      .catch((err) => console.error("更新ログの取得に失敗しました", err));
+  }, []);
+
   return (
-    <div className="container mx-auto p-4 ">
-      <h1 className="text-2xl font-bold mb-4">デッキエディタ</h1>
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      <h1 className="text-2xl font-bold text-center">デッキエディタ</h1>
+
       <Card>
         <CardHeader>
-          <h1 className="text-2xl font-bold">デッキコード入力</h1>
+          <h2 className="text-xl font-semibold">デッキコード入力</h2>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,9 +69,10 @@ export default function Home() {
           </form>
         </CardContent>
       </Card>
+
       <Card>
         <CardHeader>
-          <h1 className="text-2xl font-bold">デッキ新規作成</h1>
+          <h2 className="text-xl font-semibold">デッキ新規作成</h2>
         </CardHeader>
         <CardContent>
           <Button onClick={() => router.push("/new")} className="w-full">
@@ -64,6 +80,20 @@ export default function Home() {
           </Button>
         </CardContent>
       </Card>
+
+      {changelog.length > 0 && (
+        <div className="mt-12 border-t pt-6 text-sm text-muted-foreground">
+          <h2 className="text-base font-semibold mb-2">更新ログ</h2>
+          <ul className="space-y-2 list-disc list-inside">
+            {changelog.map((entry, idx) => (
+              <li key={idx}>
+                <span className="font-medium">{entry.date}：</span>
+                {entry.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
