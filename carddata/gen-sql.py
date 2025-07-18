@@ -1,13 +1,20 @@
 import json
 import os
+import requests
 
 
-# JSONデータの読み込み
-with open("carddata/data.json", "r", encoding="utf-8") as f:
-    data_json = f.read()
+# # JSONデータの読み込み
+# with open("carddata/data.json", "r", encoding="utf-8") as f:
+#     data_json = f.read()
 
-# JSONデータをPythonの辞書に変換
-data = json.loads(data_json)
+# # JSONデータをPythonの辞書に変換
+# data = json.loads(data_json)
+
+# JSONデータの取得（APIから直接）
+page = input("page number:")
+url = f"https://api.ultraman-cardgame.com/api/v1/jp/cards?page={page}&per_page=100"
+response = requests.get(url)
+data = response.json()
 
 
 # 特殊文字をエスケープする関数
@@ -82,7 +89,7 @@ def generate_sql(data):
 
 
 # SQL分割してファイル出力
-def split_and_save_sql(inserts, chunk_size=50, output_dir="output"):
+def split_and_save_sql(inserts, chunk_size=100, output_dir="output"):
     os.makedirs(output_dir, exist_ok=True)
 
     for i in range(0, len(inserts), chunk_size):
@@ -98,4 +105,4 @@ def split_and_save_sql(inserts, chunk_size=50, output_dir="output"):
 
 # メイン処理
 inserts = generate_sql(data)
-split_and_save_sql(inserts, chunk_size=50)
+split_and_save_sql(inserts, chunk_size=100)
