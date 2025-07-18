@@ -2,6 +2,7 @@ export const ultraCharacter = [
   "アーク",
   "アグル",
   "オーブ",
+  "オメガ",
   "ガイア",
   "ギンガ",
   "サトウ ケン",
@@ -29,5 +30,6 @@ export const cardTypes = [
   { value: "disaster", label: "災禍" },
   { value: "devastation", label: "壊滅" },
   { value: "invasion", label: "侵略" },
+  { value: "meteo", label: "メテオ" },
 ] as const;
 
