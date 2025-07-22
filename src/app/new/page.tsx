@@ -88,6 +88,7 @@ export default function Home() {
     level: "none",
     type: "none",
     round: "none",
+    keyword: "",
   });
 
   const searchQueryMap: Record<string, string> = {
