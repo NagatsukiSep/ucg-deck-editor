@@ -158,23 +158,6 @@ export default function Home() {
     return;
   };
 
-  // const isEdge = (id: string, order: "up" | "down") => {
-  //   const index = deckCards.findIndex((card) => card.id === id);
-  //   if (index === -1) {
-  //     return false;
-  //   }
-  //   if (order === "up") {
-  //     if (index === 0) {
-  //       return true;
-  //     }
-  //   } else {
-  //     if (index === deckCards.length - 1) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
