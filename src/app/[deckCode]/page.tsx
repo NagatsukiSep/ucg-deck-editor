@@ -8,7 +8,7 @@ import { useAppContext } from "@/context/AppContext";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { analyzeDeck } from "@/utils/analyzeDeck";
 import { get } from "@/utils/request";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
 
 export default function Home(props: { params: Promise<{ deckCode: string }> }) {
@@ -95,7 +95,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   };
 
   const { setOriginalDeckCards } = useAppContext();
-  const router = useRouter();
 
   return (
     <div className="container mx-auto p-4 ">
@@ -161,7 +160,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 <Button
                   onClick={() => {
                     setOriginalDeckCards(deckCards);
-                    router.push("/new");
+                    redirect("/new");
                   }}
                   className="m-2"
                 >
