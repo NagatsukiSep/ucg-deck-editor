@@ -189,6 +189,7 @@ export default function Home() {
               }}
               className="w-full my-4"
               type="button"
+              disabled={deckCards.length < 2}
             >
               自動並び替え
             </Button>
