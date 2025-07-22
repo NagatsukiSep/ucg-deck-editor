@@ -187,7 +187,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
-            <DeckBarChart analysis={deckAnalysis} />
+            {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             <Button
               onClick={() => {
                 generateDeckCode();
