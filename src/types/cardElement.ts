@@ -22,6 +22,13 @@ export const ultraCharacter = [
   "ロッソ",
 ] as const;
 
+export const kaijuCharacter = [
+  "ギルアーク",
+  "ジャグラス ジャグラー",
+  "ベリアル",
+] as const;
+
+
 export const cardTypes = [
   { value: "basic", label: "基本" },
   { value: "power", label: "剛力" },

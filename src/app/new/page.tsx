@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
-import { cardTypes, ultraCharacter } from "@/types/cardElement";
+import { cardTypes, kaijuCharacter, ultraCharacter } from "@/types/cardElement";
 import { SearchSelect } from "@/components/searchSelect";
 import { PaginationControls } from "@/components/paginationControls";
 import { CardComponent } from "@/components/cardComponent";
@@ -334,6 +334,23 @@ export default function Home() {
                     options={[
                       { value: "none", label: "キャラクター名" },
                       ...ultraCharacter.map((name) => ({
+                        value: name,
+                        label: name,
+                      })),
+                    ]}
+                  />
+                )}
+
+                {selectedGenre === "kaiju" && (
+                  <SearchSelect
+                    label="キャラクター名"
+                    value={searchQuery.characterName}
+                    onChange={(value) =>
+                      setSearchQuery({ ...searchQuery, characterName: value })
+                    }
+                    options={[
+                      { value: "none", label: "キャラクター名" },
+                      ...kaijuCharacter.map((name) => ({
                         value: name,
                         label: name,
                       })),
