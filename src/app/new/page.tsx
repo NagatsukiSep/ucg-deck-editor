@@ -211,7 +211,7 @@ export default function Home() {
             </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
-              <div className="flex flex-wrap mt-4">
+              <div className="flex flex-wrap mt-4 items-center">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-1/2 md:w-32">
                     <div className="relative w-full p-2">
