@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
@@ -7,9 +8,14 @@ export default function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-start">
         {/* ロゴ部分 */}
         <Link href="/">
-          <span className="cursor-pointer text-xl font-bold text-black">
-            UCG Deck Editor
-          </span>
+          <Image
+            src="/logo.png"
+            alt="ULTRA DECK BUILDER  Logo"
+            width={154}
+            height={77}
+            priority
+            className="cursor-pointer"
+          />
         </Link>
 
         {/* ナビゲーション部分 */}

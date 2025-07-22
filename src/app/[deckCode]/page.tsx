@@ -1,10 +1,12 @@
 "use client";
 
+import DeckBarChart from "@/components/deckBarChart";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from "@/context/AppContext";
-import { CardDetail } from "@/types/deckCard";
+import { CardDetail, DeckAnalysis } from "@/types/deckCard";
+import { analyzeDeck } from "@/utils/analyzeDeck";
 import { get } from "@/utils/request";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
@@ -18,26 +20,46 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
 
   const getDeckData = useCallback(async () => {
     setLoadingDetails(true);
-    const data = await get<{ deck_cards: string }>(
-      `/deck?deck_code=${deckCode}`
-    );
-    if (data.length === 0) {
-      setIs404(true);
-      return;
-    }
-
     try {
-      const parsed = JSON.parse(data[0].deck_cards);
-      setDeckCards(parsed);
-      generateCollage(parsed);
+      const data = await get<{ deck_cards: string }>(
+        `/deck?deck_code=${deckCode}`
+      );
+      if (data.length === 0) {
+        setIs404(true);
+        return;
+      }
+
+      // deck_cards をパースして ID一覧と count マップ作成
+      const parsed: { id: string; count: number }[] = JSON.parse(
+        data[0].deck_cards
+      );
+      const idToCount = new Map(parsed.map((card) => [card.id, card.count]));
+      const cardIds = [...idToCount.keys()];
+      const cardDetails = await get<CardDetail>(
+        `/card_detail?ids=${cardIds.join(",")}`
+      );
+      const enrichedCards: CardDetail[] = cardDetails.map((card) => ({
+        ...card,
+        count: idToCount.get(card.id) ?? 0,
+      }));
+
+      // state に保存
+      setDeckCards(enrichedCards);
+      generateCollage(enrichedCards);
     } catch (error) {
       console.error("Failed to parse JSON:", error);
     }
     setLoadingDetails(false);
   }, [deckCode]);
+
+  useEffect(() => {
+    const analysis = analyzeDeck(deckCards);
+    setDeckAnalysis(analysis);
+  }, [deckCards]);
 
   useEffect(() => {
     if (didRun.current) return; // 2回目以降はスキップ
@@ -102,45 +124,50 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row">
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(deckCode);
-                  alert("デッキコードをコピーしました。");
-                }}
-                className="m-2"
-              >
-                デッキコードをコピー
-              </Button>
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/${deckCode}`
-                  );
-                  alert("デッキコードをURL付きでコピーしました。");
-                }}
-                className="m-2"
-              >
-                デッキコードをURL付きでコピー
-              </Button>
-              <Button
-                onClick={() => {
-                  window.open(imageUrl, "_blank");
-                }}
-                className="m-2"
-                disabled={isGeneratingImage}
-              >
-                {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
-              </Button>
-              <Button
-                onClick={() => {
-                  setOriginalDeckCards(deckCards);
-                  router.push("/new");
-                }}
-                className="m-2"
-              >
-                このデッキからデッキ作成
-              </Button>
+            <div className="flex flex-col md:flex-row items-center">
+              <DeckBarChart analysis={deckAnalysis} />
+              <div className="flex flex-col">
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(deckCode);
+                    alert("デッキコードをコピーしました。");
+                  }}
+                  className="m-2"
+                >
+                  デッキコードをコピー
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/${deckCode}`
+                    );
+                    alert("デッキコードをURL付きでコピーしました。");
+                  }}
+                  className="m-2"
+                >
+                  デッキコードをURL付きでコピー
+                </Button>
+              </div>
+              <div className="flex flex-col">
+                <Button
+                  onClick={() => {
+                    window.open(imageUrl, "_blank");
+                  }}
+                  className="m-2"
+                  disabled={isGeneratingImage}
+                >
+                  {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setOriginalDeckCards(deckCards);
+                    router.push("/new");
+                  }}
+                  className="m-2"
+                >
+                  このデッキからデッキ作成
+                </Button>
+              </div>
             </div>
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>

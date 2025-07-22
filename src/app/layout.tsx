@@ -15,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UCG deck builder",
-  description: "UCG deck builder",
+  title: "Ultra Deck Builder - ウルトラマンカードゲーム デッキビルダー",
+  description:
+    "Ultra Deck Builderは、ウルトラマンカードゲーム（UCG）専用の非公式デッキ作成ツールです。直感的なUIでデッキ構築・共有が簡単にできます。",
 };
 
 export default function RootLayout({

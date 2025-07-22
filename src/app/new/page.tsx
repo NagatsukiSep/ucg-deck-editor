@@ -7,21 +7,26 @@ import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 // import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
-import { CardDetail } from "@/types/deckCard";
+import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
-import { cardTypes, ultraCharacter } from "@/types/cardElement";
+import { cardTypes, kaijuCharacter, ultraCharacter } from "@/types/cardElement";
 import { SearchSelect } from "@/components/searchSelect";
 import { PaginationControls } from "@/components/paginationControls";
 import { CardComponent } from "@/components/cardComponent";
+import DeckBarChart from "@/components/deckBarChart";
+import { analyzeDeck } from "@/utils/analyzeDeck";
+import { Input } from "@/components/ui/input";
+import { autoSortDeck, changeIndex, isEdge } from "@/utils/deckOrder";
 
 type UltraHeroSearchQuery = {
   characterName: string;
   level: string;
   type: string;
   round: string;
+  keyword?: string;
 };
 
 const perPage = 20;
@@ -29,12 +34,15 @@ const perPage = 20;
 export default function Home() {
   const { originalDeckCards, setOriginalDeckCards } = useAppContext();
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
+  const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
 
   useEffect(() => {
     if (originalDeckCards.length > 0) {
       setDeckCards(originalDeckCards);
       setCardCount(50);
       setOriginalDeckCards([]);
+      const analysis = analyzeDeck(originalDeckCards);
+      setDeckAnalysis(analysis);
     }
   }, [originalDeckCards, setOriginalDeckCards]);
 
@@ -68,6 +76,8 @@ export default function Home() {
   useEffect(() => {
     const total = deckCards.reduce((sum, card) => sum + (card.count || 0), 0);
     setCardCount(total);
+    const analysis = analyzeDeck(deckCards);
+    setDeckAnalysis(analysis);
   }, [deckCards]);
 
   const [cardCount, setCardCount] = useState(0);
@@ -78,6 +88,7 @@ export default function Home() {
     level: "none",
     type: "none",
     round: "none",
+    keyword: "",
   });
 
   const searchQueryMap: Record<string, string> = {
@@ -96,11 +107,11 @@ export default function Home() {
       setSearchedCardsPage(0);
       setSearchedCards(
         await get(
-          `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&per_page=${perPage}&offset=0`
+          `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&keyword=${searchQuery.keyword}&per_page=${perPage}&offset=0`
         )
       );
       const data = await get<{ total_count: number }>(
-        `/search_count?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}`
+        `/search_count?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&keyword=${searchQuery.keyword}`
       );
       setSearchedCardsCount(data[0].total_count);
     } catch (error) {
@@ -148,46 +159,6 @@ export default function Home() {
     return;
   };
 
-  const changeIndex = (id: string, order: "up" | "down") => {
-    const index = deckCards.findIndex((card) => card.id === id);
-    if (index === -1) {
-      return;
-    }
-    if (order === "up") {
-      if (index === 0) {
-        return;
-      }
-      const newDeckCards = [...deckCards];
-      newDeckCards[index] = deckCards[index - 1];
-      newDeckCards[index - 1] = deckCards[index];
-      setDeckCards(newDeckCards);
-    } else {
-      if (index === deckCards.length - 1) {
-        return;
-      }
-      const newDeckCards = [...deckCards];
-      newDeckCards[index] = deckCards[index + 1];
-      newDeckCards[index + 1] = deckCards[index];
-      setDeckCards(newDeckCards);
-    }
-  };
-  const isEdge = (id: string, order: "up" | "down") => {
-    const index = deckCards.findIndex((card) => card.id === id);
-    if (index === -1) {
-      return false;
-    }
-    if (order === "up") {
-      if (index === 0) {
-        return true;
-      }
-    } else {
-      if (index === deckCards.length - 1) {
-        return true;
-      }
-    }
-    return false;
-  };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
@@ -200,6 +171,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
+            {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             <Button
               onClick={() => {
                 generateDeckCode();
@@ -210,9 +182,19 @@ export default function Home() {
             >
               デッキコード生成
             </Button>
+            <Button
+              onClick={() => {
+                const sortedDeck = autoSortDeck(deckCards, deckAnalysis);
+                setDeckCards(sortedDeck);
+              }}
+              className="w-full my-4"
+              type="button"
+            >
+              自動並び替え
+            </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
-              <div className="flex flex-wrap mt-4">
+              <div className="flex flex-wrap mt-4 items-center">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-1/2 md:w-32">
                     <div className="relative w-full p-2">
@@ -220,23 +202,33 @@ export default function Home() {
                         src={card.image_url}
                         alt={card.detail_name}
                       />
-                      {!isEdge(card.id, "up") && (
+                      {!isEdge(card.id, "up", deckCards) && (
                         <div className="absolute bottom-1/2 translate-y-1/2 left-0 transform mb-2 p-2">
                           <div className="text-white bg-[#171717] rounded-sm py-1">
                             <ChevronLeft
                               onClick={() => {
-                                changeIndex(card.id, "up");
+                                const newDeckCards = changeIndex(
+                                  card.id,
+                                  "up",
+                                  deckCards
+                                );
+                                setDeckCards(newDeckCards);
                               }}
                             />
                           </div>
                         </div>
                       )}
-                      {!isEdge(card.id, "down") && (
+                      {!isEdge(card.id, "down", deckCards) && (
                         <div className="absolute bottom-1/2 translate-y-1/2 right-0 transform mb-2 p-2">
                           <div className="text-white bg-[#171717] rounded-sm py-1">
                             <ChevronRight
                               onClick={() => {
-                                changeIndex(card.id, "down");
+                                const newDeckCards = changeIndex(
+                                  card.id,
+                                  "down",
+                                  deckCards
+                                );
+                                setDeckCards(newDeckCards);
                               }}
                             />
                           </div>
@@ -333,6 +325,23 @@ export default function Home() {
                   />
                 )}
 
+                {selectedGenre === "kaiju" && (
+                  <SearchSelect
+                    label="キャラクター名"
+                    value={searchQuery.characterName}
+                    onChange={(value) =>
+                      setSearchQuery({ ...searchQuery, characterName: value })
+                    }
+                    options={[
+                      { value: "none", label: "キャラクター名" },
+                      ...kaijuCharacter.map((name) => ({
+                        value: name,
+                        label: name,
+                      })),
+                    ]}
+                  />
+                )}
+
                 {(selectedGenre === "ultra-hero" ||
                   selectedGenre === "kaiju") && (
                   <SearchSelect
@@ -382,19 +391,17 @@ export default function Home() {
               </div>
             </div>
 
-            {/* <div className="w-full mt-4 flex">
-            <Input
-              type="text"
-              placeholder="キーワードで検索"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow"
-            />
-            <Button type="submit" className="w-full sm:w-auto mx-2">
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
-          </div> */}
+            <div className="w-full px-4 flex">
+              <Input
+                type="text"
+                placeholder="キーワードで検索"
+                value={searchQuery.keyword || ""}
+                onChange={(e) =>
+                  setSearchQuery({ ...searchQuery, keyword: e.target.value })
+                }
+                className="flex-grow"
+              />
+            </div>
 
             <Button
               onClick={handleSearch}
