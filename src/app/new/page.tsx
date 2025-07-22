@@ -200,7 +200,6 @@ export default function Home() {
             </Button>
             <Button
               onClick={() => {
-                console.log(deckAnalysis);
                 const sortedDeck = autoSortDeck(deckCards, deckAnalysis);
                 setDeckCards(sortedDeck);
               }}

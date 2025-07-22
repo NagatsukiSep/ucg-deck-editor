@@ -49,7 +49,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
 
       // state に保存
       setDeckCards(enrichedCards);
-      console.log("Deck cards:", enrichedCards);
       generateCollage(enrichedCards);
     } catch (error) {
       console.error("Failed to parse JSON:", error);
@@ -60,7 +59,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   useEffect(() => {
     const analysis = analyzeDeck(deckCards);
     setDeckAnalysis(analysis);
-    console.log("Deck analysis updated:", analysis);
   }, [deckCards]);
 
   useEffect(() => {
