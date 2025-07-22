@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 // import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
-import { CardDetail } from "@/types/deckCard";
+import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
@@ -16,6 +16,8 @@ import { cardTypes, ultraCharacter } from "@/types/cardElement";
 import { SearchSelect } from "@/components/searchSelect";
 import { PaginationControls } from "@/components/paginationControls";
 import { CardComponent } from "@/components/cardComponent";
+import DeckBarChart from "@/components/deckBarChart";
+import { analyzeDeck } from "@/utils/analyzeDeck";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -29,12 +31,15 @@ const perPage = 20;
 export default function Home() {
   const { originalDeckCards, setOriginalDeckCards } = useAppContext();
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
+  const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
 
   useEffect(() => {
     if (originalDeckCards.length > 0) {
       setDeckCards(originalDeckCards);
       setCardCount(50);
       setOriginalDeckCards([]);
+      const analysis = analyzeDeck(originalDeckCards);
+      setDeckAnalysis(analysis);
     }
   }, [originalDeckCards, setOriginalDeckCards]);
 
@@ -68,6 +73,8 @@ export default function Home() {
   useEffect(() => {
     const total = deckCards.reduce((sum, card) => sum + (card.count || 0), 0);
     setCardCount(total);
+    const analysis = analyzeDeck(deckCards);
+    setDeckAnalysis(analysis);
   }, [deckCards]);
 
   const [cardCount, setCardCount] = useState(0);
@@ -200,6 +207,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
+            <DeckBarChart analysis={deckAnalysis} />
             <Button
               onClick={() => {
                 generateDeckCode();
