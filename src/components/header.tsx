@@ -11,8 +11,9 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="ULTRA DECK BUILDER  Logo"
-            width={150}
-            height={50}
+            width={154}
+            height={77}
+            priority
             className="cursor-pointer"
           />
         </Link>
