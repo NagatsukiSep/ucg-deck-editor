@@ -43,8 +43,6 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <h1 className="text-2xl font-bold text-center">デッキエディタ</h1>
-
       <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold">デッキコード入力</h2>
