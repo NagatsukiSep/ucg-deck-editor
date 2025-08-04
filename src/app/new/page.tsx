@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-// import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
@@ -46,6 +45,14 @@ export default function Home() {
     }
   }, [originalDeckCards, setOriginalDeckCards]);
 
+  const BALTAN_RULE_IDS = ["362", "740"];
+
+  const isMaxCardCount = (card: CardDetail, count: number) => {
+    if (BALTAN_RULE_IDS.includes(card.id)) {
+      return false;
+    }
+    return count >= 4;
+  };
   const updateCardCount = (card: CardDetail, delta: number) => {
     setDeckCards((prev) => {
       const index = prev.findIndex((c) => c.id === card.id);
@@ -58,7 +65,7 @@ export default function Home() {
         const current = prev[index];
         const newCount = (current.count || 1) + delta;
 
-        if (newCount > 4) return prev; // 上限
+        if (isMaxCardCount(card, current.count || 1)) return prev; // 上限
         if (newCount <= 0) {
           // 削除
           return prev.filter((c) => c.id !== card.id);
@@ -254,9 +261,11 @@ export default function Home() {
                           onClick={() => updateCardCount(card, 1)}
                           className="w-6 h-6 text-lg m-1 p-0 rounded-full"
                           type="button"
-                          disabled={(card.count ?? 0) >= 4}
+                          disabled={isMaxCardCount(card, card.count ?? 0)}
                           variant={
-                            (card.count ?? 0) >= 4 ? "secondary" : "outline"
+                            isMaxCardCount(card, card.count ?? 0)
+                              ? "secondary"
+                              : "outline"
                           }
                         >
                           +
