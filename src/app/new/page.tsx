@@ -47,11 +47,11 @@ export default function Home() {
 
   const BALTAN_RULE_IDS = ["362", "740"];
 
-  const isMaxCardCount = (card: CardDetail, count: number) => {
+  const isOverMaxCardCount = (card: CardDetail, count: number) => {
     if (BALTAN_RULE_IDS.includes(card.id)) {
       return false;
     }
-    return count >= 4;
+    return count > 4;
   };
   const updateCardCount = (card: CardDetail, delta: number) => {
     setDeckCards((prev) => {
@@ -65,7 +65,7 @@ export default function Home() {
         const current = prev[index];
         const newCount = (current.count || 1) + delta;
 
-        if (isMaxCardCount(card, current.count || 1) && delta > 0) return prev; // 上限
+        if (isOverMaxCardCount(card, newCount)) return prev; // 上限
         if (newCount <= 0) {
           // 削除
           return prev.filter((c) => c.id !== card.id);
@@ -261,9 +261,12 @@ export default function Home() {
                           onClick={() => updateCardCount(card, 1)}
                           className="w-6 h-6 text-lg m-1 p-0 rounded-full"
                           type="button"
-                          disabled={isMaxCardCount(card, card.count ?? 0)}
+                          disabled={isOverMaxCardCount(
+                            card,
+                            (card.count ?? 0) + 1
+                          )}
                           variant={
-                            isMaxCardCount(card, card.count ?? 0)
+                            isOverMaxCardCount(card, (card.count ?? 0) + 1)
                               ? "secondary"
                               : "outline"
                           }
