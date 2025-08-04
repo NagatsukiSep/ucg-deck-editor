@@ -65,7 +65,7 @@ export default function Home() {
         const current = prev[index];
         const newCount = (current.count || 1) + delta;
 
-        if (isMaxCardCount(card, current.count || 1)) return prev; // 上限
+        if (isMaxCardCount(card, current.count || 1) && delta > 0) return prev; // 上限
         if (newCount <= 0) {
           // 削除
           return prev.filter((c) => c.id !== card.id);
