@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sharp from "sharp";
 import axios from "axios";
+import path from "path";
 
 interface ImageInput {
   imagePath: string; // URLまたはローカルパス
@@ -82,30 +83,13 @@ export default async function handler(
 
     const COUNT_WIDTH = 32;
 
-    const generateCountOverlay = async (text: string): Promise<Buffer> => {
-      const fontSize = 18;
-      const verticalAdjust = 0.35 * fontSize; // 調整量（フォントサイズの35%分）
-
-      const svgText = `
-    <svg width="${COUNT_WIDTH}" height="${COUNT_WIDTH}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${COUNT_WIDTH}" height="${COUNT_WIDTH}" fill="black" rx="4" ry="4"/>
-      <text x="50%" y="${COUNT_WIDTH / 2 + verticalAdjust}" 
-            font-size="${fontSize}" font-weight="bold"
-            text-anchor="middle"
-            fill="white" font-family="DejaVu Sans, sans-serif">
-        ${text}
-      </text>
-    </svg>
-  `;
-      return await sharp(Buffer.from(svgText)).toBuffer();
-    };
-
-
     // カード画像と枚数のテキストを重ねて作成
     const cardWithText = await Promise.all(
       images.map(async ({ imagePath }, index) => {
         const cardImage = await fetchImage(imagePath);
-        const overlayImage = await generateCountOverlay(count[index].toString());
+        const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count[index]}.png`))
+          .resize(COUNT_WIDTH, COUNT_WIDTH)
+          .toBuffer()
 
         // テキストを重ねたカード画像を作成
         return sharp(cardImage)
