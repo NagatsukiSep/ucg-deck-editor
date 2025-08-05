@@ -96,7 +96,7 @@ export default async function handler(
       <text x="50%" y="${COUNT_WIDTH / 2 + verticalAdjust}" 
             font-size="${fontSize}" font-weight="bold"
             text-anchor="middle"
-            fill="white" font-family="Arial">
+            fill="white" font-family="DejaVu Sans, sans-serif">
         ${text}
       </text>
     </svg>
