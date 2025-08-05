@@ -24,14 +24,14 @@ export const ImageWithSkeleton = ({
 }: ImageWithSkeletonProps) => {
   const [loaded, setLoaded] = useState(false);
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full flex items-center justify-center">
       <Image
         src={src}
         alt={alt}
         width={143}
         height={200}
         onLoad={() => setLoaded(true)}
-        className="w-full h-auto"
+        className="w-full "
         onClick={onClick}
       />
       <Dialog>

@@ -10,6 +10,7 @@ export type CardDetail = {
   character_name?: string;
   feature_value?: string;
   count?: number;
+  type_value?: "ultra_hero" | "kaiju" | "scene";
 };
 
 export type DeckAnalysis = {
