@@ -5,12 +5,13 @@ import path from "path";
 
 interface ImageInput {
   imagePath: string; // URLまたはローカルパス
+  count: number; // カードの枚数
+  isScene: boolean; // シーンカードかどうか
 }
 
 interface GenerateCollageRequest extends NextApiRequest {
   body: {
     images: ImageInput[];
-    count: number[];
   };
 }
 
@@ -58,9 +59,9 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { images, count } = req.body;
+  const { images } = req.body;
 
-  if (!images || !Array.isArray(images) || !count || !Array.isArray(count)) {
+  if (!images || !Array.isArray(images) || images.length === 0) {
     return res.status(400).json({ error: "Invalid request data" });
   }
 
@@ -70,10 +71,11 @@ export default async function handler(
     const row = Math.ceil(images.length / cardsPerColumn(images.length));
 
     // URLまたはローカルパスから画像を取得してリサイズ
-    const fetchImage = async (imagePath: string): Promise<Buffer> => {
+    const fetchImage = async (imagePath: string, isScene: boolean): Promise<Buffer> => {
       if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
         const response = await axios.get(imagePath, { responseType: "arraybuffer" });
         return sharp(Buffer.from(response.data))
+          .rotate(isScene ? 90 : 0) // シーンカードは90度回転
           .resize(CARD_WIDTH, CARD_HEIGHT)
           .toBuffer();
       } else {
@@ -85,9 +87,9 @@ export default async function handler(
 
     // カード画像と枚数のテキストを重ねて作成
     const cardWithText = await Promise.all(
-      images.map(async ({ imagePath }, index) => {
-        const cardImage = await fetchImage(imagePath);
-        const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count[index]}.png`))
+      images.map(async ({ imagePath, count, isScene }) => {
+        const cardImage = await fetchImage(imagePath, isScene);
+        const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count}.png`))
           .resize(COUNT_WIDTH, COUNT_WIDTH)
           .toBuffer()
 

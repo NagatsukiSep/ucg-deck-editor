@@ -205,7 +205,7 @@ export default function Home() {
               <div className="flex flex-wrap mt-4 items-center">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-1/2 md:w-32">
-                    <div className="relative w-full p-2">
+                    <div className="relative w-full aspect-[143/200] p-2">
                       <ImageWithSkeleton
                         src={card.image_url}
                         alt={card.detail_name}
