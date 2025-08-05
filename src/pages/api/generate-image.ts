@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sharp from "sharp";
 import axios from "axios";
+import path from "path";
+
+path.resolve(process.cwd(), 'fonts', 'fonts.conf')
+path.resolve(process.cwd(), 'fonts', 'Arial.ttf')
 
 interface ImageInput {
   imagePath: string; // URLまたはローカルパス
@@ -92,7 +96,7 @@ export default async function handler(
       <text x="50%" y="${COUNT_WIDTH / 2 + verticalAdjust}" 
             font-size="${fontSize}" font-weight="bold"
             text-anchor="middle"
-            fill="white" font-family="DejaVu Sans, sans-serif">
+            fill="white" font-family="Arial">
         ${text}
       </text>
     </svg>
