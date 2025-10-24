@@ -12,7 +12,15 @@ import requests
 
 # JSONデータの取得（APIから直接）
 page = input("page number:")
-url = f"https://api.ultraman-cardgame.com/api/v1/jp/cards?page={page}&per_page=100"
+if not page.isdigit():
+    print("Invalid page number. Please enter a numeric value.")
+    exit(1)
+is_promo = input("is promo? (y/n):")
+if is_promo.lower() == "y":
+    promo_query = "&card_bundle_id=1"
+else:
+    promo_query = ""
+url = f"https://api.ultraman-cardgame.com/api/v1/jp/cards?page={page}&per_page=100{promo_query}"
 response = requests.get(url)
 data = response.json()
 
