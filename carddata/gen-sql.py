@@ -29,7 +29,7 @@ data = response.json()
 def escape_sql(value):
     if value is None:
         return "NULL"
-    return f"'{str(value).replace('\'', '\'\'')}'"  # シングルクォートを2つに置換
+    return "'" + str(value).replace("'", "''") + "'"
 
 
 # INSERT文を生成する関数
