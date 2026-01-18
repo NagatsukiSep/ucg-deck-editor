@@ -8,7 +8,17 @@ export const autoSortDeck = (
   const levelOrder = {
     ultra_hero: ["3", "2", "1"],
     kaiju: ["7", "6", "5", "4"],
+    ultra_mecha: ["3", "2", "1"],
   };
+
+  const nameFeatureMap = new Map<string, string>();
+  deckCards.forEach((card) => {
+    if (!card.character_name || !card.feature_value) return;
+    if (card.feature_value === "scene") return;
+    if (!nameFeatureMap.has(card.character_name)) {
+      nameFeatureMap.set(card.character_name, card.feature_value);
+    }
+  });
 
   const getCharTotal = (name: string) => {
     const value = deckAnalysis[name];
@@ -17,14 +27,7 @@ export const autoSortDeck = (
     return Object.values(value).reduce((sum, n) => sum + n, 0);
   };
 
-  const isUltraHero = (name: string) =>
-    typeof deckAnalysis[name] !== "number" &&
-    Object.keys(deckAnalysis[name]!).some((level) => ["1", "2", "3"].includes(level));
-
-  const isKaiju = (name: string) =>
-    typeof deckAnalysis[name] !== "number" &&
-    Object.keys(deckAnalysis[name]!).some((level) => ["4", "5", "6", "7"].includes(level));
-
+  const getFeatureByName = (name: string) => nameFeatureMap.get(name);
 
   const getHighLevelCount = (name: string): number => {
     const value = deckAnalysis[name];
@@ -36,8 +39,19 @@ export const autoSortDeck = (
     .filter((name) => name !== "") // 念のため空キー回避
     .sort((a, b) => {
       // ①ジャンル順
-      const getGenreRank = (name: string): number =>
-        isUltraHero(name) ? 0 : isKaiju(name) ? 1 : 2;
+      const getGenreRank = (name: string): number => {
+        if (name === "シーン") return 3;
+        switch (getFeatureByName(name)) {
+          case "ultra_hero":
+            return 0;
+          case "kaiju":
+            return 1;
+          case "ultra_mecha":
+            return 2;
+          default:
+            return 3;
+        }
+      };
 
       const genreDiff = getGenreRank(a) - getGenreRank(b);
       if (genreDiff !== 0) return genreDiff;

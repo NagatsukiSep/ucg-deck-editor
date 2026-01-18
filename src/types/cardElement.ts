@@ -31,6 +31,8 @@ export const kaijuCharacter = [
   "ベリアル",
 ] as const;
 
+export const ultraMechaCharacter = [] as const;
+
 
 export const cardTypes = [
   { value: "basic", label: "基本" },

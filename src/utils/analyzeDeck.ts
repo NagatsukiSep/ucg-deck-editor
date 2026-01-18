@@ -40,6 +40,23 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
         break;
       }
 
+      case "ultra_mecha": {
+        const name = card.character_name ?? "不明メカ";
+        const level = card.level?.toString() ?? "不明";
+
+        if (!result[name]) {
+          result[name] = {};
+        }
+
+        if (typeof result[name] === "number") {
+          result[name] = { [level]: card.count ?? 0 };
+        } else {
+          const levelMap = result[name] as Record<string, number>;
+          levelMap[level] = (levelMap[level] ?? 0) + (card.count ?? 0);
+        }
+        break;
+      }
+
       case "scene": {
         const name = "シーン";
         const prev = typeof result[name] === "number" ? result[name] : 0;
