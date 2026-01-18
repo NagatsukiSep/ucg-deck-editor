@@ -11,7 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { useAppContext } from "@/context/AppContext";
-import { cardTypes, kaijuCharacter, ultraCharacter } from "@/types/cardElement";
+import {
+  cardTypes,
+  kaijuCharacter,
+  ultraCharacter,
+  ultraMechaCharacter,
+} from "@/types/cardElement";
 import { SearchSelect } from "@/components/searchSelect";
 import { PaginationControls } from "@/components/paginationControls";
 import { CardComponent } from "@/components/cardComponent";
@@ -101,6 +106,7 @@ export default function Home() {
   const searchQueryMap: Record<string, string> = {
     "ultra-hero": "ultra_hero",
     kaiju: "kaiju",
+    "ultra-mecha": "ultra_mecha",
     scene: "scene",
   };
 
@@ -293,7 +299,7 @@ export default function Home() {
             <div className="m-4">
               <RadioGroup
                 defaultValue="ultra-hero"
-                className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-4 gap-4"
                 onValueChange={(value) => {
                   setSelectedGenre(value);
                   setSearchQuery({
@@ -307,11 +313,15 @@ export default function Home() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="ultra-hero" id="ultra-hero" />
-                  <Label htmlFor="ultra-hero">ウルトラマン</Label>
+                  <Label htmlFor="ultra-hero">ウルトラヒーロー</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="kaiju" id="kaiju" />
                   <Label htmlFor="kaiju">ウルトラ怪獣</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="ultra-mecha" id="ultra-mecha" />
+                  <Label htmlFor="ultra-mecha">ウルトラメカ</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scene" id="scene" />
@@ -356,8 +366,26 @@ export default function Home() {
                   />
                 )}
 
+                {selectedGenre === "ultra-mecha" && (
+                  <SearchSelect
+                    label="キャラクター名"
+                    value={searchQuery.characterName}
+                    onChange={(value) =>
+                      setSearchQuery({ ...searchQuery, characterName: value })
+                    }
+                    options={[
+                      { value: "none", label: "キャラクター名" },
+                      ...ultraMechaCharacter.map((name) => ({
+                        value: name,
+                        label: name,
+                      })),
+                    ]}
+                  />
+                )}
+
                 {(selectedGenre === "ultra-hero" ||
-                  selectedGenre === "kaiju") && (
+                  selectedGenre === "kaiju" ||
+                  selectedGenre === "ultra-mecha") && (
                   <SearchSelect
                     label="レベル"
                     value={searchQuery.level}
@@ -375,7 +403,8 @@ export default function Home() {
                 )}
 
                 {(selectedGenre === "ultra-hero" ||
-                  selectedGenre === "kaiju") && (
+                  selectedGenre === "kaiju" ||
+                  selectedGenre === "ultra-mecha") && (
                   <SearchSelect
                     label="TYPE"
                     value={searchQuery.type}
