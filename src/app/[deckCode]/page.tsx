@@ -39,6 +39,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               count: card.count,
               isScene: card.feature_value === "scene",
             })),
+            deckUrl: `${window.location.origin}/${deckCode}`,
           }),
         });
 

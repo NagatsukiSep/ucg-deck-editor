@@ -12,12 +12,15 @@ interface ImageInput {
 interface GenerateCollageRequest extends NextApiRequest {
   body: {
     images: ImageInput[];
+    deckUrl?: string;
   };
 }
 
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
+const LOGO_SIZE = 80;
+const QR_SIZE = 120;
 
 function cardsPerColumn(cardCount: number): number {
   if (cardCount <= 4)
@@ -59,7 +62,7 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { images } = req.body;
+  const { images, deckUrl } = req.body;
 
   if (!images || !Array.isArray(images) || images.length === 0) {
     return res.status(400).json({ error: "Invalid request data" });
@@ -110,6 +113,34 @@ export default async function handler(
       return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + (BG_HEIGHT - CARD_HEIGHT * rows) / 2 };
     });
 
+    const overlayData = [...compositeData];
+
+    try {
+      const logoBuffer = await sharp(path.join(process.cwd(), "public", "logo.png"))
+        .resize(LOGO_SIZE, LOGO_SIZE)
+        .png()
+        .toBuffer();
+      overlayData.push({ input: logoBuffer, left: PADDING, top: PADDING });
+    } catch (error) {
+      console.error("Failed to load logo image:", error);
+    }
+
+    if (deckUrl) {
+      try {
+        const qrResponse = await axios.get(
+          `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encodeURIComponent(deckUrl)}`,
+          { responseType: "arraybuffer" }
+        );
+        const qrBuffer = await sharp(Buffer.from(qrResponse.data))
+          .resize(QR_SIZE, QR_SIZE)
+          .png()
+          .toBuffer();
+        overlayData.push({ input: qrBuffer, left: BG_WIDTH - QR_SIZE - PADDING, top: PADDING });
+      } catch (error) {
+        console.error("Failed to load QR code image:", error);
+      }
+    }
+
     // 背景画像を作成し、カードを配置
     const collageBuffer = await sharp({
       create: {
@@ -119,7 +150,7 @@ export default async function handler(
         background: { r: 255, g: 255, b: 255 }, // 白背景
       },
     })
-      .composite(compositeData)
+      .composite(overlayData)
       .png()
       .toBuffer();
 
@@ -134,4 +165,3 @@ export default async function handler(
     res.status(500).json({ error: "Failed to generate collage" });
   }
 }
-
