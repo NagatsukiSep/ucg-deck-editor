@@ -13,6 +13,7 @@ interface GenerateCollageRequest extends NextApiRequest {
   body: {
     images: ImageInput[];
     deckUrl?: string;
+    deckCode?: string;
   };
 }
 
@@ -70,14 +71,37 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { images, deckUrl } = req.body;
+  const { images, deckUrl, deckCode } = req.body;
 
   if (!images || !Array.isArray(images) || images.length === 0) {
     return res.status(400).json({ error: "Invalid request data" });
   }
 
   try {
-    const overlayHeight = deckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
+    const refererHeader = req.headers.referer;
+    const forwardedProtoHeader = req.headers["x-forwarded-proto"];
+    const forwardedProto = Array.isArray(forwardedProtoHeader)
+      ? forwardedProtoHeader[0]
+      : forwardedProtoHeader;
+    let resolvedDeckUrl = deckUrl;
+
+    if (!resolvedDeckUrl && deckCode) {
+      if (refererHeader) {
+        try {
+          const origin = new URL(refererHeader).origin;
+          resolvedDeckUrl = `${origin}/${deckCode}`;
+        } catch (error) {
+          console.error("Failed to parse referer header:", error);
+        }
+      }
+
+      if (!resolvedDeckUrl && req.headers.host) {
+        const proto = forwardedProto ?? "https";
+        resolvedDeckUrl = `${proto}://${req.headers.host}/${deckCode}`;
+      }
+    }
+
+    const overlayHeight = resolvedDeckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
     const reservedTop = overlayHeight + LOGO_PADDING;
     const columns = Math.ceil(images.length / cardsPerColumn(images.length));
     const rows = Math.ceil(images.length / columns);
@@ -135,10 +159,10 @@ export default async function handler(
       console.error("Failed to load logo image:", error);
     }
 
-    if (deckUrl) {
+    if (resolvedDeckUrl) {
       try {
         const qrResponse = await axios.get(
-          `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encodeURIComponent(deckUrl)}`,
+          `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encodeURIComponent(resolvedDeckUrl)}`,
           { responseType: "arraybuffer" }
         );
         const qrBuffer = await sharp(Buffer.from(qrResponse.data))
