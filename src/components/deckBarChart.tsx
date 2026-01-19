@@ -10,6 +10,11 @@ import {
 } from "recharts";
 import React from "react";
 import { useI18n } from "@/i18n/I18nProvider";
+import {
+  kaijuCharacter,
+  ultraCharacter,
+  ultraMechaCharacter,
+} from "@/types/cardElement";
 
 type DeckAnalysis = {
   [name: string]:
@@ -26,12 +31,19 @@ type Props = {
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const { t } = useI18n();
   const sceneKey = "scene";
+  const characterLabelMap = new Map(
+    [...ultraCharacter, ...ultraMechaCharacter, ...kaijuCharacter].map(
+      (entry) => [entry.value, entry.labelKey] as const
+    )
+  );
   const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", sceneKey];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
 
   Object.entries(analysis).forEach(([name, value]) => {
-    const displayName = name === sceneKey ? t("chart.scene") : name;
+    const labelKey = characterLabelMap.get(name);
+    const displayName =
+      name === sceneKey ? t("chart.scene") : labelKey ? t(labelKey) : name;
     if (typeof value === "number") {
       chartData.push({ name: displayName, [sceneKey]: value });
       maxTotal = Math.max(maxTotal, value);
