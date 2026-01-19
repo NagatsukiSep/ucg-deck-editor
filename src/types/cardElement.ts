@@ -25,7 +25,7 @@ export const ultraCharacter = [
   "ロッソ",
 ] as const;
 
-export const ultraMechaCharacter: string[] = [];
+export const ultraMechaCharacter = ["アースガロン", "セブンガー"] as const;
 
 export const kaijuCharacter = [
   "ギルアーク",
