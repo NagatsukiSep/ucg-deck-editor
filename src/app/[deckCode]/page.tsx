@@ -126,15 +126,17 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row items-center">
-              <DeckBarChart analysis={deckAnalysis} />
-              <div className="flex flex-col">
+            <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+              <div className="w-full lg:w-1/2">
+                <DeckBarChart analysis={deckAnalysis} />
+              </div>
+              <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Button
                   onClick={() => {
                     navigator.clipboard.writeText(deckCode);
                     alert("デッキコードをコピーしました。");
                   }}
-                  className="m-2"
+                  className="w-full"
                 >
                   デッキコードをコピー
                 </Button>
@@ -145,17 +147,15 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                     );
                     alert("デッキコードをURL付きでコピーしました。");
                   }}
-                  className="m-2"
+                  className="w-full"
                 >
                   デッキコードをURL付きでコピー
                 </Button>
-              </div>
-              <div className="flex flex-col">
                 <Button
                   onClick={() => {
                     window.open(imageUrl, "_blank");
                   }}
-                  className="m-2"
+                  className="w-full"
                   disabled={isGeneratingImage}
                 >
                   {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
@@ -165,7 +165,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                     setOriginalDeckCards(deckCards);
                     redirect("/new");
                   }}
-                  className="m-2"
+                  className="w-full"
                 >
                   このデッキからデッキ作成
                 </Button>
@@ -174,9 +174,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>
             ) : (
-              <div className="flex flex-wrap mt-4">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
                 {deckCards.map((card) => (
-                  <div key={card.id} className="w-1/2 md:w-48">
+                  <div key={card.id} className="w-full">
                     <div className="relative w-full p-2">
                       <ImageWithSkeleton
                         src={card.image_url}

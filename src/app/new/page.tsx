@@ -113,6 +113,7 @@ export default function Home() {
   const [searchedCardsCount, setSearchedCardsCount] = useState(0);
   const [searchedCardsPage, setSearchedCardsPage] = useState(0);
   const [searchedCards, setSearchedCards] = useState<CardDetail[]>([]);
+  const [activePane, setActivePane] = useState<"deck" | "search">("deck");
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,16 +174,34 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 pt-6 md:pt-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
+      <div className="md:hidden mb-4 sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-gray-200 py-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant={activePane === "deck" ? "default" : "outline"}
+            onClick={() => setActivePane("deck")}
+          >
+            デッキ
+          </Button>
+          <Button
+            type="button"
+            variant={activePane === "search" ? "default" : "outline"}
+            onClick={() => setActivePane("search")}
+          >
+            カード検索
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card className="p-2">
-          <CardHeader>
+        <Card className={activePane === "deck" ? "p-2" : "hidden md:block p-2"}>
+          <CardHeader className="hidden md:block">
             <CardTitle>
               <h1 className="text-2xl font-bold">現在のデッキ</h1>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4 md:pt-0">
             <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
             {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             <Button
@@ -208,9 +227,9 @@ export default function Home() {
             </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
-              <div className="flex flex-wrap mt-4 items-center">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
                 {deckCards.map((card) => (
-                  <div key={card.id} className="w-1/2 md:w-32">
+                  <div key={card.id} className="w-full">
                     <div className="relative w-full aspect-[143/200] p-2">
                       <ImageWithSkeleton
                         src={card.image_url}
@@ -289,8 +308,10 @@ export default function Home() {
             )}
           </CardContent>
         </Card>
-        <Card className="p-2">
-          <CardHeader>
+        <Card
+          className={activePane === "search" ? "p-2" : "hidden md:block p-2"}
+        >
+          <CardHeader className="hidden md:block">
             <CardTitle>
               <h1 className="text-2xl font-bold">カード検索</h1>
             </CardTitle>
@@ -464,14 +485,13 @@ export default function Home() {
 
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {searchedCards.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 m-4 mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3 sm:gap-4 m-4 mx-auto">
                 {searchedCards.map((card) => (
-                  <div key={card.id} className="m-2">
-                    <CardComponent
-                      card={card}
-                      addCard={(card, delta) => updateCardCount(card, delta)}
-                    />
-                  </div>
+                  <CardComponent
+                    key={card.id}
+                    card={card}
+                    addCard={(card, delta) => updateCardCount(card, delta)}
+                  />
                 ))}
               </div>
             ) : (
