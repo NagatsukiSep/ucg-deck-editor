@@ -21,6 +21,7 @@ type Props = {
 };
 
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
+  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
 
@@ -35,7 +36,14 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     maxTotal = Math.max(maxTotal, total);
 
     const entry: { name: string; [level: string]: number | string } = { name };
-    for (const [level, count] of Object.entries(value)) {
+    const orderedLevels = [
+      ...levelOrder.filter((level) => level in value),
+      ...Object.keys(value)
+        .filter((level) => !levelOrder.includes(level))
+        .sort((a, b) => a.localeCompare(b)),
+    ];
+    for (const level of orderedLevels) {
+      const count = value[level] ?? 0;
       entry[level] = count;
     }
     chartData.push(entry);
@@ -48,7 +56,6 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     });
   });
 
-  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const sortedLevels = [
     ...levelOrder.filter((level) => levelKeys.has(level)),
     ...Array.from(levelKeys)
