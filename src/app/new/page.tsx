@@ -201,7 +201,7 @@ export default function Home() {
               <h1 className="text-2xl font-bold">現在のデッキ</h1>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4 md:pt-0">
             <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
             {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             <Button
