@@ -92,9 +92,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const barMargin = 8; // バー同士の余白
   const axisHeight = 48; // X軸の目安高さ
 
-  const tooltipPadding = 40;
-  const chartHeight =
-    chartData.length * (barHeight + barMargin) + axisHeight + tooltipPadding;
+  const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
   return (
     <div className="w-full" style={{ height: `${chartHeight}px` }}>
@@ -106,7 +104,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
         >
           <XAxis type="number" domain={[0, Math.ceil(maxTotal * 1.1)]} />
           <YAxis type="category" dataKey="name" />
-          <Tooltip />
+          <Tooltip wrapperStyle={{ zIndex: 50, pointerEvents: "none" }} />
           {/* <Legend /> */}
           {sortedLevels.map((level) => (
             <Bar
