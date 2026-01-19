@@ -106,7 +106,7 @@ export default function Home() {
   const searchQueryMap: Record<string, string> = {
     "ultra-hero": "ultra_hero",
     kaiju: "kaiju",
-    "ultra-mecha": "ultra_mecha",
+    "ultra-mecha": "ultra_mech",
     scene: "scene",
   };
 

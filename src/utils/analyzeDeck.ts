@@ -40,7 +40,7 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
         break;
       }
 
-      case "ultra_mecha": {
+      case "ultra_mech": {
         const name = card.character_name ?? "不明メカ";
         const level = card.level?.toString() ?? "不明";
 

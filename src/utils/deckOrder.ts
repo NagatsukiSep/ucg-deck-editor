@@ -8,7 +8,7 @@ export const autoSortDeck = (
   const levelOrder = {
     ultra_hero: ["3", "2", "1"],
     kaiju: ["7", "6", "5", "4"],
-    ultra_mecha: ["3", "2", "1"],
+    ultra_mech: ["3", "2", "1"],
   };
 
   const characterFeatureMap = new Map<string, string>();
@@ -27,7 +27,7 @@ export const autoSortDeck = (
         return 0;
       case "kaiju":
         return 1;
-      case "ultra_mecha":
+      case "ultra_mech":
         return 2;
       case "scene":
         return 3;
@@ -53,7 +53,7 @@ export const autoSortDeck = (
 
   const isUltraMecha = (name: string) =>
     typeof deckAnalysis[name] !== "number" &&
-    characterFeatureMap.get(name) === "ultra_mecha";
+    characterFeatureMap.get(name) === "ultra_mech";
 
 
   const getHighLevelCount = (name: string): number => {
