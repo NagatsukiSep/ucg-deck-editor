@@ -372,9 +372,9 @@ export default function Home() {
                     }
                     options={[
                       { value: "none", label: t("new.search.characterName") },
-                      ...ultraCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      ...ultraCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -389,9 +389,9 @@ export default function Home() {
                     }
                     options={[
                       { value: "none", label: t("new.search.characterName") },
-                      ...kaijuCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      ...kaijuCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -406,9 +406,9 @@ export default function Home() {
                     }
                     options={[
                       { value: "none", label: t("new.search.characterName") },
-                      ...ultraMechaCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      ...ultraMechaCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -444,7 +444,10 @@ export default function Home() {
                     }
                     options={[
                       { value: "none", label: t("new.search.type") },
-                      ...cardTypes,
+                      ...cardTypes.map((cardType) => ({
+                        value: cardType.value,
+                        label: t(cardType.labelKey),
+                      })),
                     ]}
                   />
                 )}
