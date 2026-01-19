@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BarChart,
   Bar,
@@ -7,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import React from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type DeckAnalysis = {
   [name: string]:
@@ -21,6 +24,7 @@ type Props = {
 };
 
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
+  const { t } = useI18n();
   const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
@@ -82,9 +86,9 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
   const getLevelLabel = (level: string) => {
-    if (level === "シーン") return "シーン";
-    if (level === "4_hero") return "レベル4";
-    return `レベル${level}`;
+    if (level === "シーン") return t("chart.scene");
+    if (level === "4_hero") return `${t("chart.level")}4`;
+    return `${t("chart.level")}${level}`;
   };
 
   return (

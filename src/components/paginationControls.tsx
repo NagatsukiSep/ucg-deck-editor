@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Pagination,
   PaginationContent,
@@ -7,6 +9,7 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type Props = {
   currentPage: number;
@@ -21,18 +24,22 @@ export const PaginationControls = ({
   perPage,
   onPageChange,
 }: Props) => {
+  const { t } = useI18n();
   const totalPages = Math.ceil(totalCount / perPage);
 
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious onClick={() => onPageChange(currentPage - 1)} />
+          <PaginationPrevious
+            onClick={() => onPageChange(currentPage - 1)}
+            label={t("pagination.previous")}
+          />
         </PaginationItem>
 
         {currentPage > 1 && (
           <PaginationItem>
-            <PaginationEllipsis />
+            <PaginationEllipsis label={t("pagination.more")} />
           </PaginationItem>
         )}
 
@@ -58,12 +65,15 @@ export const PaginationControls = ({
 
         {currentPage < totalPages - 2 && (
           <PaginationItem>
-            <PaginationEllipsis />
+            <PaginationEllipsis label={t("pagination.more")} />
           </PaginationItem>
         )}
 
         <PaginationItem>
-          <PaginationNext onClick={() => onPageChange(currentPage + 1)} />
+          <PaginationNext
+            onClick={() => onPageChange(currentPage + 1)}
+            label={t("pagination.next")}
+          />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
