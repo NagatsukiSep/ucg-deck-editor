@@ -10,7 +10,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home() {
   const [deckCode, setDeckCode] = useState("");
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const router = useRouter();
 
@@ -31,10 +31,28 @@ export default function Home() {
 
   type ChangelogEntry = {
     date: string;
-    message: string;
+    message:
+      | string
+      | {
+          ja?: string;
+          en?: string;
+          ko?: string;
+        };
   };
 
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
+  const getChangelogMessage = (entry: ChangelogEntry) => {
+    if (typeof entry.message === "string") {
+      return entry.message;
+    }
+    return (
+      entry.message[locale] ??
+      entry.message.ja ??
+      entry.message.en ??
+      entry.message.ko ??
+      ""
+    );
+  };
 
   useEffect(() => {
     fetch("/changelog.json")
@@ -96,7 +114,7 @@ export default function Home() {
             {changelog.map((entry, idx) => (
               <li key={idx}>
                 <span className="font-medium">{entry.date}：</span>
-                {entry.message}
+                {getChangelogMessage(entry)}
               </li>
             ))}
           </ul>

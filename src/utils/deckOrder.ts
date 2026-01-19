@@ -17,8 +17,8 @@ export const autoSortDeck = (
       characterFeatureMap.set(card.character_name, card.feature_value);
     }
   });
-  if (deckAnalysis["シーン"] !== undefined) {
-    characterFeatureMap.set("シーン", "scene");
+  if (deckAnalysis.scene !== undefined) {
+    characterFeatureMap.set("scene", "scene");
   }
 
   const getGenreRankByFeature = (feature?: string): number => {
