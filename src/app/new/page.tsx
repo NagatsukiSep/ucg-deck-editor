@@ -316,12 +316,12 @@ export default function Home() {
                   <Label htmlFor="ultra-hero">ウルトラヒーロー</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="kaiju" id="kaiju" />
-                  <Label htmlFor="kaiju">ウルトラ怪獣</Label>
-                </div>
-                <div className="flex items-center space-x-2">
                   <RadioGroupItem value="ultra-mecha" id="ultra-mecha" />
                   <Label htmlFor="ultra-mecha">ウルトラメカ</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="kaiju" id="kaiju" />
+                  <Label htmlFor="kaiju">ウルトラ怪獣</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scene" id="scene" />

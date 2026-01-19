@@ -25,9 +25,9 @@ export const autoSortDeck = (
     switch (feature) {
       case "ultra_hero":
         return 0;
-      case "kaiju":
-        return 1;
       case "ultra_mech":
+        return 1;
+      case "kaiju":
         return 2;
       case "scene":
         return 3;
@@ -71,7 +71,7 @@ export const autoSortDeck = (
         if (feature) {
           return getGenreRankByFeature(feature);
         }
-        return isUltraHero(name) ? 0 : isKaiju(name) ? 1 : isUltraMecha(name) ? 2 : 3;
+        return isUltraHero(name) ? 0 : isUltraMecha(name) ? 1 : isKaiju(name) ? 2 : 3;
       };
 
       const genreDiff = getGenreRank(a) - getGenreRank(b);
