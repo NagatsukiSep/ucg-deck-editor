@@ -37,23 +37,29 @@ function cardsPerColumn(cardCount: number): number {
     return 5;
 }
 
-function cardSize(cardCount: number, reservedTop: number): { width: number, height: number } {
-  const heightTmp = Math.floor((BG_HEIGHT - PADDING * 2 - reservedTop) / cardsPerColumn(cardCount));
-  const widthTmp = Math.floor(heightTmp * 143 / 200);
-  // カードの幅が背景の幅を超える場合、幅を調整
-  if (widthTmp * Math.ceil(cardCount / cardsPerColumn(cardCount)) + PADDING * 2 > BG_WIDTH) {
-    const width = Math.floor((BG_WIDTH - PADDING * 2) / (Math.ceil(cardCount / cardsPerColumn(cardCount))));
-    const height = Math.floor(width * 200 / 143);
+function cardSize(
+  columns: number,
+  rows: number,
+  reservedTop: number
+): { width: number, height: number } {
+  const maxWidth = BG_WIDTH - PADDING * 2;
+  const maxHeight = BG_HEIGHT - PADDING * 2 - reservedTop;
+  const widthFromColumns = Math.floor(maxWidth / columns);
+  const heightFromWidth = Math.floor(widthFromColumns * 200 / 143);
+  const heightFromRows = Math.floor(maxHeight / rows);
+
+  if (heightFromWidth > heightFromRows) {
+    const width = Math.floor(heightFromRows * 143 / 200);
     return {
       width: width,
-      height: height
-    };
-  } else {
-    return {
-      width: widthTmp,
-      height: heightTmp
+      height: heightFromRows
     };
   }
+
+  return {
+    width: widthFromColumns,
+    height: heightFromWidth
+  };
 }
 
 export default async function handler(
@@ -73,9 +79,10 @@ export default async function handler(
   try {
     const overlayHeight = deckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
     const reservedTop = overlayHeight + LOGO_PADDING * 2;
-    const CARD_WIDTH = 2 * Math.floor(cardSize(images.length, reservedTop).width / 2);
-    const CARD_HEIGHT = 2 * Math.floor(cardSize(images.length, reservedTop).height / 2);
-    const row = Math.ceil(images.length / cardsPerColumn(images.length));
+    const columns = Math.ceil(images.length / cardsPerColumn(images.length));
+    const rows = Math.ceil(images.length / columns);
+    const CARD_WIDTH = 2 * Math.floor(cardSize(columns, rows, reservedTop).width / 2);
+    const CARD_HEIGHT = 2 * Math.floor(cardSize(columns, rows, reservedTop).height / 2);
 
     // URLまたはローカルパスから画像を取得してリサイズ
     const fetchImage = async (imagePath: string, isScene: boolean): Promise<Buffer> => {
@@ -108,14 +115,12 @@ export default async function handler(
     );
 
     // 背景画像サイズを計算
-    const rows = Math.ceil(images.length / row);
-
     // カードを配置する位置を計算
     const startY = reservedTop + (BG_HEIGHT - reservedTop - CARD_HEIGHT * rows) / 2;
     const compositeData = cardWithText.map((buffer, index) => {
-      const x = (index % row) * CARD_WIDTH;
-      const y = Math.floor(index / row) * CARD_HEIGHT;
-      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + startY };
+      const x = (index % columns) * CARD_WIDTH;
+      const y = Math.floor(index / columns) * CARD_HEIGHT;
+      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * columns) / 2, top: y + startY };
     });
 
     const overlayData = [...compositeData];
