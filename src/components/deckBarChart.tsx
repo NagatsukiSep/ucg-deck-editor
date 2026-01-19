@@ -6,7 +6,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import React from "react";
+import React, { useState } from "react";
 
 type DeckAnalysis = {
   [name: string]:
@@ -21,6 +21,10 @@ type Props = {
 };
 
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
+  const [activeInfo, setActiveInfo] = useState<{
+    label: string;
+    payload: { name: string; value: number; color?: string }[];
+  } | null>(null);
   const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
@@ -87,32 +91,109 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     return `レベル${level}`;
   };
 
-  return (
-    <div className="w-full" style={{ height: `${chartHeight}px` }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          layout="vertical"
-          data={chartData}
-          margin={{ top: 16, right: 32, left: 80, bottom: 16 }}
-        >
-          <XAxis type="number" domain={[0, Math.ceil(maxTotal * 1.1)]} />
-          <YAxis type="category" dataKey="name" />
-          <Tooltip wrapperStyle={{ zIndex: 50, pointerEvents: "none" }} />
-          {/* <Legend /> */}
-          {sortedLevels.map((level) => (
-            <Bar
-              key={level}
-              dataKey={level}
-              stackId="a"
-              fill={levelColors[level] ?? "#ccc"}
-              name={getLevelLabel(level)}
-              hide={!levelKeys.has(level)}
-              isAnimationActive={true}
-              barSize={20}
-            />
+  const formatTooltipPayload = (
+    payload: { name: string; value: number; color?: string }[]
+  ) =>
+    payload
+      .filter((entry) => entry.value > 0)
+      .map((entry) => ({
+        ...entry,
+        label: getLevelLabel(entry.name),
+      }));
+
+  const handleChartActivate = (event?: {
+    activeLabel?: string;
+    activePayload?: { name: string; value: number; color?: string }[];
+  }) => {
+    if (!event?.activeLabel || !event.activePayload?.length) {
+      setActiveInfo(null);
+      return;
+    }
+    setActiveInfo({
+      label: event.activeLabel,
+      payload: event.activePayload,
+    });
+  };
+
+  const renderTooltipContent = (
+    payload: { name: string; value: number; color?: string }[],
+    label: string
+  ) => {
+    const formatted = formatTooltipPayload(payload);
+    if (formatted.length === 0) return null;
+
+    return (
+      <div className="rounded-md border bg-background p-3 text-sm shadow-md">
+        <div className="font-semibold mb-1">{label}</div>
+        <ul className="space-y-1">
+          {formatted.map((entry) => (
+            <li key={entry.name} className="flex items-center gap-2">
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: entry.color ?? "#999" }}
+              />
+              <span className="flex-1">{entry.label}</span>
+              <span className="tabular-nums">{entry.value}</span>
+            </li>
           ))}
-        </BarChart>
-      </ResponsiveContainer>
+        </ul>
+      </div>
+    );
+  };
+
+  return (
+    <div className="w-full">
+      <div className="mb-2 md:hidden min-h-[64px]">
+        {activeInfo &&
+          renderTooltipContent(activeInfo.payload, activeInfo.label)}
+      </div>
+      <div className="w-full" style={{ height: `${chartHeight}px` }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            layout="vertical"
+            data={chartData}
+            margin={{ top: 16, right: 32, left: 80, bottom: 16 }}
+            onClick={handleChartActivate}
+            onTouchStart={handleChartActivate}
+            onTouchEnd={() => setActiveInfo(null)}
+            onMouseLeave={() => setActiveInfo(null)}
+          >
+            <XAxis type="number" domain={[0, Math.ceil(maxTotal * 1.1)]} />
+            <YAxis type="category" dataKey="name" />
+            <Tooltip
+              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+              content={({ active, payload, label }) =>
+                active && payload?.length
+                  ? renderTooltipContent(
+                      payload as {
+                        name: string;
+                        value: number;
+                        color?: string;
+                      }[],
+                      label ?? ""
+                    )
+                  : null
+              }
+            />
+            {/* <Legend /> */}
+            {sortedLevels.map((level) => (
+              <Bar
+                key={level}
+                dataKey={level}
+                stackId="a"
+                fill={levelColors[level] ?? "#ccc"}
+                name={getLevelLabel(level)}
+                hide={!levelKeys.has(level)}
+                isAnimationActive={true}
+                barSize={20}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground md:hidden">
+        棒グラフをタップしている間、上に詳細が表示されます。
+      </p>
     </div>
   );
 };
