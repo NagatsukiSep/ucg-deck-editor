@@ -56,12 +56,10 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     });
   });
 
-  const sortedLevels = [
-    ...levelOrder.filter((level) => levelKeys.has(level)),
-    ...Array.from(levelKeys)
-      .filter((level) => !levelOrder.includes(level))
-      .sort((a, b) => a.localeCompare(b)),
-  ];
+  const extraLevels = Array.from(levelKeys)
+    .filter((level) => !levelOrder.includes(level))
+    .sort((a, b) => a.localeCompare(b));
+  const sortedLevels = [...levelOrder, ...extraLevels];
 
   const levelColors: Record<string, string> = {
     "1": "#AEDFF7", // ヒーローLv1: パステルブルー（軽く爽やか）→ #AEDFF7
@@ -108,6 +106,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
               stackId="a"
               fill={levelColors[level] ?? "#ccc"}
               name={getLevelLabel(level)}
+              hide={!levelKeys.has(level)}
               isAnimationActive={true}
               barSize={20}
             />
