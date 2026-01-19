@@ -176,7 +176,7 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4 pt-6 md:pt-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
-      <div className="md:hidden mb-4">
+      <div className="md:hidden mb-4 sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-gray-200 py-2">
         <div className="grid grid-cols-2 gap-2">
           <Button
             type="button"
