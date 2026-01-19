@@ -196,7 +196,7 @@ export default function Home() {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className={activePane === "deck" ? "p-2" : "hidden md:block p-2"}>
-          <CardHeader>
+          <CardHeader className="hidden md:block">
             <CardTitle>
               <h1 className="text-2xl font-bold">現在のデッキ</h1>
             </CardTitle>
@@ -311,7 +311,7 @@ export default function Home() {
         <Card
           className={activePane === "search" ? "p-2" : "hidden md:block p-2"}
         >
-          <CardHeader>
+          <CardHeader className="hidden md:block">
             <CardTitle>
               <h1 className="text-2xl font-bold">カード検索</h1>
             </CardTitle>
