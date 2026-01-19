@@ -43,7 +43,9 @@ const getInitialLocale = () => {
   }
 
   const browserLocale = window.navigator.language.toLowerCase();
-  return browserLocale.startsWith("ja") ? "ja" : "en";
+  if (browserLocale.startsWith("ja")) return "ja";
+  if (browserLocale.startsWith("ko")) return "ko";
+  return "en";
 };
 
 export const I18nProvider = ({ children }: { children: React.ReactNode }) => {

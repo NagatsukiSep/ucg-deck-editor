@@ -2,6 +2,7 @@ import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 
 export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
   const result: DeckAnalysis = {};
+  const sceneKey = "scene";
 
   for (const card of cards) {
     switch (card.feature_value) {
@@ -59,7 +60,7 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
       }
 
       case "scene": {
-        const name = "シーン";
+        const name = sceneKey;
         const prev = typeof result[name] === "number" ? result[name] : 0;
         result[name] = prev + (card.count ?? 0);
         break;
@@ -73,8 +74,8 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
 
   const entries = Object.entries(result);
   entries.sort((a, b) => {
-    const isAScene = a[0] === "シーン";
-    const isBScene = b[0] === "シーン";
+    const isAScene = a[0] === sceneKey;
+    const isBScene = b[0] === sceneKey;
     if (isAScene && !isBScene) return 1;
     if (!isAScene && isBScene) return -1;
 
