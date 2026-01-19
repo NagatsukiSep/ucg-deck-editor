@@ -7,7 +7,8 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
     switch (card.feature_value) {
       case "ultra_hero": {
         const name = card.character_name ?? "不明ヒーロー";
-        const level = card.level?.toString() ?? "不明";
+        const rawLevel = card.level?.toString() ?? "不明";
+        const level = rawLevel === "4" ? "4_hero" : rawLevel;
 
         if (!result[name]) {
           result[name] = {};
@@ -70,5 +71,31 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
     }
   }
 
-  return result;
+  const entries = Object.entries(result);
+  entries.sort((a, b) => {
+    const isAScene = a[0] === "シーン";
+    const isBScene = b[0] === "シーン";
+    if (isAScene && !isBScene) return 1;
+    if (!isAScene && isBScene) return -1;
+
+    const totalA =
+      typeof a[1] === "number"
+        ? a[1]
+        : Object.values(a[1]).reduce((sum, n) => sum + n, 0);
+    const totalB =
+      typeof b[1] === "number"
+        ? b[1]
+        : Object.values(b[1]).reduce((sum, n) => sum + n, 0);
+    if (totalA !== totalB) {
+      return totalB - totalA;
+    }
+    return a[0].localeCompare(b[0], "ja");
+  });
+
+  const orderedResult: DeckAnalysis = {};
+  for (const [name, value] of entries) {
+    orderedResult[name] = value;
+  }
+
+  return orderedResult;
 };

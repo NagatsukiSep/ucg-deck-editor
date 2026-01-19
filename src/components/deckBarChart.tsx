@@ -21,6 +21,7 @@ type Props = {
 };
 
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
+  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
 
@@ -35,25 +36,17 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     maxTotal = Math.max(maxTotal, total);
 
     const entry: { name: string; [level: string]: number | string } = { name };
-    for (const [level, count] of Object.entries(value)) {
+    const orderedLevels = [
+      ...levelOrder.filter((level) => level in value),
+      ...Object.keys(value)
+        .filter((level) => !levelOrder.includes(level))
+        .sort((a, b) => a.localeCompare(b)),
+    ];
+    for (const level of orderedLevels) {
+      const count = value[level] ?? 0;
       entry[level] = count;
     }
     chartData.push(entry);
-  });
-
-  chartData.sort((a, b) => {
-    const isAScene = a.name === "シーン";
-    const isBScene = b.name === "シーン";
-    if (isAScene && !isBScene) return 1;
-    if (!isAScene && isBScene) return -1;
-
-    const totalA = Object.entries(a)
-      .filter(([k]) => k !== "name")
-      .reduce((sum, [, v]) => sum + (typeof v === "number" ? v : 0), 0);
-    const totalB = Object.entries(b)
-      .filter(([k]) => k !== "name")
-      .reduce((sum, [, v]) => sum + (typeof v === "number" ? v : 0), 0);
-    return totalB - totalA;
   });
 
   const levelKeys = new Set<string>();
@@ -63,13 +56,17 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     });
   });
 
-  const sortedLevels = Array.from(levelKeys).sort();
+  const extraLevels = Array.from(levelKeys)
+    .filter((level) => !levelOrder.includes(level))
+    .sort((a, b) => a.localeCompare(b));
+  const sortedLevels = [...levelOrder, ...extraLevels];
 
   const levelColors: Record<string, string> = {
     "1": "#AEDFF7", // ヒーローLv1: パステルブルー（軽く爽やか）→ #AEDFF7
     "2": "#7FC8F8", // ヒーローLv2: スカイブルー（少し濃く）→ #7FC8F8
     "3": "#3DA9FC", // ヒーローLv3: 鮮やかなブルー（芯のある強さ）→ #3DA9FC
 
+    "4_hero": "#D4AF37", // ヒーローLv4: 金色 → #D4AF37
     "4": "#F4A261", // 怪獣Lv4: ソフトなオレンジ（軽めの怪獣）→ #F4A261
     "5": "#E76F51", // 怪獣Lv5: 赤みのあるオレンジ（やや強い）→ #E76F51
     "6": "#D62828", // 怪獣Lv6: 深紅（強烈で危険）→ #D62828
@@ -84,6 +81,12 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
 
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
+  const getLevelLabel = (level: string) => {
+    if (level === "シーン") return "シーン";
+    if (level === "4_hero") return "レベル4";
+    return `レベル${level}`;
+  };
+
   return (
     <div className="w-full" style={{ height: `${chartHeight}px` }}>
       <ResponsiveContainer width="100%" height="100%">
@@ -94,7 +97,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
         >
           <XAxis type="number" domain={[0, Math.ceil(maxTotal * 1.1)]} />
           <YAxis type="category" dataKey="name" />
-          <Tooltip />
+          <Tooltip wrapperStyle={{ zIndex: 50, pointerEvents: "none" }} />
           {/* <Legend /> */}
           {sortedLevels.map((level) => (
             <Bar
@@ -102,7 +105,8 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
               dataKey={level}
               stackId="a"
               fill={levelColors[level] ?? "#ccc"}
-              name={level === "シーン" ? "シーン" : `レベル${level}`}
+              name={getLevelLabel(level)}
+              hide={!levelKeys.has(level)}
               isAnimationActive={true}
               barSize={20}
             />
