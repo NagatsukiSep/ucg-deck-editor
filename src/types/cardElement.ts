@@ -43,7 +43,7 @@ export const kaijuCharacter: OptionEntry[] = [
   { value: "ベリアル", labelKey: "character.kaiju.belial" },
 ];
 
-export const cardTypes: Array<{ value: string; labelKey: string }> = [
+export const cardTypes: Array<{ value: string; labelKey: TranslationKey }> = [
   { value: "basic", labelKey: "cardType.basic" },
   { value: "power", labelKey: "cardType.power" },
   { value: "armed", labelKey: "cardType.armed" },
