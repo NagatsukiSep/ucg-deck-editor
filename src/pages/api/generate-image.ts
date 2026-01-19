@@ -19,7 +19,8 @@ interface GenerateCollageRequest extends NextApiRequest {
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
-const LOGO_SIZE = 80;
+const LOGO_WIDTH = 120;
+const LOGO_HEIGHT = 60;
 const QR_SIZE = 120;
 
 function cardsPerColumn(cardCount: number): number {
@@ -117,7 +118,7 @@ export default async function handler(
 
     try {
       const logoBuffer = await sharp(path.join(process.cwd(), "public", "logo.png"))
-        .resize(LOGO_SIZE, LOGO_SIZE)
+        .resize(LOGO_WIDTH, LOGO_HEIGHT)
         .png()
         .toBuffer();
       overlayData.push({ input: logoBuffer, left: PADDING, top: PADDING });
