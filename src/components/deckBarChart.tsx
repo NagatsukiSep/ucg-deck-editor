@@ -64,16 +64,12 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   });
 
   const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
-  const sortedLevels = Array.from(levelKeys).sort((a, b) => {
-    const indexA = levelOrder.indexOf(a);
-    const indexB = levelOrder.indexOf(b);
-    if (indexA === -1 && indexB === -1) {
-      return a.localeCompare(b);
-    }
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-  });
+  const sortedLevels = [
+    ...levelOrder.filter((level) => levelKeys.has(level)),
+    ...Array.from(levelKeys)
+      .filter((level) => !levelOrder.includes(level))
+      .sort((a, b) => a.localeCompare(b)),
+  ];
 
   const levelColors: Record<string, string> = {
     "1": "#AEDFF7", // ヒーローLv1: パステルブルー（軽く爽やか）→ #AEDFF7
@@ -97,7 +93,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
 
   const getLevelLabel = (level: string) => {
     if (level === "シーン") return "シーン";
-    if (level === "4_hero") return "レベル4(ヒーロー)";
+    if (level === "4_hero") return "レベル4";
     return `レベル${level}`;
   };
 
