@@ -1,78 +1,162 @@
 [
   {
     "date": "2026/01/19",
-    "message": "スマートフォン向け表示を改善。"
+    "message": {
+      "ja": "多言語化（英語、韓国語）に対応。",
+      "en": "Added multilingual support (English and Korean).",
+      "ko": "다국어(영어, 한국어) 지원을 추가했습니다."
+    }
+  },
+  {
+    "date": "2026/01/19",
+    "message": {
+      "ja": "スマートフォン向け表示を改善。",
+      "en": "Improved the smartphone layout.",
+      "ko": "스마트폰용 표시를 개선했습니다."
+    }
   },
   {
     "date": "2026/01/18",
-    "message": "BP06のカードを追加。"
+    "message": {
+      "ja": "BP06のカードを追加。",
+      "en": "Added BP06 cards.",
+      "ko": "BP06 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/12/24",
-    "message": "UD01のカードを追加。"
+    "message": {
+      "ja": "UD01のカードを追加。",
+      "en": "Added UD01 cards.",
+      "ko": "UD01 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/10/24",
-    "message": "BP05のカードを追加。"
+    "message": {
+      "ja": "BP05のカードを追加。",
+      "en": "Added BP05 cards.",
+      "ko": "BP05 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/08/05",
-    "message": "シーンカードの表示を修正。"
+    "message": {
+      "ja": "シーンカードの表示を修正。",
+      "en": "Fixed the display of scene cards.",
+      "ko": "씬 카드 표시를 수정했습니다."
+    }
   },
   {
     "date": "2025/08/05",
-    "message": "デッキ画像の数字が文字化けする問題を修正。"
+    "message": {
+      "ja": "デッキ画像の数字が文字化けする問題を修正。",
+      "en": "Fixed garbled numbers in deck images.",
+      "ko": "덱 이미지의 숫자가 깨지는 문제를 수정했습니다."
+    }
   },
   {
     "date": "2025/08/04",
-    "message": "一部のバルタン星人は５枚以上採用できるように修正。デッキ画像のレイアウトを改善。"
+    "message": {
+      "ja": "一部のバルタン星人は５枚以上採用できるように修正。デッキ画像のレイアウトを改善。",
+      "en": "Updated some Baltan aliens to allow more than five copies. Improved the deck image layout.",
+      "ko": "일부 발탄 성인은 5장 이상 채용할 수 있도록 수정했습니다. 덱 이미지 레이아웃을 개선했습니다."
+    }
   },
   {
     "date": "2025/07/25",
-    "message": "BP04のカードを追加。"
+    "message": {
+      "ja": "BP04のカードを追加。",
+      "en": "Added BP04 cards.",
+      "ko": "BP04 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/07/22",
-    "message": "アプリ名を変更。ロゴを追加。"
+    "message": {
+      "ja": "アプリ名を変更。ロゴを追加。",
+      "en": "Changed the app name and added a logo.",
+      "ko": "앱 이름을 변경하고 로고를 추가했습니다."
+    }
   },
   {
     "date": "2025/07/22",
-    "message": "検索を改善。キーワード検索を追加。"
+    "message": {
+      "ja": "検索を改善。キーワード検索を追加。",
+      "en": "Improved search and added keyword search.",
+      "ko": "검색을 개선하고 키워드 검색을 추가했습니다."
+    }
   },
   {
     "date": "2025/07/22",
-    "message": "自動並び替え機能を追加。"
+    "message": {
+      "ja": "自動並び替え機能を追加。",
+      "en": "Added auto-sorting.",
+      "ko": "자동 정렬 기능을 추가했습니다."
+    }
   },
   {
     "date": "2025/07/18",
-    "message": "SD03のカードを追加。"
+    "message": {
+      "ja": "SD03のカードを追加。",
+      "en": "Added SD03 cards.",
+      "ko": "SD03 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/07/18",
-    "message": "更新ログを追加。"
+    "message": {
+      "ja": "更新ログを追加。",
+      "en": "Added the changelog.",
+      "ko": "업데이트 로그를 추가했습니다."
+    }
   },
   {
     "date": "2025/04/11",
-    "message": "BP03のカードを追加。"
+    "message": {
+      "ja": "BP03のカードを追加。",
+      "en": "Added BP03 cards.",
+      "ko": "BP03 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/03/13",
-    "message": "画像が表示されない問題を修正。"
+    "message": {
+      "ja": "画像が表示されない問題を修正。",
+      "en": "Fixed an issue where images did not display.",
+      "ko": "이미지가 표시되지 않는 문제를 수정했습니다."
+    }
   },
   {
     "date": "2025/01/16",
-    "message": "デッキのカードを並べ替える機能を追加。"
+    "message": {
+      "ja": "デッキのカードを並べ替える機能を追加。",
+      "en": "Added a feature to reorder cards in the deck.",
+      "ko": "덱의 카드를 정렬하는 기능을 추가했습니다."
+    }
   },
   {
     "date": "2025/01/16",
-    "message": "表示中のデッキから編集できる機能を追加。"
+    "message": {
+      "ja": "表示中のデッキから編集できる機能を追加。",
+      "en": "Added the ability to edit from the displayed deck.",
+      "ko": "표시 중인 덱에서 편집할 수 있는 기능을 추가했습니다."
+    }
   },
   {
     "date": "2025/01/15",
-    "message": "BP02, EXD01のカードを追加。"
+    "message": {
+      "ja": "BP02, EXD01のカードを追加。",
+      "en": "Added BP02 and EXD01 cards.",
+      "ko": "BP02, EXD01 카드가 추가되었습니다."
+    }
   },
   {
     "date": "2025/01/12",
-    "message": "公開。"
+    "message": {
+      "ja": "公開。",
+      "en": "Released.",
+      "ko": "공개했습니다."
+    }
   }
 ]

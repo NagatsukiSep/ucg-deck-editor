@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useI18n } from "@/i18n/I18nProvider";
 
 interface ImageWithSkeletonProps {
   src: string;
@@ -23,6 +26,7 @@ export const ImageWithSkeleton = ({
   onClick,
 }: ImageWithSkeletonProps) => {
   const [loaded, setLoaded] = useState(false);
+  const { t } = useI18n();
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <Image
@@ -39,14 +43,14 @@ export const ImageWithSkeleton = ({
           <button
             type="button"
             className="absolute top-6 right-1 flex items-center justify-center w-6 h-6 p-0 text-black rounded-full bg-white/40"
-            title="拡大表示"
+            title={t("image.zoom")}
           >
             <ZoomIn className="w-5 h-5" />
           </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>拡大表示</DialogTitle>
+            <DialogTitle>{t("image.zoom")}</DialogTitle>
             <DialogDescription>{alt}</DialogDescription>
           </DialogHeader>
           <Image

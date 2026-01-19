@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BarChart,
   Bar,
@@ -7,6 +9,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import React from "react";
+import { useI18n } from "@/i18n/I18nProvider";
+import {
+  kaijuCharacter,
+  ultraCharacter,
+  ultraMechaCharacter,
+} from "@/types/cardElement";
 
 type DeckAnalysis = {
   [name: string]:
@@ -21,13 +29,23 @@ type Props = {
 };
 
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
-  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
+  const { t } = useI18n();
+  const sceneKey = "scene";
+  const characterLabelMap = new Map(
+    [...ultraCharacter, ...ultraMechaCharacter, ...kaijuCharacter].map(
+      (entry) => [entry.value, entry.labelKey] as const
+    )
+  );
+  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", sceneKey];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
 
   Object.entries(analysis).forEach(([name, value]) => {
+    const labelKey = characterLabelMap.get(name);
+    const displayName =
+      name === sceneKey ? t("chart.scene") : labelKey ? t(labelKey) : name;
     if (typeof value === "number") {
-      chartData.push({ name, シーン: value });
+      chartData.push({ name: displayName, [sceneKey]: value });
       maxTotal = Math.max(maxTotal, value);
       return;
     }
@@ -35,7 +53,9 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     const total = Object.values(value).reduce((sum, n) => sum + n, 0);
     maxTotal = Math.max(maxTotal, total);
 
-    const entry: { name: string; [level: string]: number | string } = { name };
+    const entry: { name: string; [level: string]: number | string } = {
+      name: displayName,
+    };
     const orderedLevels = [
       ...levelOrder.filter((level) => level in value),
       ...Object.keys(value)
@@ -72,7 +92,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     "6": "#D62828", // 怪獣Lv6: 深紅（強烈で危険）→ #D62828
     "7": "#6A040F", // 怪獣Lv7: 暗赤（ラスボス感）→ #6A040F
 
-    シーン: "#9E9E9E", // シーン: グレートーン（中立的、補助的）→ #9E9E9E
+    [sceneKey]: "#9E9E9E", // シーン: グレートーン（中立的、補助的）→ #9E9E9E
   };
 
   const barHeight = 32; // 1バーの高さ
@@ -82,9 +102,9 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
   const getLevelLabel = (level: string) => {
-    if (level === "シーン") return "シーン";
-    if (level === "4_hero") return "レベル4";
-    return `レベル${level}`;
+    if (level === sceneKey) return t("chart.scene");
+    if (level === "4_hero") return `${t("chart.level")}4`;
+    return `${t("chart.level")}${level}`;
   };
 
   return (

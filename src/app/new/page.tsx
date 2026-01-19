@@ -24,6 +24,7 @@ import DeckBarChart from "@/components/deckBarChart";
 import { analyzeDeck } from "@/utils/analyzeDeck";
 import { Input } from "@/components/ui/input";
 import { autoSortDeck, changeIndex, isEdge } from "@/utils/deckOrder";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -39,6 +40,7 @@ export default function Home() {
   const { originalDeckCards, setOriginalDeckCards } = useAppContext();
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
+  const { t } = useI18n();
 
   useEffect(() => {
     if (originalDeckCards.length > 0) {
@@ -159,7 +161,7 @@ export default function Home() {
 
   const generateDeckCode = async () => {
     if (cardCount !== 50) {
-      alert("デッキは50枚でなければなりません。");
+      alert(t("new.alert.deckMustBe50"));
       return;
     }
     const data = {
@@ -175,7 +177,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 pt-6 md:pt-4">
-      <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("new.title")}</h1>
       <div className="md:hidden mb-4 sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-gray-200 py-2">
         <div className="grid grid-cols-2 gap-2">
           <Button
@@ -183,14 +185,14 @@ export default function Home() {
             variant={activePane === "deck" ? "default" : "outline"}
             onClick={() => setActivePane("deck")}
           >
-            デッキ
+            {t("new.mobile.deckTab")}
           </Button>
           <Button
             type="button"
             variant={activePane === "search" ? "default" : "outline"}
             onClick={() => setActivePane("search")}
           >
-            カード検索
+            {t("new.mobile.searchTab")}
           </Button>
         </div>
       </div>
@@ -198,11 +200,15 @@ export default function Home() {
         <Card className={activePane === "deck" ? "p-2" : "hidden md:block p-2"}>
           <CardHeader className="hidden md:block">
             <CardTitle>
-              <h1 className="text-2xl font-bold">現在のデッキ</h1>
+              <h1 className="text-2xl font-bold">
+                {t("new.currentDeckTitle")}
+              </h1>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 md:pt-0">
-            <h2 className="text-xl font-bold">カード枚数: {cardCount}</h2>
+            <h2 className="text-xl font-bold">
+              {t("new.cardCount", { count: cardCount })}
+            </h2>
             {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             <Button
               onClick={() => {
@@ -212,7 +218,7 @@ export default function Home() {
               type="submit"
               disabled={cardCount !== 50}
             >
-              デッキコード生成
+              {t("new.generateDeckCode")}
             </Button>
             <Button
               onClick={() => {
@@ -223,7 +229,7 @@ export default function Home() {
               type="button"
               disabled={deckCards.length < 2}
             >
-              自動並び替え
+              {t("new.autoSort")}
             </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
@@ -304,7 +310,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <p>カードがありません。</p>
+              <p>{t("new.noCards")}</p>
             )}
           </CardContent>
         </Card>
@@ -313,7 +319,7 @@ export default function Home() {
         >
           <CardHeader className="hidden md:block">
             <CardTitle>
-              <h1 className="text-2xl font-bold">カード検索</h1>
+              <h1 className="text-2xl font-bold">{t("new.searchTitle")}</h1>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -334,19 +340,23 @@ export default function Home() {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="ultra-hero" id="ultra-hero" />
-                  <Label htmlFor="ultra-hero">ウルトラヒーロー</Label>
+                  <Label htmlFor="ultra-hero">
+                    {t("new.genres.ultraHero")}
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="ultra-mecha" id="ultra-mecha" />
-                  <Label htmlFor="ultra-mecha">ウルトラメカ</Label>
+                  <Label htmlFor="ultra-mecha">
+                    {t("new.genres.ultraMecha")}
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="kaiju" id="kaiju" />
-                  <Label htmlFor="kaiju">ウルトラ怪獣</Label>
+                  <Label htmlFor="kaiju">{t("new.genres.kaiju")}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scene" id="scene" />
-                  <Label htmlFor="scene">シーン</Label>
+                  <Label htmlFor="scene">{t("new.genres.scene")}</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -355,16 +365,16 @@ export default function Home() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {selectedGenre === "ultra-hero" && (
                   <SearchSelect
-                    label="キャラクター名"
+                    label={t("new.search.characterName")}
                     value={searchQuery.characterName}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
                     options={[
-                      { value: "none", label: "キャラクター名" },
-                      ...ultraCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      { value: "none", label: t("new.search.characterName") },
+                      ...ultraCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -372,16 +382,16 @@ export default function Home() {
 
                 {selectedGenre === "kaiju" && (
                   <SearchSelect
-                    label="キャラクター名"
+                    label={t("new.search.characterName")}
                     value={searchQuery.characterName}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
                     options={[
-                      { value: "none", label: "キャラクター名" },
-                      ...kaijuCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      { value: "none", label: t("new.search.characterName") },
+                      ...kaijuCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -389,16 +399,16 @@ export default function Home() {
 
                 {selectedGenre === "ultra-mecha" && (
                   <SearchSelect
-                    label="キャラクター名"
+                    label={t("new.search.characterName")}
                     value={searchQuery.characterName}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, characterName: value })
                     }
                     options={[
-                      { value: "none", label: "キャラクター名" },
-                      ...ultraMechaCharacter.map((name) => ({
-                        value: name,
-                        label: name,
+                      { value: "none", label: t("new.search.characterName") },
+                      ...ultraMechaCharacter.map((character) => ({
+                        value: character.value,
+                        label: t(character.labelKey),
                       })),
                     ]}
                   />
@@ -408,13 +418,13 @@ export default function Home() {
                   selectedGenre === "kaiju" ||
                   selectedGenre === "ultra-mecha") && (
                   <SearchSelect
-                    label="レベル"
+                    label={t("new.search.level")}
                     value={searchQuery.level}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, level: value })
                     }
                     options={[
-                      { value: "none", label: "レベル" },
+                      { value: "none", label: t("new.search.level") },
                       ...Array.from({ length: 7 }, (_, i) => ({
                         value: (i + 1).toString(),
                         label: (i + 1).toString(),
@@ -427,24 +437,30 @@ export default function Home() {
                   selectedGenre === "kaiju" ||
                   selectedGenre === "ultra-mecha") && (
                   <SearchSelect
-                    label="TYPE"
+                    label={t("new.search.type")}
                     value={searchQuery.type}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, type: value })
                     }
-                    options={[{ value: "none", label: "TYPE" }, ...cardTypes]}
+                    options={[
+                      { value: "none", label: t("new.search.type") },
+                      ...cardTypes.map((cardType) => ({
+                        value: cardType.value,
+                        label: t(cardType.labelKey),
+                      })),
+                    ]}
                   />
                 )}
 
                 {selectedGenre === "scene" && (
                   <SearchSelect
-                    label="ラウンド"
+                    label={t("new.search.round")}
                     value={searchQuery.round}
                     onChange={(value) =>
                       setSearchQuery({ ...searchQuery, round: value })
                     }
                     options={[
-                      { value: "none", label: "ラウンド" },
+                      { value: "none", label: t("new.search.round") },
                       ...[0, 1, 2, 3, 4].map((num) => ({
                         value: num.toString(),
                         label: num.toString(),
@@ -458,7 +474,7 @@ export default function Home() {
             <div className="w-full px-4 flex">
               <Input
                 type="text"
-                placeholder="キーワードで検索"
+                placeholder={t("new.search.keywordPlaceholder")}
                 value={searchQuery.keyword || ""}
                 onChange={(e) =>
                   setSearchQuery({ ...searchQuery, keyword: e.target.value })
@@ -473,9 +489,9 @@ export default function Home() {
               type="submit"
             >
               <Search className="w-4 h-4 mr-2" />
-              検索
+              {t("new.search.action")}
             </Button>
-            <p>検索結果: {searchedCardsCount}件</p>
+            <p>{t("new.search.results", { count: searchedCardsCount })}</p>
             <PaginationControls
               currentPage={searchedCardsPage}
               totalCount={searchedCardsCount}
@@ -495,7 +511,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <p>検索結果がありません。</p>
+              <p>{t("new.search.noResults")}</p>
             )}
           </CardContent>
         </Card>

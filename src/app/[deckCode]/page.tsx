@@ -10,6 +10,7 @@ import { analyzeDeck } from "@/utils/analyzeDeck";
 import { get } from "@/utils/request";
 import { redirect } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const params = use(props.params);
@@ -21,6 +22,40 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [imageUrl, setImageUrl] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
+  const { t } = useI18n();
+
+  const generateCollage = useCallback(
+    async (cards: CardDetail[]) => {
+      setIsGeneratingImage(true);
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            images: cards.map((card) => ({
+              imagePath: card.image_url,
+              count: card.count,
+              isScene: card.feature_value === "scene",
+            })),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate collage");
+        }
+
+        const blob = await response.blob();
+        setImageUrl(URL.createObjectURL(blob));
+        setIsGeneratingImage(false);
+      } catch (error) {
+        console.error(error);
+        alert(t("deck.generateImageFailed"));
+      }
+    },
+    [t]
+  );
 
   const getDeckData = useCallback(async () => {
     setLoadingDetails(true);
@@ -54,7 +89,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       console.error("Failed to parse JSON:", error);
     }
     setLoadingDetails(false);
-  }, [deckCode]);
+  }, [deckCode, generateCollage]);
 
   useEffect(() => {
     const analysis = analyzeDeck(deckCards);
@@ -67,51 +102,21 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     getDeckData();
   }, [getDeckData]);
 
-  const generateCollage = async (cards: CardDetail[]) => {
-    setIsGeneratingImage(true);
-    try {
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          images: cards.map((card) => ({
-            imagePath: card.image_url,
-            count: card.count,
-            isScene: card.feature_value === "scene",
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate collage");
-      }
-
-      const blob = await response.blob();
-      setImageUrl(URL.createObjectURL(blob));
-      setIsGeneratingImage(false);
-    } catch (error) {
-      console.error(error);
-      alert("Failed to generate collage");
-    }
-  };
-
   const { setOriginalDeckCards } = useAppContext();
 
   return (
     <div className="container mx-auto p-4 ">
-      <h1 className="text-2xl font-bold mb-4">デッキ表示</h1>
+      <h1 className="text-2xl font-bold mb-4">{t("deck.title")}</h1>
       {is404 && (
         <div>
-          <p>デッキが見つかりませんでした。</p>
+          <p>{t("deck.notFound")}</p>
           <Button
             onClick={() => {
               window.location.href = "/";
             }}
             className="mt-4"
           >
-            トップに戻る
+            {t("deck.backToTop")}
           </Button>
         </div>
       )}
@@ -121,7 +126,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
           <CardHeader>
             <CardTitle>
               <h2 className="text-xl font-bold">
-                デッキコード{deckCode}のデッキ情報
+                {t("deck.infoTitle", { deckCode })}
               </h2>
             </CardTitle>
           </CardHeader>
@@ -134,22 +139,22 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 <Button
                   onClick={() => {
                     navigator.clipboard.writeText(deckCode);
-                    alert("デッキコードをコピーしました。");
+                    alert(t("deck.copyCodeSuccess"));
                   }}
                   className="w-full"
                 >
-                  デッキコードをコピー
+                  {t("deck.copyCode")}
                 </Button>
                 <Button
                   onClick={() => {
                     navigator.clipboard.writeText(
                       `${window.location.origin}/${deckCode}`
                     );
-                    alert("デッキコードをURL付きでコピーしました。");
+                    alert(t("deck.copyUrlSuccess"));
                   }}
                   className="w-full"
                 >
-                  デッキコードをURL付きでコピー
+                  {t("deck.copyUrl")}
                 </Button>
                 <Button
                   onClick={() => {
@@ -158,7 +163,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                   className="w-full"
                   disabled={isGeneratingImage}
                 >
-                  {isGeneratingImage ? "読み込み中" : "デッキ画像を表示"}
+                  {isGeneratingImage
+                    ? t("deck.loadingImage")
+                    : t("deck.showImage")}
                 </Button>
                 <Button
                   onClick={() => {
@@ -167,12 +174,12 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                   }}
                   className="w-full"
                 >
-                  このデッキからデッキ作成
+                  {t("deck.fromDeck")}
                 </Button>
               </div>
             </div>
             {loadingDetails ? (
-              <p>カード情報を読み込んでいます...</p>
+              <p>{t("deck.loadingCards")}</p>
             ) : (
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
                 {deckCards.map((card) => (
