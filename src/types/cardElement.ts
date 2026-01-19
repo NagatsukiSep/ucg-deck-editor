@@ -20,9 +20,12 @@ export const ultraCharacter = [
   "ビクトリー",
   "ブル",
   "ブレーザー",
+  "マックス",
   "メビウス",
   "ロッソ",
 ] as const;
+
+export const ultraMechaCharacter = ["アースガロン", "セブンガー"] as const;
 
 export const kaijuCharacter = [
   "ギルアーク",
@@ -41,4 +44,3 @@ export const cardTypes = [
   { value: "invasion", label: "侵略" },
   { value: "meteo", label: "メテオ" },
 ] as const;
-
