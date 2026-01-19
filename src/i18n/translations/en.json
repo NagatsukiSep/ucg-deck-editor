@@ -48,7 +48,7 @@
   "new.search.level": "Level",
   "new.search.type": "TYPE",
   "new.search.round": "Round",
-  "new.search.keywordPlaceholder": "Search by keyword",
+  "new.search.keywordPlaceholder": "Search by keyword (Japanese only)",
   "new.search.action": "Search",
   "new.search.results": "Results: {count}",
   "new.search.noResults": "No results found.",

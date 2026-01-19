@@ -48,7 +48,7 @@
   "new.search.level": "레벨",
   "new.search.type": "TYPE",
   "new.search.round": "라운드",
-  "new.search.keywordPlaceholder": "키워드로 검색",
+  "new.search.keywordPlaceholder": "키워드로 검색(일본어만)",
   "new.search.action": "검색",
   "new.search.results": "검색 결과: {count}건",
   "new.search.noResults": "검색 결과가 없습니다.",
