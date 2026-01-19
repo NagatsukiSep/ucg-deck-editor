@@ -63,7 +63,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     });
   });
 
-  const levelOrder = ["1", "2", "3", "4", "5", "6", "7", "シーン"];
+  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", "シーン"];
   const sortedLevels = Array.from(levelKeys).sort((a, b) => {
     const indexA = levelOrder.indexOf(a);
     const indexB = levelOrder.indexOf(b);
@@ -80,6 +80,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     "2": "#7FC8F8", // ヒーローLv2: スカイブルー（少し濃く）→ #7FC8F8
     "3": "#3DA9FC", // ヒーローLv3: 鮮やかなブルー（芯のある強さ）→ #3DA9FC
 
+    "4_hero": "#D4AF37", // ヒーローLv4: 金色 → #D4AF37
     "4": "#F4A261", // 怪獣Lv4: ソフトなオレンジ（軽めの怪獣）→ #F4A261
     "5": "#E76F51", // 怪獣Lv5: 赤みのあるオレンジ（やや強い）→ #E76F51
     "6": "#D62828", // 怪獣Lv6: 深紅（強烈で危険）→ #D62828
@@ -93,6 +94,12 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const axisHeight = 48; // X軸の目安高さ
 
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
+
+  const getLevelLabel = (level: string) => {
+    if (level === "シーン") return "シーン";
+    if (level === "4_hero") return "レベル4(ヒーロー)";
+    return `レベル${level}`;
+  };
 
   return (
     <div className="w-full" style={{ height: `${chartHeight}px` }}>
@@ -112,7 +119,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
               dataKey={level}
               stackId="a"
               fill={levelColors[level] ?? "#ccc"}
-              name={level === "シーン" ? "シーン" : `レベル${level}`}
+              name={getLevelLabel(level)}
               isAnimationActive={true}
               barSize={20}
             />

@@ -7,7 +7,8 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
     switch (card.feature_value) {
       case "ultra_hero": {
         const name = card.character_name ?? "不明ヒーロー";
-        const level = card.level?.toString() ?? "不明";
+        const rawLevel = card.level?.toString() ?? "不明";
+        const level = rawLevel === "4" ? "4_hero" : rawLevel;
 
         if (!result[name]) {
           result[name] = {};
