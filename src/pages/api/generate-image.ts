@@ -19,9 +19,10 @@ interface GenerateCollageRequest extends NextApiRequest {
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
+const LOGO_PADDING = 8;
 const LOGO_WIDTH = 120;
 const LOGO_HEIGHT = 60;
-const QR_SIZE = 120;
+const QR_SIZE = 40;
 
 function cardsPerColumn(cardCount: number): number {
   if (cardCount <= 4)
@@ -36,8 +37,8 @@ function cardsPerColumn(cardCount: number): number {
     return 5;
 }
 
-function cardSize(cardCount: number): { width: number, height: number } {
-  const heightTmp = Math.floor((BG_HEIGHT - PADDING * 2) / cardsPerColumn(cardCount));
+function cardSize(cardCount: number, reservedTop: number): { width: number, height: number } {
+  const heightTmp = Math.floor((BG_HEIGHT - PADDING * 2 - reservedTop) / cardsPerColumn(cardCount));
   const widthTmp = Math.floor(heightTmp * 143 / 200);
   // カードの幅が背景の幅を超える場合、幅を調整
   if (widthTmp * Math.ceil(cardCount / cardsPerColumn(cardCount)) + PADDING * 2 > BG_WIDTH) {
@@ -70,8 +71,10 @@ export default async function handler(
   }
 
   try {
-    const CARD_WIDTH = 2 * Math.floor(cardSize(images.length).width / 2);
-    const CARD_HEIGHT = 2 * Math.floor(cardSize(images.length).height / 2);
+    const overlayHeight = deckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
+    const reservedTop = overlayHeight + LOGO_PADDING * 2;
+    const CARD_WIDTH = 2 * Math.floor(cardSize(images.length, reservedTop).width / 2);
+    const CARD_HEIGHT = 2 * Math.floor(cardSize(images.length, reservedTop).height / 2);
     const row = Math.ceil(images.length / cardsPerColumn(images.length));
 
     // URLまたはローカルパスから画像を取得してリサイズ
@@ -108,10 +111,11 @@ export default async function handler(
     const rows = Math.ceil(images.length / row);
 
     // カードを配置する位置を計算
+    const startY = reservedTop + (BG_HEIGHT - reservedTop - CARD_HEIGHT * rows) / 2;
     const compositeData = cardWithText.map((buffer, index) => {
       const x = (index % row) * CARD_WIDTH;
       const y = Math.floor(index / row) * CARD_HEIGHT;
-      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + (BG_HEIGHT - CARD_HEIGHT * rows) / 2 };
+      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + startY };
     });
 
     const overlayData = [...compositeData];
@@ -121,7 +125,7 @@ export default async function handler(
         .resize(LOGO_WIDTH, LOGO_HEIGHT)
         .png()
         .toBuffer();
-      overlayData.push({ input: logoBuffer, left: PADDING, top: PADDING });
+      overlayData.push({ input: logoBuffer, left: LOGO_PADDING, top: LOGO_PADDING });
     } catch (error) {
       console.error("Failed to load logo image:", error);
     }
@@ -136,7 +140,7 @@ export default async function handler(
           .resize(QR_SIZE, QR_SIZE)
           .png()
           .toBuffer();
-        overlayData.push({ input: qrBuffer, left: BG_WIDTH - QR_SIZE - PADDING, top: PADDING });
+        overlayData.push({ input: qrBuffer, left: BG_WIDTH - QR_SIZE - LOGO_PADDING, top: LOGO_PADDING });
       } catch (error) {
         console.error("Failed to load QR code image:", error);
       }
