@@ -1,6 +1,8 @@
 {
   "nav.top": "トップ",
   "header.logoAlt": "ULTRA DECK BUILDER ロゴ",
+  "header.switchToEnglish": "English",
+  "header.switchToJapanese": "日本語",
   "home.deckCodeInputTitle": "デッキコード入力",
   "home.deckCodeLabel": "デッキコード",
   "home.deckCodePlaceholder": "デッキコードを入力",

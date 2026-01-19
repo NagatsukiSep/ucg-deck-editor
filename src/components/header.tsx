@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Header() {
-  const { t } = useI18n();
+  const { t, locale, setLocale } = useI18n();
+  const nextLocale = locale === "ja" ? "en" : "ja";
 
   return (
     <header className="border-b px-4 py-3">
@@ -22,14 +23,23 @@ export default function Header() {
         </Link>
 
         {/* ナビゲーション部分 */}
-        <nav>
-          <ul className="flex gap-6 ml-12">
+        <nav className="flex items-center gap-4 ml-12">
+          <ul className="flex gap-6">
             <li>
               <Link href="/" className="text-black hover:underline">
                 {t("nav.top")}
               </Link>
             </li>
           </ul>
+          <button
+            type="button"
+            className="rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+            onClick={() => setLocale(nextLocale)}
+          >
+            {nextLocale === "en"
+              ? t("header.switchToEnglish")
+              : t("header.switchToJapanese")}
+          </button>
         </nav>
       </div>
     </header>
