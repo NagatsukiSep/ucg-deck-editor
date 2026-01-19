@@ -1,6 +1,8 @@
+import type { TranslationKey } from "@/i18n";
+
 type OptionEntry = {
   value: string;
-  labelKey: string;
+  labelKey: TranslationKey;
 };
 
 export const ultraCharacter: OptionEntry[] = [
