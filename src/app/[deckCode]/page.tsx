@@ -174,7 +174,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             {loadingDetails ? (
               <p>カード情報を読み込んでいます...</p>
             ) : (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-full">
                     <div className="relative w-full p-2">
