@@ -113,6 +113,7 @@ export default function Home() {
   const [searchedCardsCount, setSearchedCardsCount] = useState(0);
   const [searchedCardsPage, setSearchedCardsPage] = useState(0);
   const [searchedCards, setSearchedCards] = useState<CardDetail[]>([]);
+  const [activePane, setActivePane] = useState<"deck" | "search">("deck");
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,8 +176,26 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">デッキ作成</h1>
+      <div className="md:hidden mb-4">
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant={activePane === "deck" ? "default" : "outline"}
+            onClick={() => setActivePane("deck")}
+          >
+            デッキ
+          </Button>
+          <Button
+            type="button"
+            variant={activePane === "search" ? "default" : "outline"}
+            onClick={() => setActivePane("search")}
+          >
+            カード検索
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card className="p-2">
+        <Card className={activePane === "deck" ? "p-2" : "hidden md:block p-2"}>
           <CardHeader>
             <CardTitle>
               <h1 className="text-2xl font-bold">現在のデッキ</h1>
@@ -289,7 +308,9 @@ export default function Home() {
             )}
           </CardContent>
         </Card>
-        <Card className="p-2">
+        <Card
+          className={activePane === "search" ? "p-2" : "hidden md:block p-2"}
+        >
           <CardHeader>
             <CardTitle>
               <h1 className="text-2xl font-bold">カード検索</h1>
