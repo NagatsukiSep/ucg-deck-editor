@@ -19,10 +19,10 @@ interface GenerateCollageRequest extends NextApiRequest {
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
-const LOGO_PADDING = 8;
+const LOGO_PADDING = 4;
 const LOGO_WIDTH = 120;
 const LOGO_HEIGHT = 60;
-const QR_SIZE = 40;
+const QR_SIZE = 60;
 
 function cardsPerColumn(cardCount: number): number {
   if (cardCount <= 4)
@@ -78,7 +78,7 @@ export default async function handler(
 
   try {
     const overlayHeight = deckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
-    const reservedTop = overlayHeight + LOGO_PADDING * 2;
+    const reservedTop = overlayHeight + LOGO_PADDING;
     const columns = Math.ceil(images.length / cardsPerColumn(images.length));
     const rows = Math.ceil(images.length / columns);
     const CARD_WIDTH = 2 * Math.floor(cardSize(columns, rows, reservedTop).width / 2);
