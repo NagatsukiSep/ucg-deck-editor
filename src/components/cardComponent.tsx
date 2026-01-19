@@ -20,7 +20,7 @@ export const CardComponent = ({ card, addCard }: Props) => {
 
   return (
     <div
-      className={`w-32 h-auto mx-auto cursor-pointer rounded-md transition-all duration-500 ease-in-out will-change-transform will-change-filter ${
+      className={`w-full h-auto mx-auto cursor-pointer rounded-md transition-all duration-500 ease-in-out will-change-transform will-change-filter ${
         isAdded ? "brightness-[1.5] contrast-125 scale-[1.1]" : ""
       }`}
     >
