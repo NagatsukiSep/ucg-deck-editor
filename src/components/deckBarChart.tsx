@@ -41,21 +41,6 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     chartData.push(entry);
   });
 
-  chartData.sort((a, b) => {
-    const isAScene = a.name === "シーン";
-    const isBScene = b.name === "シーン";
-    if (isAScene && !isBScene) return 1;
-    if (!isAScene && isBScene) return -1;
-
-    const totalA = Object.entries(a)
-      .filter(([k]) => k !== "name")
-      .reduce((sum, [, v]) => sum + (typeof v === "number" ? v : 0), 0);
-    const totalB = Object.entries(b)
-      .filter(([k]) => k !== "name")
-      .reduce((sum, [, v]) => sum + (typeof v === "number" ? v : 0), 0);
-    return totalB - totalA;
-  });
-
   const levelKeys = new Set<string>();
   chartData.forEach((row) => {
     Object.keys(row).forEach((k) => {
