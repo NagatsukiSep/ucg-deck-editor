@@ -86,7 +86,10 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
       typeof b[1] === "number"
         ? b[1]
         : Object.values(b[1]).reduce((sum, n) => sum + n, 0);
-    return totalB - totalA;
+    if (totalA !== totalB) {
+      return totalB - totalA;
+    }
+    return a[0].localeCompare(b[0], "ja");
   });
 
   const orderedResult: DeckAnalysis = {};
