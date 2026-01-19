@@ -24,6 +24,39 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
   const { t } = useI18n();
 
+  const generateCollage = useCallback(
+    async (cards: CardDetail[]) => {
+      setIsGeneratingImage(true);
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            images: cards.map((card) => ({
+              imagePath: card.image_url,
+              count: card.count,
+              isScene: card.feature_value === "scene",
+            })),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate collage");
+        }
+
+        const blob = await response.blob();
+        setImageUrl(URL.createObjectURL(blob));
+        setIsGeneratingImage(false);
+      } catch (error) {
+        console.error(error);
+        alert(t("deck.generateImageFailed"));
+      }
+    },
+    [t]
+  );
+
   const getDeckData = useCallback(async () => {
     setLoadingDetails(true);
     try {
@@ -56,7 +89,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       console.error("Failed to parse JSON:", error);
     }
     setLoadingDetails(false);
-  }, [deckCode]);
+  }, [deckCode, generateCollage]);
 
   useEffect(() => {
     const analysis = analyzeDeck(deckCards);
@@ -68,36 +101,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     didRun.current = true;
     getDeckData();
   }, [getDeckData]);
-
-  const generateCollage = async (cards: CardDetail[]) => {
-    setIsGeneratingImage(true);
-    try {
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          images: cards.map((card) => ({
-            imagePath: card.image_url,
-            count: card.count,
-            isScene: card.feature_value === "scene",
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate collage");
-      }
-
-      const blob = await response.blob();
-      setImageUrl(URL.createObjectURL(blob));
-      setIsGeneratingImage(false);
-    } catch (error) {
-      console.error(error);
-      alert(t("deck.generateImageFailed"));
-    }
-  };
 
   const { setOriginalDeckCards } = useAppContext();
 
