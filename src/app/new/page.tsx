@@ -208,7 +208,7 @@ export default function Home() {
             </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-full">
                     <div className="relative w-full aspect-[143/200] p-2">
@@ -464,7 +464,7 @@ export default function Home() {
 
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {searchedCards.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 m-4 mx-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3 sm:gap-4 m-4 mx-auto">
                 {searchedCards.map((card) => (
                   <CardComponent
                     key={card.id}
