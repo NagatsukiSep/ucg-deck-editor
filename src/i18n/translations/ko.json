@@ -69,6 +69,7 @@
   "myDeck.deleteDescription": "마이 덱에서 삭제합니다.",
   "myDeck.deleteCancel": "취소",
   "myDeck.deleteConfirm": "삭제",
+  "myDeck.notice": "덱은 이 브라우저에만 저장되며 캐시 삭제 시 사라질 수 있습니다.",
   "home.changelogTitle": "업데이트 로그",
   "alerts.deckCodeRequired": "덱 코드를 입력해 주세요.",
   "alerts.redirectFailed": "리다이렉트에 실패했습니다. 다시 시도해 주세요.",

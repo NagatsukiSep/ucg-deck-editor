@@ -130,7 +130,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       alert(t("deck.saveFailed"));
       return;
     }
-    alert(t("deck.saveSuccess"));
     setSaveError("");
     setIsSaveDialogOpen(false);
   };

@@ -69,6 +69,7 @@
   "myDeck.deleteDescription": "マイデッキから削除します。",
   "myDeck.deleteCancel": "キャンセル",
   "myDeck.deleteConfirm": "削除",
+  "myDeck.notice": "デッキの保存はブラウザ内のみで行われます。キャッシュの削除などで消える可能性があります。",
   "home.changelogTitle": "更新ログ",
   "alerts.deckCodeRequired": "デッキコードを入力してください。",
   "alerts.redirectFailed": "リダイレクトに失敗しました。もう一度お試しください。",

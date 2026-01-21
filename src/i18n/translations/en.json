@@ -69,6 +69,7 @@
   "myDeck.deleteDescription": "This will remove the saved deck from My Decks.",
   "myDeck.deleteCancel": "Cancel",
   "myDeck.deleteConfirm": "Delete",
+  "myDeck.notice": "Saved decks are stored only in this browser and may be removed if you clear your cache.",
   "home.changelogTitle": "Changelog",
   "alerts.deckCodeRequired": "Please enter a deck code.",
   "alerts.redirectFailed": "Failed to redirect. Please try again.",

@@ -159,6 +159,9 @@ export default function MyDeckPage() {
           onPageChange={setCurrentPage}
         />
       )}
+      <p className="text-xs text-muted-foreground">
+        {t("myDeck.notice")}
+      </p>
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
