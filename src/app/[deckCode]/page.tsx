@@ -34,6 +34,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [saveError, setSaveError] = useState("");
   const { t } = useI18n();
 
   const generateCollage = useCallback(
@@ -122,7 +123,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     }
     const result = saveDeckCode(deckCode, saveName);
     if (result.alreadySaved) {
-      alert(t("deck.saveAlready"));
+      setSaveError(t("deck.saveAlready"));
       return;
     }
     if (!result.saved) {
@@ -130,6 +131,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       return;
     }
     alert(t("deck.saveSuccess"));
+    setSaveError("");
     setIsSaveDialogOpen(false);
   };
 
@@ -188,6 +190,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 <Button
                   onClick={() => {
                     setSaveName(deckCode);
+                    setSaveError("");
                     setIsSaveDialogOpen(true);
                   }}
                   className="w-full"
@@ -256,6 +259,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               onChange={(event) => setSaveName(event.target.value)}
               placeholder={t("deck.saveDialogNamePlaceholder")}
             />
+            {saveError && (
+              <p className="text-sm text-red-600">{saveError}</p>
+            )}
           </div>
           <DialogFooter>
             <Button
