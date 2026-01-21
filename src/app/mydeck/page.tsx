@@ -25,7 +25,7 @@ import { PaginationControls } from "@/components/paginationControls";
 const perPage = 10;
 
 export default function MyDeckPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const router = useRouter();
   const [savedDecks, setSavedDecks] = useState<SavedDeck[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -94,6 +94,16 @@ export default function MyDeckPage() {
     return sortedSavedDecks.slice(start, start + perPage);
   }, [currentPage, sortedSavedDecks]);
 
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Asia/Tokyo",
+      }),
+    [locale]
+  );
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       <Card>
@@ -117,7 +127,7 @@ export default function MyDeckPage() {
                     <p className="text-xs text-muted-foreground">{deck.code}</p>
                     <p className="text-xs text-muted-foreground">
                       {t("myDeck.savedAt", {
-                        date: new Date(deck.savedAt).toLocaleString(),
+                        date: dateFormatter.format(new Date(deck.savedAt)),
                       })}
                     </p>
                   </div>
