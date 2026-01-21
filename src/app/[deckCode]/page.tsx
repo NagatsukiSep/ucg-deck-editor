@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from "@/context/AppContext";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { analyzeDeck } from "@/utils/analyzeDeck";
+import { saveDeckCode } from "@/utils/myDecks";
 import { get } from "@/utils/request";
 import { redirect } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
@@ -103,6 +104,18 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   }, [getDeckData]);
 
   const { setOriginalDeckCards } = useAppContext();
+  const handleSaveDeck = () => {
+    const result = saveDeckCode(deckCode);
+    if (result.alreadySaved) {
+      alert(t("deck.saveAlready"));
+      return;
+    }
+    if (!result.saved) {
+      alert(t("deck.saveFailed"));
+      return;
+    }
+    alert(t("deck.saveSuccess"));
+  };
 
   return (
     <div className="container mx-auto p-4 ">
@@ -155,6 +168,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                   className="w-full"
                 >
                   {t("deck.copyUrl")}
+                </Button>
+                <Button onClick={handleSaveDeck} className="w-full">
+                  {t("deck.saveToMyDecks")}
                 </Button>
                 <Button
                   onClick={() => {
