@@ -11,7 +11,6 @@ import { useI18n } from "@/i18n/I18nProvider";
 export default function Home() {
   const [deckCode, setDeckCode] = useState("");
   const { t, locale } = useI18n();
-
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -4,9 +4,19 @@ import DeckBarChart from "@/components/deckBarChart";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAppContext } from "@/context/AppContext";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { analyzeDeck } from "@/utils/analyzeDeck";
+import { saveDeckCode } from "@/utils/myDecks";
 import { get } from "@/utils/request";
 import { redirect } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
@@ -22,6 +32,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [imageUrl, setImageUrl] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [saveName, setSaveName] = useState("");
+  const [saveError, setSaveError] = useState("");
   const { t } = useI18n();
 
   const generateCollage = useCallback(
@@ -103,6 +116,23 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   }, [getDeckData]);
 
   const { setOriginalDeckCards } = useAppContext();
+  const handleSaveDeck = () => {
+    if (!saveName.trim()) {
+      alert(t("deck.saveNameRequired"));
+      return;
+    }
+    const result = saveDeckCode(deckCode, saveName);
+    if (result.alreadySaved) {
+      setSaveError(t("deck.saveAlready"));
+      return;
+    }
+    if (!result.saved) {
+      alert(t("deck.saveFailed"));
+      return;
+    }
+    setSaveError("");
+    setIsSaveDialogOpen(false);
+  };
 
   return (
     <div className="container mx-auto p-4 ">
@@ -158,6 +188,16 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 </Button>
                 <Button
                   onClick={() => {
+                    setSaveName(deckCode);
+                    setSaveError("");
+                    setIsSaveDialogOpen(true);
+                  }}
+                  className="w-full"
+                >
+                  {t("deck.saveToMyDecks")}
+                </Button>
+                <Button
+                  onClick={() => {
                     window.open(imageUrl, "_blank");
                   }}
                   className="w-full"
@@ -200,6 +240,42 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
           </CardContent>
         </Card>
       )}
+      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("deck.saveDialogTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("deck.saveDialogDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label htmlFor="saveDeckName" className="text-sm font-medium">
+              {t("deck.saveDialogNameLabel")}
+            </label>
+            <Input
+              id="saveDeckName"
+              value={saveName}
+              onChange={(event) => setSaveName(event.target.value)}
+              placeholder={t("deck.saveDialogNamePlaceholder")}
+            />
+            {saveError && (
+              <p className="text-sm text-red-600">{saveError}</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsSaveDialogOpen(false)}
+            >
+              {t("deck.saveDialogCancel")}
+            </Button>
+            <Button type="button" onClick={handleSaveDeck}>
+              {t("deck.saveDialogSave")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
