@@ -32,6 +32,9 @@ export default function MyDeckPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editCode, setEditCode] = useState("");
   const [editName, setEditName] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteCode, setDeleteCode] = useState("");
+  const [deleteName, setDeleteName] = useState("");
 
   useEffect(() => {
     setSavedDecks(getSavedDecks());
@@ -53,6 +56,21 @@ export default function MyDeckPage() {
   const handleRemoveDeck = (code: string) => {
     const nextDecks = removeDeckCode(code);
     setSavedDecks(nextDecks);
+  };
+
+  const openDeleteDialog = (deck: SavedDeck) => {
+    setDeleteCode(deck.code);
+    setDeleteName(deck.name);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteCode) {
+      setIsDeleteDialogOpen(false);
+      return;
+    }
+    handleRemoveDeck(deleteCode);
+    setIsDeleteDialogOpen(false);
   };
 
   const openEditDialog = (deck: SavedDeck) => {
@@ -120,8 +138,8 @@ export default function MyDeckPage() {
                     </Button>
                     <Button
                       type="button"
-                      variant="secondary"
-                      onClick={() => handleRemoveDeck(deck.code)}
+                      variant="destructive"
+                      onClick={() => openDeleteDialog(deck)}
                     >
                       {t("myDeck.remove")}
                     </Button>
@@ -168,6 +186,30 @@ export default function MyDeckPage() {
             </Button>
             <Button type="button" onClick={handleUpdateName}>
               {t("myDeck.save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("myDeck.deleteTitle")}</DialogTitle>
+            <DialogDescription>{t("myDeck.deleteDescription")}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1">
+            <p className="text-sm font-medium">{deleteName}</p>
+            <p className="text-xs text-muted-foreground">{deleteCode}</p>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              {t("myDeck.deleteCancel")}
+            </Button>
+            <Button type="button" variant="destructive" onClick={handleConfirmDelete}>
+              {t("myDeck.deleteConfirm")}
             </Button>
           </DialogFooter>
         </DialogContent>
