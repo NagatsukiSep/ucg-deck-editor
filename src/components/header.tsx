@@ -38,6 +38,11 @@ export default function Header() {
               </Link>
             </li>
             <li>
+              <Link href="/new" className="text-black hover:underline">
+                {t("nav.newDeck")}
+              </Link>
+            </li>
+            <li>
               <Link href="/mydeck" className="text-black hover:underline">
                 {t("nav.myDecks")}
               </Link>
@@ -85,6 +90,13 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               {t("nav.top")}
+            </Link>
+            <Link
+              href="/new"
+              className="text-sm font-medium text-gray-900"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t("nav.newDeck")}
             </Link>
             <Link
               href="/mydeck"
