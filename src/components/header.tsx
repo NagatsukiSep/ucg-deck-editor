@@ -25,7 +25,7 @@ export default function Header() {
             width={154}
             height={77}
             priority
-            className="cursor-pointer"
+            className="cursor-pointer h-9 w-auto md:h-[77px]"
           />
         </Link>
 
