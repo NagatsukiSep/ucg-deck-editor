@@ -4,6 +4,15 @@ import DeckBarChart from "@/components/deckBarChart";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAppContext } from "@/context/AppContext";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { analyzeDeck } from "@/utils/analyzeDeck";
@@ -23,6 +32,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [imageUrl, setImageUrl] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [deckAnalysis, setDeckAnalysis] = useState<DeckAnalysis>({});
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [saveName, setSaveName] = useState("");
   const { t } = useI18n();
 
   const generateCollage = useCallback(
@@ -105,12 +116,11 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
 
   const { setOriginalDeckCards } = useAppContext();
   const handleSaveDeck = () => {
-    const name = window.prompt(t("deck.saveNamePrompt"), deckCode) ?? "";
-    if (!name.trim()) {
+    if (!saveName.trim()) {
       alert(t("deck.saveNameRequired"));
       return;
     }
-    const result = saveDeckCode(deckCode, name);
+    const result = saveDeckCode(deckCode, saveName);
     if (result.alreadySaved) {
       alert(t("deck.saveAlready"));
       return;
@@ -120,6 +130,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       return;
     }
     alert(t("deck.saveSuccess"));
+    setIsSaveDialogOpen(false);
   };
 
   return (
@@ -174,7 +185,13 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                 >
                   {t("deck.copyUrl")}
                 </Button>
-                <Button onClick={handleSaveDeck} className="w-full">
+                <Button
+                  onClick={() => {
+                    setSaveName(deckCode);
+                    setIsSaveDialogOpen(true);
+                  }}
+                  className="w-full"
+                >
                   {t("deck.saveToMyDecks")}
                 </Button>
                 <Button
@@ -221,6 +238,39 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
           </CardContent>
         </Card>
       )}
+      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("deck.saveDialogTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("deck.saveDialogDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label htmlFor="saveDeckName" className="text-sm font-medium">
+              {t("deck.saveDialogNameLabel")}
+            </label>
+            <Input
+              id="saveDeckName"
+              value={saveName}
+              onChange={(event) => setSaveName(event.target.value)}
+              placeholder={t("deck.saveDialogNamePlaceholder")}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsSaveDialogOpen(false)}
+            >
+              {t("deck.saveDialogCancel")}
+            </Button>
+            <Button type="button" onClick={handleSaveDeck}>
+              {t("deck.saveDialogSave")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

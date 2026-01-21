@@ -96,3 +96,17 @@ export const removeDeckCode = (code: string) => {
   persistDecks(nextDecks);
   return nextDecks;
 };
+
+export const updateDeckName = (code: string, name: string) => {
+  const normalized = code.trim();
+  const normalizedName = name.trim();
+  if (!normalized || !normalizedName) {
+    return getSavedDecks();
+  }
+
+  const nextDecks = getSavedDecks().map((deck) =>
+    deck.code === normalized ? { ...deck, name: normalizedName } : deck
+  );
+  persistDecks(nextDecks);
+  return nextDecks;
+};
