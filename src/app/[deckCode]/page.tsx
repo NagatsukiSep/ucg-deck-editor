@@ -105,7 +105,12 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
 
   const { setOriginalDeckCards } = useAppContext();
   const handleSaveDeck = () => {
-    const result = saveDeckCode(deckCode);
+    const name = window.prompt(t("deck.saveNamePrompt"), deckCode) ?? "";
+    if (!name.trim()) {
+      alert(t("deck.saveNameRequired"));
+      return;
+    }
+    const result = saveDeckCode(deckCode, name);
     if (result.alreadySaved) {
       alert(t("deck.saveAlready"));
       return;

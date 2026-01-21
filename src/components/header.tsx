@@ -35,6 +35,11 @@ export default function Header() {
                 {t("nav.top")}
               </Link>
             </li>
+            <li>
+              <Link href="/mydeck" className="text-black hover:underline">
+                {t("nav.myDecks")}
+              </Link>
+            </li>
           </ul>
           <div className="ml-auto flex items-center gap-2 text-xs font-medium text-gray-700">
             <span>{t("header.languageLabel")}:</span>

@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useI18n } from "@/i18n/I18nProvider";
-import { getSavedDecks, removeDeckCode, SavedDeck } from "@/utils/myDecks";
 
 export default function Home() {
   const [deckCode, setDeckCode] = useState("");
   const { t, locale } = useI18n();
-  const [savedDecks, setSavedDecks] = useState<SavedDeck[]>([]);
-
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,70 +62,8 @@ export default function Home() {
       );
   }, [t]);
 
-  useEffect(() => {
-    setSavedDecks(getSavedDecks());
-  }, []);
-
-  const sortedSavedDecks = useMemo(() => {
-    return [...savedDecks].sort(
-      (a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime()
-    );
-  }, [savedDecks]);
-
-  const handleRemoveDeck = (code: string) => {
-    const nextDecks = removeDeckCode(code);
-    setSavedDecks(nextDecks);
-  };
-
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <Card>
-        <CardHeader>
-          <h2 className="text-xl font-semibold">{t("home.myDecksTitle")}</h2>
-        </CardHeader>
-        <CardContent>
-          {sortedSavedDecks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t("home.myDecksEmpty")}
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {sortedSavedDecks.map((deck) => (
-                <div
-                  key={deck.code}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border rounded-md p-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{deck.code}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {t("home.myDecksSavedAt", {
-                        date: new Date(deck.savedAt).toLocaleString(),
-                      })}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => router.push(`/${deck.code}`)}
-                    >
-                      {t("home.myDecksOpen")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => handleRemoveDeck(deck.code)}
-                    >
-                      {t("home.myDecksRemove")}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold">

@@ -1,19 +1,41 @@
 export type SavedDeck = {
   code: string;
+  name: string;
   savedAt: string;
 };
 
 const STORAGE_KEY = "myDeckCodes";
 
-const isSavedDeck = (value: unknown): value is SavedDeck => {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "code" in value &&
-    "savedAt" in value &&
-    typeof (value as SavedDeck).code === "string" &&
-    typeof (value as SavedDeck).savedAt === "string"
-  );
+const normalizeSavedDeck = (value: unknown): SavedDeck | null => {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+
+  const record = value as Partial<SavedDeck> & {
+    code?: unknown;
+    name?: unknown;
+    savedAt?: unknown;
+  };
+
+  if (typeof record.code !== "string" || typeof record.savedAt !== "string") {
+    return null;
+  }
+
+  const code = record.code.trim();
+  if (!code) {
+    return null;
+  }
+
+  const name =
+    typeof record.name === "string" && record.name.trim().length > 0
+      ? record.name.trim()
+      : code;
+
+  return {
+    code,
+    name,
+    savedAt: record.savedAt,
+  };
 };
 
 export const getSavedDecks = (): SavedDeck[] => {
@@ -26,7 +48,9 @@ export const getSavedDecks = (): SavedDeck[] => {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isSavedDeck);
+    return parsed
+      .map((item) => normalizeSavedDeck(item))
+      .filter((item): item is SavedDeck => item !== null);
   } catch (error) {
     console.error("Failed to read saved decks:", error);
     return [];
@@ -40,9 +64,10 @@ const persistDecks = (decks: SavedDeck[]) => {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
 };
 
-export const saveDeckCode = (code: string) => {
+export const saveDeckCode = (code: string, name: string) => {
   const normalized = code.trim();
-  if (!normalized) {
+  const normalizedName = name.trim();
+  if (!normalized || !normalizedName) {
     return { saved: false, alreadySaved: false };
   }
 
@@ -53,7 +78,7 @@ export const saveDeckCode = (code: string) => {
   }
 
   const nextDecks: SavedDeck[] = [
-    { code: normalized, savedAt: new Date().toISOString() },
+    { code: normalized, name: normalizedName, savedAt: new Date().toISOString() },
     ...decks,
   ];
   persistDecks(nextDecks);
