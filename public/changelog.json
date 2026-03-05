@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026/03/05",
+    "message": {
+      "ja": "PWAに対応。",
+      "en": "Added PWA support.",
+      "ko": "PWA를 지원합니다."
+    }
+  },
+  {
     "date": "2026/01/21",
     "message": {
       "ja": "マイデッキ機能を追加。",
