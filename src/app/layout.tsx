@@ -24,8 +24,9 @@ export const metadata: Metadata = {
   applicationName: "Ultra Deck Builder",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/icon_origin.png",
+    apple: "/icon_origin.png",
+    shortcut: "/icon_origin.png",
   },
   appleWebApp: {
     capable: true,
