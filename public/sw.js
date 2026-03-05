@@ -1,5 +1,5 @@
-const CACHE_NAME = "ucg-deck-editor-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/favicon.ico"];
+const CACHE_NAME = "ucg-deck-editor-v2";
+const APP_SHELL = ["/", "/manifest.webmanifest", "/favicon.ico", "/icon_origin.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
