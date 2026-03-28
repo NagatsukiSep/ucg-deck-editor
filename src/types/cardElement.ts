@@ -18,6 +18,7 @@ export const ultraCharacter: OptionEntry[] = [
   { value: "ジード", labelKey: "character.ultra.geed" },
   { value: "ゼット", labelKey: "character.ultra.z" },
   { value: "ゼロ", labelKey: "character.ultra.zero" },
+  { value: "タイガ", labelKey: "character.ultra.taiga" },
   { value: "ダイナ", labelKey: "character.ultra.dyna" },
   { value: "ティガ", labelKey: "character.ultra.tiga" },
   { value: "デッカー", labelKey: "character.ultra.decker" },
