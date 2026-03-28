@@ -39,9 +39,13 @@ export const ultraMechaCharacter: OptionEntry[] = [
 ];
 
 export const kaijuCharacter: OptionEntry[] = [
+  { value: "カルミラ", labelKey: "character.kaiju.carmeara" },
   { value: "ギルアーク", labelKey: "character.kaiju.gilArc" },
   { value: "ジャグラス ジャグラー", labelKey: "character.kaiju.jugglusJuggler" },
+  { value: "ゼットン", labelKey: "character.kaiju.zetton" },
+  { value: "トリガーダーク", labelKey: "character.kaiju.triggerDark" },
   { value: "ベリアル", labelKey: "character.kaiju.belial" },
+  { value: "メフィラス星人", labelKey: "character.kaiju.mephilas" },
 ];
 
 export const cardTypes: Array<{ value: string; labelKey: TranslationKey }> = [
