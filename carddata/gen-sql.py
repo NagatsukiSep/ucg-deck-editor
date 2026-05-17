@@ -1,5 +1,8 @@
+import argparse
 import json
 import os
+import sys
+import time
 import requests
 
 
@@ -10,19 +13,69 @@ import requests
 # # JSONデータをPythonの辞書に変換
 # data = json.loads(data_json)
 
-# JSONデータの取得（APIから直接）
-page = input("page number:")
-if not page.isdigit():
-    print("Invalid page number. Please enter a numeric value.")
-    exit(1)
-is_promo = input("is promo? (y/n):")
-if is_promo.lower() == "y":
-    promo_query = "&card_bundle_id=1"
-else:
-    promo_query = ""
-url = f"https://api.ultraman-cardgame.com/api/v1/jp/cards?page={page}&per_page=100{promo_query}"
-response = requests.get(url)
-data = response.json()
+def parse_args():
+    parser = argparse.ArgumentParser(description="Generate SQL files for UCG cards.")
+    parser.add_argument("--page", type=int, required=True, help="Positive integer page number.")
+    parser.add_argument(
+        "--promo",
+        action="store_true",
+        help="Fetch promo cards only.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="output",
+        help="Directory to write generated SQL files into.",
+    )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=100,
+        help="Number of INSERT statements per output file.",
+    )
+    parser.add_argument(
+        "--retries",
+        type=int,
+        default=3,
+        help="Number of retries for the remote card API.",
+    )
+    parser.add_argument(
+        "--retry-delay",
+        type=float,
+        default=2.0,
+        help="Seconds to wait between retries.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=30.0,
+        help="HTTP timeout in seconds for the remote card API.",
+    )
+    args = parser.parse_args()
+    if args.page < 1:
+        raise ValueError("page must be a positive integer.")
+    return args
+
+
+def fetch_cards(page, promo_only, retries, retry_delay, timeout):
+    promo_query = "&card_bundle_id=1" if promo_only else ""
+    url = f"https://api.ultraman-cardgame.com/api/v1/jp/cards?page={page}&per_page=100{promo_query}"
+
+    last_error = None
+    for attempt in range(1, retries + 1):
+        try:
+            response = requests.get(url, timeout=timeout)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as exc:
+            last_error = exc
+            if attempt == retries:
+                break
+            print(
+                f"Request failed on attempt {attempt}/{retries}. Retrying in {retry_delay} seconds..."
+            )
+            time.sleep(retry_delay)
+
+    raise RuntimeError(f"Failed to fetch cards after {retries} attempts: {last_error}")
 
 
 # 特殊文字をエスケープする関数
@@ -111,6 +164,22 @@ def split_and_save_sql(inserts, chunk_size=100, output_dir="output"):
         print(f"File {file_name} created with {len(chunk)} statements.")
 
 
-# メイン処理
-inserts = generate_sql(data)
-split_and_save_sql(inserts, chunk_size=100)
+def main():
+    args = parse_args()
+    data = fetch_cards(
+        page=args.page,
+        promo_only=args.promo,
+        retries=args.retries,
+        retry_delay=args.retry_delay,
+        timeout=args.timeout,
+    )
+    inserts = generate_sql(data)
+    split_and_save_sql(inserts, chunk_size=args.chunk_size, output_dir=args.output_dir)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(1)
