@@ -6,6 +6,7 @@ export type CardDetail = {
   id: string;
   detail_name: string;
   image_url: string;
+  thumbnail_image_url?: string;
   level?: number;
   character_name?: string;
   feature_value?: string;
