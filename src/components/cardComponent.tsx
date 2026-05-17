@@ -27,6 +27,7 @@ export const CardComponent = ({ card, addCard }: Props) => {
       <div className="w-full aspect-[143/200]">
         <ImageWithSkeleton
           src={card.image_url}
+          fallbackSrc={card.thumbnail_image_url}
           alt={card.detail_name}
           onClick={handleClick}
         />

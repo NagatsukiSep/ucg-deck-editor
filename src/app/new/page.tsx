@@ -239,6 +239,7 @@ export default function Home() {
                     <div className="relative w-full aspect-[143/200] p-2">
                       <ImageWithSkeleton
                         src={card.image_url}
+                        fallbackSrc={card.thumbnail_image_url}
                         alt={card.detail_name}
                       />
                       {!isEdge(card.id, "up", deckCards) && (
