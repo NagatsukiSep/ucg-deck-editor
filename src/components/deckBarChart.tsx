@@ -108,8 +108,13 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   };
 
   return (
-    <div className="w-full" style={{ height: `${chartHeight}px` }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="w-full min-w-0" style={{ height: `${chartHeight}px` }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={0}
+        minHeight={chartHeight}
+      >
         <BarChart
           layout="vertical"
           data={chartData}

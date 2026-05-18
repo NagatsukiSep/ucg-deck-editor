@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ZoomIn } from "lucide-react";
 import {
@@ -19,6 +19,7 @@ interface ImageWithSkeletonProps {
   fallbackSrc?: string;
   alt: string;
   onClick?: () => void;
+  topLeftOverlay?: ReactNode;
 }
 
 const PROXIED_IMAGE_HOSTS = new Set([
@@ -44,22 +45,63 @@ export const ImageWithSkeleton = ({
   fallbackSrc,
   alt,
   onClick,
+  topLeftOverlay,
 }: ImageWithSkeletonProps) => {
   const [loaded, setLoaded] = useState(false);
-  const [hasTriedFallback, setHasTriedFallback] = useState(false);
   const { t } = useI18n();
-  const activeSrc = hasTriedFallback && fallbackSrc ? fallbackSrc : src;
-  const resolvedSrc = buildImageSrc(activeSrc);
+  const primarySrc = buildImageSrc(src);
+  const resolvedFallbackSrc =
+    fallbackSrc && fallbackSrc !== src ? buildImageSrc(fallbackSrc) : undefined;
+  const [displaySrc, setDisplaySrc] = useState(primarySrc);
 
   useEffect(() => {
     setLoaded(false);
-    setHasTriedFallback(false);
-  }, [src, fallbackSrc]);
+    setDisplaySrc(primarySrc);
+  }, [primarySrc]);
+
+  useEffect(() => {
+    let active = true;
+    const image = new window.Image();
+
+    const handleLoad = () => {
+      if (active) {
+        setLoaded(true);
+      }
+    };
+
+    const handleError = () => {
+      if (!active) {
+        return;
+      }
+
+      if (displaySrc === primarySrc && resolvedFallbackSrc) {
+        setLoaded(false);
+        setDisplaySrc(resolvedFallbackSrc);
+        return;
+      }
+
+      setLoaded(true);
+    };
+
+    image.onload = handleLoad;
+    image.onerror = handleError;
+    image.src = displaySrc;
+
+    if (image.complete) {
+      handleLoad();
+    }
+
+    return () => {
+      active = false;
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [displaySrc, primarySrc, resolvedFallbackSrc]);
 
   const handleError = () => {
-    if (!hasTriedFallback && fallbackSrc && fallbackSrc !== src) {
+    if (displaySrc === primarySrc && resolvedFallbackSrc) {
       setLoaded(false);
-      setHasTriedFallback(true);
+      setDisplaySrc(resolvedFallbackSrc);
       return;
     }
 
@@ -69,8 +111,7 @@ export const ImageWithSkeleton = ({
   return (
     <div className="relative w-full h-full flex items-center justify-center">
       <Image
-        key={resolvedSrc}
-        src={resolvedSrc}
+        src={displaySrc}
         alt={alt}
         onLoad={() => setLoaded(true)}
         onError={handleError}
@@ -81,6 +122,7 @@ export const ImageWithSkeleton = ({
         }`}
         onClick={onClick}
       />
+      {topLeftOverlay}
       <Dialog>
         <DialogTrigger asChild>
           <button
@@ -97,8 +139,7 @@ export const ImageWithSkeleton = ({
             <DialogDescription>{alt}</DialogDescription>
           </DialogHeader>
           <Image
-            key={`zoom-${resolvedSrc}`}
-            src={resolvedSrc}
+            src={displaySrc}
             alt={alt}
             width={500}
             height={700}

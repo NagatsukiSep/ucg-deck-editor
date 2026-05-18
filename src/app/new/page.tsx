@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Images, Search } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { get, post } from "@/utils/request";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +24,23 @@ import DeckBarChart from "@/components/deckBarChart";
 import { analyzeDeck } from "@/utils/analyzeDeck";
 import { Input } from "@/components/ui/input";
 import { autoSortDeck, changeIndex, isEdge } from "@/utils/deckOrder";
+import {
+  buildArtworkGroupKey,
+  fetchArtworkVariants as fetchArtworkVariantsFromApi,
+} from "@/utils/cardVariants";
+import {
+  resolveBaseCardKey,
+  serializeDeckCards,
+  withBaseCardKey,
+} from "@/utils/deckCardIdentity";
 import { useI18n } from "@/i18n/I18nProvider";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type UltraHeroSearchQuery = {
   characterName: string;
@@ -35,6 +51,37 @@ type UltraHeroSearchQuery = {
 };
 
 const perPage = 20;
+const groupedSearchFetchLimit = 2000;
+
+const buildGroupedCardKey = (card: CardDetail) => {
+  const number = resolveBaseCardKey(card);
+  if (!number) {
+    return card.id;
+  }
+  return number;
+};
+
+const groupCardsByNumberAndBranch = (cards: CardDetail[]) => {
+  const grouped = new Map<string, CardDetail>();
+
+  for (const card of cards) {
+    const key = buildGroupedCardKey(card);
+    const existing = grouped.get(key);
+    if (!existing) {
+      grouped.set(key, card);
+      continue;
+    }
+
+    const existingHasBranch = Boolean(existing.branch?.trim());
+    const currentHasBranch = Boolean(card.branch?.trim());
+
+    if (existingHasBranch && !currentHasBranch) {
+      grouped.set(key, card);
+    }
+  }
+
+  return [...grouped.values()];
+};
 
 export default function Home() {
   const { originalDeckCards, setOriginalDeckCards } = useAppContext();
@@ -44,10 +91,10 @@ export default function Home() {
 
   useEffect(() => {
     if (originalDeckCards.length > 0) {
-      setDeckCards(originalDeckCards);
+      setDeckCards(originalDeckCards.map(withBaseCardKey));
       setCardCount(50);
       setOriginalDeckCards([]);
-      const analysis = analyzeDeck(originalDeckCards);
+      const analysis = analyzeDeck(originalDeckCards.map(withBaseCardKey));
       setDeckAnalysis(analysis);
     }
   }, [originalDeckCards, setOriginalDeckCards]);
@@ -65,7 +112,7 @@ export default function Home() {
       const index = prev.findIndex((c) => c.id === card.id);
       if (index === -1 && delta > 0) {
         // 新規追加
-        return [...prev, { ...card, count: 1 }];
+        return [...prev, { ...withBaseCardKey(card), count: 1 }];
       }
 
       if (index !== -1) {
@@ -115,47 +162,210 @@ export default function Home() {
   const [searchedCardsCount, setSearchedCardsCount] = useState(0);
   const [searchedCardsPage, setSearchedCardsPage] = useState(0);
   const [searchedCards, setSearchedCards] = useState<CardDetail[]>([]);
+  const [groupedSearchCards, setGroupedSearchCards] = useState<CardDetail[]>([]);
+  const [groupSameCards, setGroupSameCards] = useState(false);
   const [activePane, setActivePane] = useState<"deck" | "search">("deck");
+  const [artModalCard, setArtModalCard] = useState<CardDetail | null>(null);
+  const [artVariantCards, setArtVariantCards] = useState<CardDetail[]>([]);
+  const [isArtModalLoading, setIsArtModalLoading] = useState(false);
+  const [artModalMode, setArtModalMode] = useState<"select" | "view">("select");
+  const [, setArtVariantCache] = useState<Record<string, CardDetail[]>>({});
+  const artVariantCacheRef = useRef<Record<string, CardDetail[]>>({});
+  const artworkRequestRef = useRef<Record<string, Promise<CardDetail[]>>>({});
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const buildSearchPath = (offset: number, limit: number) =>
+    `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&keyword=${searchQuery.keyword}&per_page=${limit}&offset=${offset}`;
+
+  const getCachedArtworkVariants = useCallback(
+    (card: CardDetail) => artVariantCacheRef.current[buildArtworkGroupKey(card)],
+    []
+  );
+
+  const runSearch = async (page: number, grouped: boolean) => {
     try {
-      setSearchedCardsPage(0);
+      setSearchedCardsPage(page);
+
+      if (grouped) {
+        const cards = (await get<CardDetail>(buildSearchPath(0, groupedSearchFetchLimit))).map(
+          withBaseCardKey
+        );
+        const dedupedCards = groupCardsByNumberAndBranch(cards);
+        setGroupedSearchCards(dedupedCards);
+        setSearchedCards(
+          dedupedCards.slice(page * perPage, (page + 1) * perPage)
+        );
+        setSearchedCardsCount(dedupedCards.length);
+        return;
+      }
+
+      setGroupedSearchCards([]);
       setSearchedCards(
-        await get(
-          `/search?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&keyword=${searchQuery.keyword}&per_page=${perPage}&offset=0`
-        )
+        (await get<CardDetail>(buildSearchPath(page * perPage, perPage))).map(withBaseCardKey)
       );
       const data = await get<{ total_count: number }>(
         `/search_count?feature_value=${searchQueryMap[selectedGenre]}&character_name=${searchQuery.characterName}&level=${searchQuery.level}&type=${searchQuery.type}&round=${searchQuery.round}&keyword=${searchQuery.keyword}`
       );
-      setSearchedCardsCount(data[0].total_count);
+      setSearchedCardsCount(data[0]?.total_count ?? 0);
     } catch (error) {
       console.error("Error fetching searched ultra hero list:", error);
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runSearch(0, groupSameCards);
   };
 
   const movePage = async (page: number) => {
     if (page < 0 || page > searchedCardsCount / perPage) {
       return;
     }
-    try {
+
+    if (groupSameCards) {
       setSearchedCardsPage(page);
-      setSearchedCards(
-        await get(
-          `/search?feature_value=${
-            searchQueryMap[selectedGenre]
-          }&character_name=${searchQuery.characterName}&level=${
-            searchQuery.level
-          }&type=${searchQuery.type}&round=${
-            searchQuery.round
-          }&per_page=${perPage}&offset=${page * perPage}`
-        )
-      );
+      setSearchedCards(groupedSearchCards.slice(page * perPage, (page + 1) * perPage));
+      return;
+    }
+
+    await runSearch(page, false);
+  };
+
+  const changeDeckCardArtwork = (targetCardId: string, nextCard: CardDetail) => {
+    setDeckCards((prev) => {
+      const targetIndex = prev.findIndex((card) => card.id === targetCardId);
+      if (targetIndex === -1) {
+        return prev;
+      }
+
+      const targetCard = prev[targetIndex];
+      if (targetCard.id === nextCard.id) {
+        return prev;
+      }
+
+      const nextCount = targetCard.count ?? 0;
+      const baseCardKey = resolveBaseCardKey(targetCard);
+      const remainingCards = prev.filter((card) => card.id !== targetCardId);
+      const duplicateIndex = remainingCards.findIndex((card) => card.id === nextCard.id);
+
+      if (duplicateIndex !== -1) {
+        const mergedCards = [...remainingCards];
+        const duplicateCard = mergedCards[duplicateIndex];
+        mergedCards[duplicateIndex] = {
+          ...duplicateCard,
+          count: (duplicateCard.count ?? 0) + nextCount,
+        };
+        return mergedCards;
+      }
+
+      const replacementCard = {
+        ...withBaseCardKey(nextCard),
+        base_card_key: baseCardKey,
+        count: nextCount,
+      };
+      const updatedCards = [...remainingCards];
+      updatedCards.splice(Math.min(targetIndex, updatedCards.length), 0, replacementCard);
+      return updatedCards;
+    });
+  };
+
+  const fetchArtworkVariants = useCallback(async (card: CardDetail) => {
+    const cacheKey = buildArtworkGroupKey(card);
+    const cached = artVariantCacheRef.current[cacheKey];
+    if (cached) {
+      return cached;
+    }
+
+    const inflight = artworkRequestRef.current[cacheKey];
+    if (inflight) {
+      return inflight;
+    }
+
+    const request = (async () => {
+      const variants = await fetchArtworkVariantsFromApi(card);
+
+      artVariantCacheRef.current = {
+        ...artVariantCacheRef.current,
+        [cacheKey]: variants,
+      };
+      setArtVariantCache((prev) => ({
+        ...prev,
+        [cacheKey]: variants,
+      }));
+
+      return variants;
+    })();
+
+    artworkRequestRef.current[cacheKey] = request;
+
+    try {
+      return await request;
+    } finally {
+      delete artworkRequestRef.current[cacheKey];
+    }
+  }, []);
+
+  const openArtworkModal = async (card: CardDetail, mode: "select" | "view") => {
+    setArtModalCard(card);
+    setArtModalMode(mode);
+    setArtVariantCards(getCachedArtworkVariants(card) ?? []);
+    setIsArtModalLoading(true);
+
+    try {
+      const variants = await fetchArtworkVariants(card);
+      setArtVariantCards(variants);
     } catch (error) {
-      console.error("Error fetching searched ultra hero list:", error);
+      console.error("Error fetching artwork candidates:", error);
+      setArtVariantCards([]);
+    } finally {
+      setIsArtModalLoading(false);
     }
   };
+
+  useEffect(() => {
+    const uniqueDeckCards = Array.from(
+      new Map(deckCards.map((card) => [buildArtworkGroupKey(card), card])).values()
+    );
+
+    if (uniqueDeckCards.length === 0) {
+      return;
+    }
+
+    void Promise.all(
+      uniqueDeckCards.map(async (card) => {
+        if (getCachedArtworkVariants(card)) {
+          return;
+        }
+        try {
+          await fetchArtworkVariants(card);
+        } catch (error) {
+          console.error("Error preloading artwork candidates:", error);
+        }
+      })
+    );
+  }, [deckCards, fetchArtworkVariants, getCachedArtworkVariants]);
+
+  useEffect(() => {
+    const uniqueSearchedCards = Array.from(
+      new Map(searchedCards.map((card) => [buildArtworkGroupKey(card), card])).values()
+    );
+
+    if (uniqueSearchedCards.length === 0) {
+      return;
+    }
+
+    void Promise.all(
+      uniqueSearchedCards.map(async (card) => {
+        if (getCachedArtworkVariants(card)) {
+          return;
+        }
+        try {
+          await fetchArtworkVariants(card);
+        } catch (error) {
+          console.error("Error preloading search artwork candidates:", error);
+        }
+      })
+    );
+  }, [searchedCards, fetchArtworkVariants, getCachedArtworkVariants]);
 
   const router = useRouter();
 
@@ -165,7 +375,7 @@ export default function Home() {
       return;
     }
     const data = {
-      deck_cards: JSON.stringify(deckCards),
+      deck_cards: JSON.stringify(serializeDeckCards(deckCards)),
     };
     const response = await post<{ deck_code: string }, typeof data>(
       "new_deck",
@@ -237,11 +447,30 @@ export default function Home() {
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-full">
                     <div className="relative w-full aspect-[143/200] p-2">
+                      {(() => {
+                        const variants = getCachedArtworkVariants(card);
+                        const hasAlternateArts = (variants?.length ?? 0) > 1;
+
+                        return (
                       <ImageWithSkeleton
                         src={card.image_url}
                         fallbackSrc={card.thumbnail_image_url}
                         alt={card.detail_name}
+                        topLeftOverlay={hasAlternateArts ? (
+                          <button
+                            type="button"
+                            className="absolute top-6 left-1 z-10 flex items-center justify-center w-6 h-6 p-0 text-black rounded-full bg-white/40"
+                            title={t("image.changeArt")}
+                            onClick={() => {
+                              void openArtworkModal(card, "select");
+                            }}
+                          >
+                            <Images className="w-5 h-5" />
+                          </button>
+                        ) : undefined}
                       />
+                        );
+                      })()}
                       {!isEdge(card.id, "up", deckCards) && (
                         <div className="absolute bottom-1/2 translate-y-1/2 left-0 transform mb-2 p-2">
                           <div className="text-white bg-[#171717] rounded-sm py-1">
@@ -472,7 +701,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="w-full px-4 flex">
+            <div className="flex w-full gap-2 px-4">
               <Input
                 type="text"
                 placeholder={t("new.search.keywordPlaceholder")}
@@ -482,6 +711,20 @@ export default function Home() {
                 }
                 className="flex-grow"
               />
+              <Button
+                type="button"
+                variant={groupSameCards ? "default" : "outline"}
+                onClick={async () => {
+                  const nextValue = !groupSameCards;
+                  setGroupSameCards(nextValue);
+                  if (searchedCards.length > 0 || searchedCardsCount > 0) {
+                    await runSearch(0, nextValue);
+                  }
+                }}
+                className="shrink-0"
+              >
+                {t("new.search.groupSameCards")}
+              </Button>
             </div>
 
             <Button
@@ -502,14 +745,32 @@ export default function Home() {
 
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {searchedCards.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3 sm:gap-4 m-4 mx-auto">
-                {searchedCards.map((card) => (
-                  <CardComponent
-                    key={card.id}
-                    card={card}
-                    addCard={(card, delta) => updateCardCount(card, delta)}
-                  />
-                ))}
+              <div className="m-4 mx-auto grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-[repeat(auto-fill,120px)] md:justify-start">
+                {searchedCards.map((card) => {
+                  const variants = getCachedArtworkVariants(card);
+                  const hasAlternateArts = (variants?.length ?? 0) > 1;
+
+                  return (
+                    <CardComponent
+                      key={card.id}
+                      card={card}
+                      addCard={(card, delta) => updateCardCount(card, delta)}
+                      topLeftOverlay={hasAlternateArts ? (
+                        <button
+                          type="button"
+                          className="absolute top-6 left-1 z-10 flex items-center justify-center w-6 h-6 p-0 text-black rounded-full bg-white/40"
+                          title={t("image.viewArts")}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void openArtworkModal(card, "view");
+                          }}
+                        >
+                          <Images className="w-5 h-5" />
+                        </button>
+                      ) : undefined}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <p>{t("new.search.noResults")}</p>
@@ -517,6 +778,93 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
+      <Dialog
+        open={artModalCard !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setArtModalCard(null);
+            setArtVariantCards([]);
+            setIsArtModalLoading(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {artModalMode === "select" ? t("image.changeArt") : t("image.viewArts")}
+            </DialogTitle>
+            <DialogDescription>
+              {artModalCard?.detail_name ??
+                (artModalMode === "select"
+                  ? t("image.changeArtDescription")
+                  : t("image.viewArtsDescription"))}
+            </DialogDescription>
+          </DialogHeader>
+          {isArtModalLoading ? (
+            <p>{t("image.loadingAlternates")}</p>
+          ) : artVariantCards.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {artVariantCards.map((variant) => (
+                <div
+                  key={variant.id}
+                  role={artModalMode === "select" ? "button" : undefined}
+                  tabIndex={artModalMode === "select" ? 0 : undefined}
+                  className={`rounded-md border p-2 text-left transition-colors ${
+                    artModalCard?.id === variant.id
+                      ? "border-black bg-muted"
+                      : "border-border"
+                  }`}
+                  onClick={() => {
+                    if (artModalMode !== "select") {
+                      return;
+                    }
+                    if (!artModalCard) {
+                      return;
+                    }
+                    changeDeckCardArtwork(artModalCard.id, variant);
+                    setArtModalCard(null);
+                    setArtVariantCards([]);
+                  }}
+                  onKeyDown={(event) => {
+                    if (artModalMode !== "select") {
+                      return;
+                    }
+                    if (event.key !== "Enter" && event.key !== " ") {
+                      return;
+                    }
+
+                    event.preventDefault();
+                    if (!artModalCard) {
+                      return;
+                    }
+                    changeDeckCardArtwork(artModalCard.id, variant);
+                    setArtModalCard(null);
+                    setArtVariantCards([]);
+                  }}
+                >
+                  <div className="w-full aspect-[143/200]">
+                    <ImageWithSkeleton
+                      src={variant.image_url}
+                      fallbackSrc={variant.thumbnail_image_url}
+                      alt={variant.detail_name}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs font-medium">
+                    {variant.rarity_description || variant.number || variant.id}
+                  </p>
+                  {variant.number && (
+                    <p className="text-[10px] text-muted-foreground">
+                      {variant.number}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>{t("image.noAlternateArts")}</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

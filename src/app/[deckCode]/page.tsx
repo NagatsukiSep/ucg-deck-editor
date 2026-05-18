@@ -16,11 +16,20 @@ import {
 import { useAppContext } from "@/context/AppContext";
 import { CardDetail, DeckAnalysis } from "@/types/deckCard";
 import { analyzeDeck } from "@/utils/analyzeDeck";
+import {
+  buildArtworkGroupKey,
+  fetchArtworkVariants as fetchArtworkVariantsFromApi,
+} from "@/utils/cardVariants";
+import {
+  parseStoredDeckCards,
+  withBaseCardKey,
+} from "@/utils/deckCardIdentity";
 import { saveDeckCode } from "@/utils/myDecks";
 import { get } from "@/utils/request";
 import { redirect } from "next/navigation";
 import { useEffect, useState, use, useRef, useCallback } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
+import { Images } from "lucide-react";
 
 export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const params = use(props.params);
@@ -35,6 +44,12 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [saveError, setSaveError] = useState("");
+  const [artModalCard, setArtModalCard] = useState<CardDetail | null>(null);
+  const [artVariantCards, setArtVariantCards] = useState<CardDetail[]>([]);
+  const [isArtModalLoading, setIsArtModalLoading] = useState(false);
+  const [, setArtVariantCache] = useState<Record<string, CardDetail[]>>({});
+  const artVariantCacheRef = useRef<Record<string, CardDetail[]>>({});
+  const artworkRequestRef = useRef<Record<string, Promise<CardDetail[]>>>({});
   const { t } = useI18n();
 
   const generateCollage = useCallback(
@@ -82,18 +97,21 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       }
 
       // deck_cards をパースして ID一覧と count マップ作成
-      const parsed: { id: string; count: number }[] = JSON.parse(
-        data[0].deck_cards
-      );
+      const parsed = parseStoredDeckCards(data[0].deck_cards);
+      const storedCardsById = new Map(parsed.map((card) => [card.id, card]));
       const idToCount = new Map(parsed.map((card) => [card.id, card.count]));
       const cardIds = [...idToCount.keys()];
       const cardDetails = await get<CardDetail>(
         `/card_detail?ids=${cardIds.join(",")}`
       );
-      const enrichedCards: CardDetail[] = cardDetails.map((card) => ({
-        ...card,
-        count: idToCount.get(card.id) ?? 0,
-      }));
+      const enrichedCards: CardDetail[] = cardDetails.map((card) => {
+        const storedCard = storedCardsById.get(card.id);
+        return withBaseCardKey({
+          ...card,
+          base_card_key: storedCard?.base_card_key,
+          count: idToCount.get(card.id) ?? 0,
+        });
+      });
 
       // state に保存
       setDeckCards(enrichedCards);
@@ -134,6 +152,89 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
     setIsSaveDialogOpen(false);
   };
 
+  const getCachedArtworkVariants = useCallback(
+    (card: CardDetail) => artVariantCacheRef.current[buildArtworkGroupKey(card)],
+    []
+  );
+
+  const fetchArtworkVariants = useCallback(
+    async (card: CardDetail) => {
+      const cacheKey = buildArtworkGroupKey(card);
+      const cached = artVariantCacheRef.current[cacheKey];
+      if (cached) {
+        return cached;
+      }
+
+      const inflight = artworkRequestRef.current[cacheKey];
+      if (inflight) {
+        return inflight;
+      }
+
+      const request = (async () => {
+        const variants = await fetchArtworkVariantsFromApi(card);
+
+        artVariantCacheRef.current = {
+          ...artVariantCacheRef.current,
+          [cacheKey]: variants,
+        };
+        setArtVariantCache((prev) => ({
+          ...prev,
+          [cacheKey]: variants,
+        }));
+
+        return variants;
+      })();
+
+      artworkRequestRef.current[cacheKey] = request;
+
+      try {
+        return await request;
+      } finally {
+        delete artworkRequestRef.current[cacheKey];
+      }
+    },
+    []
+  );
+
+  const openArtworkModal = async (card: CardDetail) => {
+    setArtModalCard(card);
+    setArtVariantCards(getCachedArtworkVariants(card) ?? []);
+    setIsArtModalLoading(true);
+
+    try {
+      const variants = await fetchArtworkVariants(card);
+      setArtVariantCards(variants);
+    } catch (error) {
+      console.error("Error fetching artwork candidates:", error);
+      setArtVariantCards([]);
+    } finally {
+      setIsArtModalLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const uniqueDeckCards = Array.from(
+      new Map(deckCards.map((card) => [buildArtworkGroupKey(card), card])).values()
+    );
+
+    if (uniqueDeckCards.length === 0) {
+      return;
+    }
+
+    void Promise.all(
+      uniqueDeckCards.map(async (card) => {
+        if (getCachedArtworkVariants(card)) {
+          return;
+        }
+        try {
+          await fetchArtworkVariants(card);
+        } catch (error) {
+          console.error("Error preloading artwork candidates:", error);
+        }
+      })
+    );
+  }, [deckCards, fetchArtworkVariants, getCachedArtworkVariants]);
+
   return (
     <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-bold mb-4">{t("deck.title")}</h1>
@@ -161,11 +262,11 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-              <div className="w-full lg:w-1/2">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+              <div className="w-full min-w-0 lg:w-1/2">
                 <DeckBarChart analysis={deckAnalysis} />
               </div>
-              <div className="w-full lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid w-full grid-cols-1 gap-2 min-w-0 sm:grid-cols-2 lg:w-1/2">
                 <Button
                   onClick={() => {
                     navigator.clipboard.writeText(deckCode);
@@ -224,11 +325,25 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-full">
-                    <div className="relative w-full p-2">
+                    <div className="relative w-full aspect-[143/200] p-2">
                       <ImageWithSkeleton
                         src={card.image_url}
                         fallbackSrc={card.thumbnail_image_url}
                         alt={card.detail_name}
+                        topLeftOverlay={
+                          (getCachedArtworkVariants(card)?.length ?? 0) > 1 ? (
+                            <button
+                              type="button"
+                              className="absolute top-6 left-1 z-10 flex items-center justify-center w-6 h-6 p-0 text-black rounded-full bg-white/40"
+                              title={t("image.viewArts")}
+                              onClick={() => {
+                                void openArtworkModal(card);
+                              }}
+                            >
+                              <Images className="w-5 h-5" />
+                            </button>
+                          ) : undefined
+                        }
                       />
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-[#171717] text-center rounded-sm px-2 py-1 mb-2 w-8">
                         <div className="text-white">{card.count}</div>
@@ -275,6 +390,59 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               {t("deck.saveDialogSave")}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={Boolean(artModalCard)}
+        onOpenChange={(open) => {
+          if (open) {
+            return;
+          }
+          setArtModalCard(null);
+          setArtVariantCards([]);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("image.viewArts")}</DialogTitle>
+            <DialogDescription>
+              {artModalCard?.detail_name ?? t("image.viewArtsDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          {isArtModalLoading ? (
+            <p>{t("image.loadingAlternates")}</p>
+          ) : artVariantCards.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {artVariantCards.map((variant) => (
+                <div
+                  key={variant.id}
+                  className={`rounded-md border p-2 text-left transition-colors ${
+                    artModalCard?.id === variant.id
+                      ? "border-black bg-muted"
+                      : "border-border"
+                  }`}
+                >
+                  <div className="w-full aspect-[143/200]">
+                    <ImageWithSkeleton
+                      src={variant.image_url}
+                      fallbackSrc={variant.thumbnail_image_url}
+                      alt={variant.detail_name}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs font-medium">
+                    {variant.rarity_description || variant.number || variant.id}
+                  </p>
+                  {variant.number && (
+                    <p className="text-[10px] text-muted-foreground">
+                      {variant.number}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>{t("image.noAlternateArts")}</p>
+          )}
         </DialogContent>
       </Dialog>
     </div>

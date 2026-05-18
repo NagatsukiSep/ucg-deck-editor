@@ -18,6 +18,9 @@ interface GenerateCollageRequest extends NextApiRequest {
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
+const IMAGE_FETCH_RETRIES = 3;
+const IMAGE_FETCH_RETRY_DELAY_MS = 250;
+const IMAGE_FETCH_CONCURRENCY = 4;
 
 function cardsPerColumn(cardCount: number): number {
   if (cardCount <= 4)
@@ -71,10 +74,39 @@ export default async function handler(
     const row = Math.ceil(images.length / cardsPerColumn(images.length));
 
     // URLまたはローカルパスから画像を取得してリサイズ
+    const sleep = (ms: number) =>
+      new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
+
+    const fetchRemoteImageBuffer = async (imagePath: string): Promise<Buffer> => {
+      let lastError: unknown;
+
+      for (let attempt = 1; attempt <= IMAGE_FETCH_RETRIES; attempt += 1) {
+        try {
+          const response = await axios.get<ArrayBuffer>(imagePath, {
+            responseType: "arraybuffer",
+            timeout: 10000,
+          });
+          return Buffer.from(response.data);
+        } catch (error) {
+          lastError = error;
+
+          if (attempt === IMAGE_FETCH_RETRIES) {
+            break;
+          }
+
+          await sleep(IMAGE_FETCH_RETRY_DELAY_MS * attempt);
+        }
+      }
+
+      throw lastError;
+    };
+
     const fetchImage = async (imagePath: string, isScene: boolean): Promise<Buffer> => {
       if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-        const response = await axios.get(imagePath, { responseType: "arraybuffer" });
-        return sharp(Buffer.from(response.data))
+        const remoteBuffer = await fetchRemoteImageBuffer(imagePath);
+        return sharp(remoteBuffer)
           .rotate(isScene ? 90 : 0) // シーンカードは90度回転
           .resize(CARD_WIDTH, CARD_HEIGHT)
           .toBuffer();
@@ -86,8 +118,7 @@ export default async function handler(
     const COUNT_WIDTH = 32;
 
     // カード画像と枚数のテキストを重ねて作成
-    const cardWithText = await Promise.all(
-      images.map(async ({ imagePath, count, isScene }) => {
+    const buildCardWithText = async ({ imagePath, count, isScene }: ImageInput) => {
         const cardImage = await fetchImage(imagePath, isScene);
         const overlayImage = await sharp(path.join(process.cwd(), "public/count_image", `${count}.png`))
           .resize(COUNT_WIDTH, COUNT_WIDTH)
@@ -97,8 +128,14 @@ export default async function handler(
         return sharp(cardImage)
           .composite([{ input: overlayImage, top: CARD_HEIGHT - COUNT_WIDTH - 5, left: CARD_WIDTH - COUNT_WIDTH - 5 }])
           .toBuffer();
-      })
-    );
+    };
+
+    const cardWithText: Buffer[] = [];
+    for (let i = 0; i < images.length; i += IMAGE_FETCH_CONCURRENCY) {
+      const chunk = images.slice(i, i + IMAGE_FETCH_CONCURRENCY);
+      const chunkBuffers = await Promise.all(chunk.map(buildCardWithText));
+      cardWithText.push(...chunkBuffers);
+    }
 
     // 背景画像サイズを計算
     const rows = Math.ceil(images.length / row);
@@ -134,4 +171,3 @@ export default async function handler(
     res.status(500).json({ error: "Failed to generate collage" });
   }
 }
-

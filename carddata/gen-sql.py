@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 import time
 import requests
@@ -78,6 +79,21 @@ def fetch_cards(page, promo_only, retries, retry_delay, timeout):
     raise RuntimeError(f"Failed to fetch cards after {retries} attempts: {last_error}")
 
 
+BASE_CARD_NUMBER_PATTERN = re.compile(r"[A-Z]+\d{2}-[A-Z]?\d{3}|PR-\d{3}")
+
+
+def extract_base_card_key(number):
+    raw_number = (number or "").strip()
+    if not raw_number:
+        return ""
+
+    matches = BASE_CARD_NUMBER_PATTERN.findall(raw_number)
+    if matches:
+        return matches[-1]
+
+    return raw_number
+
+
 # 特殊文字をエスケープする関数
 def escape_sql(value):
     if value is None:
@@ -98,7 +114,7 @@ def generate_sql(data):
         inserts.append(
             f"""
         INSERT IGNORE INTO cards (
-            id, section, bundle_version, serial, branch, number, 
+            id, section, bundle_version, serial, branch, number, base_card_key,
             rarity_value, rarity_description, round, level, 
             type_value, type_description, feature_value, feature_description, 
             battle_power_1, battle_power_2, battle_power_3, battle_power_ex, 
@@ -114,6 +130,7 @@ def generate_sql(data):
             {escape_sql(card['serial'])},
             {escape_sql(card['branch'])},
             {escape_sql(card['number'])},
+            {escape_sql(extract_base_card_key(card['number']))},
             {escape_sql(card['rarity']['value'])},
             {escape_sql(card['rarity']['description'])},
             {card['round'] if card['round'] is not None else "NULL"},

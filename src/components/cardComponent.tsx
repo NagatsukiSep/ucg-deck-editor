@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { CardDetail } from "@/types/deckCard";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
+import { ReactNode } from "react";
 
 type Props = {
   card: CardDetail;
   addCard: (card: CardDetail, delta: number) => void;
+  topLeftOverlay?: ReactNode;
 };
 
-export const CardComponent = ({ card, addCard }: Props) => {
+export const CardComponent = ({ card, addCard, topLeftOverlay }: Props) => {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleClick = () => {
@@ -30,6 +32,7 @@ export const CardComponent = ({ card, addCard }: Props) => {
           fallbackSrc={card.thumbnail_image_url}
           alt={card.detail_name}
           onClick={handleClick}
+          topLeftOverlay={topLeftOverlay}
         />
       </div>
     </div>
