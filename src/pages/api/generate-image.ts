@@ -12,12 +12,18 @@ interface ImageInput {
 interface GenerateCollageRequest extends NextApiRequest {
   body: {
     images: ImageInput[];
+    deckUrl?: string;
+    deckCode?: string;
   };
 }
 
 const BG_WIDTH = 1024;
 const BG_HEIGHT = 512;
 const PADDING = 24;
+const LOGO_PADDING = 4;
+const LOGO_WIDTH = 120;
+const LOGO_HEIGHT = 60;
+const QR_SIZE = 60;
 
 function cardsPerColumn(cardCount: number): number {
   if (cardCount <= 4)
@@ -32,23 +38,29 @@ function cardsPerColumn(cardCount: number): number {
     return 5;
 }
 
-function cardSize(cardCount: number): { width: number, height: number } {
-  const heightTmp = Math.floor((BG_HEIGHT - PADDING * 2) / cardsPerColumn(cardCount));
-  const widthTmp = Math.floor(heightTmp * 143 / 200);
-  // カードの幅が背景の幅を超える場合、幅を調整
-  if (widthTmp * Math.ceil(cardCount / cardsPerColumn(cardCount)) + PADDING * 2 > BG_WIDTH) {
-    const width = Math.floor((BG_WIDTH - PADDING * 2) / (Math.ceil(cardCount / cardsPerColumn(cardCount))));
-    const height = Math.floor(width * 200 / 143);
+function cardSize(
+  columns: number,
+  rows: number,
+  reservedTop: number
+): { width: number, height: number } {
+  const maxWidth = BG_WIDTH - PADDING * 2;
+  const maxHeight = BG_HEIGHT - PADDING * 2 - reservedTop;
+  const widthFromColumns = Math.floor(maxWidth / columns);
+  const heightFromWidth = Math.floor(widthFromColumns * 200 / 143);
+  const heightFromRows = Math.floor(maxHeight / rows);
+
+  if (heightFromWidth > heightFromRows) {
+    const width = Math.floor(heightFromRows * 143 / 200);
     return {
       width: width,
-      height: height
-    };
-  } else {
-    return {
-      width: widthTmp,
-      height: heightTmp
+      height: heightFromRows
     };
   }
+
+  return {
+    width: widthFromColumns,
+    height: heightFromWidth
+  };
 }
 
 export default async function handler(
@@ -59,16 +71,42 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { images } = req.body;
+  const { images, deckUrl, deckCode } = req.body;
 
   if (!images || !Array.isArray(images) || images.length === 0) {
     return res.status(400).json({ error: "Invalid request data" });
   }
 
   try {
-    const CARD_WIDTH = 2 * Math.floor(cardSize(images.length).width / 2);
-    const CARD_HEIGHT = 2 * Math.floor(cardSize(images.length).height / 2);
-    const row = Math.ceil(images.length / cardsPerColumn(images.length));
+    const refererHeader = req.headers.referer;
+    const forwardedProtoHeader = req.headers["x-forwarded-proto"];
+    const forwardedProto = Array.isArray(forwardedProtoHeader)
+      ? forwardedProtoHeader[0]
+      : forwardedProtoHeader;
+    let resolvedDeckUrl = deckUrl;
+
+    if (!resolvedDeckUrl && deckCode) {
+      if (refererHeader) {
+        try {
+          const origin = new URL(refererHeader).origin;
+          resolvedDeckUrl = `${origin}/${deckCode}`;
+        } catch (error) {
+          console.error("Failed to parse referer header:", error);
+        }
+      }
+
+      if (!resolvedDeckUrl && req.headers.host) {
+        const proto = forwardedProto ?? "https";
+        resolvedDeckUrl = `${proto}://${req.headers.host}/${deckCode}`;
+      }
+    }
+
+    const overlayHeight = resolvedDeckUrl ? Math.max(LOGO_HEIGHT, QR_SIZE) : LOGO_HEIGHT;
+    const reservedTop = overlayHeight + LOGO_PADDING;
+    const columns = Math.ceil(images.length / cardsPerColumn(images.length));
+    const rows = Math.ceil(images.length / columns);
+    const CARD_WIDTH = 2 * Math.floor(cardSize(columns, rows, reservedTop).width / 2);
+    const CARD_HEIGHT = 2 * Math.floor(cardSize(columns, rows, reservedTop).height / 2);
 
     // URLまたはローカルパスから画像を取得してリサイズ
     const fetchImage = async (imagePath: string, isScene: boolean): Promise<Buffer> => {
@@ -101,14 +139,41 @@ export default async function handler(
     );
 
     // 背景画像サイズを計算
-    const rows = Math.ceil(images.length / row);
-
     // カードを配置する位置を計算
+    const startY = reservedTop + (BG_HEIGHT - reservedTop - CARD_HEIGHT * rows) / 2;
     const compositeData = cardWithText.map((buffer, index) => {
-      const x = (index % row) * CARD_WIDTH;
-      const y = Math.floor(index / row) * CARD_HEIGHT;
-      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * row) / 2, top: y + (BG_HEIGHT - CARD_HEIGHT * rows) / 2 };
+      const x = (index % columns) * CARD_WIDTH;
+      const y = Math.floor(index / columns) * CARD_HEIGHT;
+      return { input: buffer, left: x + (BG_WIDTH - CARD_WIDTH * columns) / 2, top: y + startY };
     });
+
+    const overlayData = [...compositeData];
+
+    try {
+      const logoBuffer = await sharp(path.join(process.cwd(), "public", "logo.png"))
+        .resize(LOGO_WIDTH, LOGO_HEIGHT)
+        .png()
+        .toBuffer();
+      overlayData.push({ input: logoBuffer, left: LOGO_PADDING, top: LOGO_PADDING });
+    } catch (error) {
+      console.error("Failed to load logo image:", error);
+    }
+
+    if (resolvedDeckUrl) {
+      try {
+        const qrResponse = await axios.get(
+          `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encodeURIComponent(resolvedDeckUrl)}`,
+          { responseType: "arraybuffer" }
+        );
+        const qrBuffer = await sharp(Buffer.from(qrResponse.data))
+          .resize(QR_SIZE, QR_SIZE)
+          .png()
+          .toBuffer();
+        overlayData.push({ input: qrBuffer, left: BG_WIDTH - QR_SIZE - LOGO_PADDING, top: LOGO_PADDING });
+      } catch (error) {
+        console.error("Failed to load QR code image:", error);
+      }
+    }
 
     // 背景画像を作成し、カードを配置
     const collageBuffer = await sharp({
@@ -119,7 +184,7 @@ export default async function handler(
         background: { r: 255, g: 255, b: 255 }, // 白背景
       },
     })
-      .composite(compositeData)
+      .composite(overlayData)
       .png()
       .toBuffer();
 
@@ -134,4 +199,3 @@ export default async function handler(
     res.status(500).json({ error: "Failed to generate collage" });
   }
 }
-
