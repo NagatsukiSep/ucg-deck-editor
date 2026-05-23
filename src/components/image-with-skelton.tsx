@@ -27,6 +27,10 @@ const PROXIED_IMAGE_HOSTS = new Set([
 ]);
 
 function buildImageSrc(src: string) {
+  if (process.env.NEXT_PUBLIC_CARD_IMAGE_PROXY !== "1") {
+    return src;
+  }
+
   try {
     const url = new URL(src);
     if (PROXIED_IMAGE_HOSTS.has(url.hostname)) {
@@ -72,6 +76,7 @@ export const ImageWithSkeleton = ({
         key={resolvedSrc}
         src={resolvedSrc}
         alt={alt}
+        referrerPolicy="no-referrer"
         onLoad={() => setLoaded(true)}
         onError={handleError}
         fill
@@ -100,6 +105,7 @@ export const ImageWithSkeleton = ({
             key={`zoom-${resolvedSrc}`}
             src={resolvedSrc}
             alt={alt}
+            referrerPolicy="no-referrer"
             width={500}
             height={700}
             className="w-full h-auto object-contain"
