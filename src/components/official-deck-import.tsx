@@ -24,7 +24,7 @@ export function OfficialDeckImport({onImport}:{onImport?:(cards:CardDetail[])=>v
   }}>
     <Label htmlFor="official-deck-code">公式デッキコード</Label>
     <Input id="official-deck-code" value={code} onChange={e=>setCode(e.target.value)} placeholder="公式コード、または公式デッキ取得URL" disabled={busy} autoCapitalize="none" autoCorrect="off" spellCheck={false} required className="text-base md:text-sm" />
-    <Button type="submit" disabled={busy || !code.trim()} className="w-full">{busy ? '取得中…' : '公式デッキを展開'}</Button>
+    <Button type="submit" disabled={busy || !code.trim()} className="w-full">{busy ? '取得中…' : '公式デッキコードから作成'}</Button>
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
   </form>;
 }

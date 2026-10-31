@@ -85,7 +85,7 @@ export default function Home() {
                 className="w-full"
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={!deckCode.trim()}>
               {t("home.submit")}
             </Button>
           </form>
