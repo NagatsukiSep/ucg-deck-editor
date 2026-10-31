@@ -29,9 +29,9 @@ export const autoSortDeck = (
         return 1;
       case "kaiju":
         return 2;
-      case "boost":
-        return 3;
       case "scene":
+        return 3;
+      case "boost":
         return 4;
       default:
         return 5;
@@ -105,13 +105,10 @@ export const autoSortDeck = (
     const charA = a.character_name ?? "";
     const charB = b.character_name ?? "";
 
-    // sceneは最後にまとめて表示
-    if (a.feature_value === "scene" && b.feature_value !== "scene") return 1; // aがシーン
-    if (b.feature_value === "scene" && a.feature_value !== "scene") return -1; // bがシーン
-
-    // ブーストはキャラクターカードの後、シーンの前にまとめる。
-    if (a.feature_value === "boost" && b.feature_value !== "boost") return 1;
-    if (b.feature_value === "boost" && a.feature_value !== "boost") return -1;
+    // キャラクターカード、シーン、ブーストの順にまとめる。
+    const tailRank = (feature?: string) => feature === "boost" ? 2 : feature === "scene" ? 1 : 0;
+    const tailDiff = tailRank(a.feature_value) - tailRank(b.feature_value);
+    if (tailDiff !== 0) return tailDiff;
 
     // キャラ名の順序（charaOrderに従う）
     const indexA = charaOrder.indexOf(charA);

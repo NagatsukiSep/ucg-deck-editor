@@ -345,11 +345,11 @@ export default function Home() {
                   <RadioGroupItem value="kaiju" id="kaiju" />
                   <Label htmlFor="kaiju">{t("new.genres.kaiju")}</Label>
                 </div>
-                <div className="flex items-center space-x-2"><RadioGroupItem value="boost" id="boost" /><Label htmlFor="boost">ブースト</Label></div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scene" id="scene" />
                   <Label htmlFor="scene">{t("new.genres.scene")}</Label>
                 </div>
+                <div className="flex items-center space-x-2"><RadioGroupItem value="boost" id="boost" /><Label htmlFor="boost">ブースト</Label></div>
               </RadioGroup>
             </div>
 

@@ -1,5 +1,45 @@
 [
   {
+    "date": "2026/10/31",
+    "message": {
+      "ja": "BP08・BP09・SD04のカードを追加し、ブーストカードと新しいキャラクターの検索に対応。",
+      "en": "Added BP08, BP09, and SD04 cards, along with search support for boost cards and new characters.",
+      "ko": "BP08・BP09・SD04 카드를 추가하고 부스트 카드와 신규 캐릭터 검색을 지원합니다."
+    }
+  },
+  {
+    "date": "2026/10/31",
+    "message": {
+      "ja": "公式デッキコード・取得URLからデッキを展開して編集できる機能を追加。",
+      "en": "Added importing and editing decks from official deck codes or retrieval URLs.",
+      "ko": "공식 덱 코드 또는 조회 URL로 덱을 불러와 편집하는 기능을 추가했습니다."
+    }
+  },
+  {
+    "date": "2026/10/31",
+    "message": {
+      "ja": "同じカードをまとめる検索と絵柄選択に対応。自動並び替えでは絵違いの合計枚数でまとめ、グループ内も枚数順に表示。",
+      "en": "Added grouped card search and artwork selection. Auto-sort groups alternate artworks by their combined count and sorts artworks within each group by count.",
+      "ko": "동일 카드 묶음 검색과 일러스트 선택을 지원합니다. 자동 정렬 시 동일 카드의 일러스트별 매수를 합산하여 묶고, 그룹 안에서도 매수순으로 표시합니다."
+    }
+  },
+  {
+    "date": "2026/10/31",
+    "message": {
+      "ja": "スマートフォン向けレイアウトとカード操作を改善し、画像の縮小配信・キャッシュで読み込みを軽量化。",
+      "en": "Improved mobile layouts and card controls, and reduced image transfer sizes with thumbnails and caching.",
+      "ko": "모바일 레이아웃과 카드 조작을 개선하고, 썸네일과 캐시로 이미지 로딩 용량을 줄였습니다."
+    }
+  },
+  {
+    "date": "2026/10/31",
+    "message": {
+      "ja": "カードデータ移行前に作成されたデッキの閲覧・画像生成を維持。旧デッキからの新規作成は利用できません。",
+      "en": "Preserved viewing and image generation for decks created before the card data migration. Creating a new deck from a legacy deck is unavailable.",
+      "ko": "카드 데이터 전환 전에 생성된 덱의 조회와 이미지 생성을 유지합니다. 기존 덱을 복제하여 새 덱을 만드는 기능은 이용할 수 없습니다."
+    }
+  },
+  {
     "date": "2026/05/17",
     "message": {
       "ja": "LTP01のカードを追加。",

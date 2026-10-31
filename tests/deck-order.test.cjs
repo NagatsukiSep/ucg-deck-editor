@@ -23,7 +23,7 @@ test('level order precedes group totals and cards without a group remain indepen
   const cards = [card('single', undefined, 3), card('a1', 'A', 1), card('high', 'H', 1, {level: 3}), card('a2', 'A', 1)];
   assert.deepEqual(autoSortDeck(cards, analysis).map(c => c.id), ['high', 'single', 'a1', 'a2']);
 });
-test('boost groups stay together before scene groups', () => {
+test('scene groups stay together before boost groups', () => {
   const cards = [card('s1', 'scene:scene', 1, {feature_value:'scene'}), card('boost1', 'boost', 1, {feature_value:'boost'}), card('hero', 'hero', 1), card('s2', 'scene:scene', 2, {feature_value:'scene'}), card('boost2', 'boost', 3, {feature_value:'boost'})];
-  assert.deepEqual(autoSortDeck(cards, analysis).map(c => c.id), ['hero', 'boost2', 'boost1', 's2', 's1']);
+  assert.deepEqual(autoSortDeck(cards, analysis).map(c => c.id), ['hero', 's2', 's1', 'boost2', 'boost1']);
 });

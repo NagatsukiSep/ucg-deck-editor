@@ -79,10 +79,9 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
 
   const entries = Object.entries(result);
   entries.sort((a, b) => {
-    const isAScene = a[0] === sceneKey;
-    const isBScene = b[0] === sceneKey;
-    if (isAScene && !isBScene) return 1;
-    if (!isAScene && isBScene) return -1;
+    const tailRank = (name: string) => name === "ブースト" ? 2 : name === sceneKey ? 1 : 0;
+    const tailDiff = tailRank(a[0]) - tailRank(b[0]);
+    if (tailDiff !== 0) return tailDiff;
 
     const totalA =
       typeof a[1] === "number"
