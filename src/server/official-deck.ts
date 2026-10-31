@@ -2,6 +2,7 @@ import { createHash, randomInt } from 'node:crypto';
 import { readFile, mkdir, writeFile, rename, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { catalog } from './cards-v2';
+import { officialSigningKey } from './official-signing-key';
 const root = path.join(process.cwd(), 'carddata/.cache');
 const inflight = new Map<string, Promise<unknown>>();
 export class OfficialDeckError extends Error {
@@ -20,9 +21,9 @@ export function officialCode(input: string): string {
 async function fetchDetail(code: string): Promise<unknown> {
   const cache = path.join(root, 'official-decks', `${code}.json`);
   try { if (Date.now() - (await stat(cache)).mtimeMs < 5 * 60 * 1000) return JSON.parse(await readFile(cache, 'utf8')); } catch { /* Cache miss. */ }
-  let key = process.env.UCG_API_SIGNING_KEY;
-  if (!key) { try { key = (await readFile(path.join(root, 'signing-key.txt'), 'utf8')).trim(); } catch { /* Deployment must provide the key. */ } }
-  if (!key) throw new OfficialDeckError('公式デッキの取得設定が未完了です。', 503);
+  let key: string;
+  try { key = await officialSigningKey(); }
+  catch { throw new OfficialDeckError('公式サービスの接続情報を取得できませんでした。時間をおいて再試行してください。', 503); }
   const timestamp = String(Date.now()), nonce = String(randomInt(1000000));
   // Match the official client's low-byte UTF-16 signature encoding.
   const utf16 = Buffer.from(JSON.stringify({code}) + nonce + timestamp + key, 'utf16le');

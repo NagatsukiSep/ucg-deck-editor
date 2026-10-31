@@ -15,7 +15,7 @@ export function OfficialDeckImport({onImport}:{onImport?:(cards:CardDetail[])=>v
     event.preventDefault(); if (locked.current) return;
     locked.current=true; setBusy(true);setError('');
     try {
-      const response=await fetch('/api/official-deck',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code}),signal:AbortSignal.timeout(20000)});
+      const response=await fetch('/api/official-deck',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code}),signal:AbortSignal.timeout(35000)});
       const result=await response.json();
       if (!response.ok) throw new Error(result.error || 'デッキを展開できませんでした。');
       if (onImport) onImport(result.cards); else {setOriginalDeckCards(result.cards);router.push('/new');}

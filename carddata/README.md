@@ -144,7 +144,12 @@ Missing local card ids reject the import rather than silently omitting cards.
 Successful responses are cached for five minutes in `.cache/official-decks`;
 concurrent requests for the same code share one upstream request.
 
-Deployments must configure `UCG_API_SIGNING_KEY` as a server-only secret. Local
-development can reuse `.cache/signing-key.txt`. Neither the key nor API signing
+Deployments may configure `UCG_API_SIGNING_KEY` as a server-only secret. Local
+development can reuse `.cache/signing-key.txt`. If neither exists, the server
+reads the signing constants from the official web application, following the
+card importer, and caches the result. Concurrent discovery is deduplicated;
+failed discovery waits one minute before retrying. Read-only filesystems use
+the in-memory cache. An official application format change may require updating
+the extractor or configuring the environment variable. Neither the key nor API signing
 headers are returned to the browser. The official API host is fixed; pasted URLs
 are used only to extract and validate the code.
