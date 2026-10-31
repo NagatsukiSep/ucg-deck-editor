@@ -1,4 +1,5 @@
 "use client";
+import { OfficialDeckImport } from "@/components/official-deck-import";
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,8 @@ export default function Home() {
           </Button>
         </CardContent>
       </Card>
+
+      <Card><CardHeader><h2 className="text-xl font-semibold">公式デッキから作成</h2></CardHeader><CardContent><OfficialDeckImport /></CardContent></Card>
 
       {changelog.length > 0 && (
         <div className="mt-12 border-t pt-6 text-sm text-muted-foreground">

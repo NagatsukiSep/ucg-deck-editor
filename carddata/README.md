@@ -133,3 +133,18 @@ Artwork ids stay independent. Copy limits aggregate by official code, or by name
 for scene cards. Official listing limits (including zero, eight and fifty) are
 checked both when editing and saving. V1 decks support viewing and image output
 but cannot be copied into the V2 editor. Boost cards have their own search tab.
+
+### Import published official decks
+
+The home page and empty editor accept a published official deck code or the
+`getPublishDetail?code=...` URL. `POST /api/official-deck` signs requests on the
+server and joins official artwork ids against `cards_v2`. It never saves a deck
+automatically. All five official card lists, including boost cards, are imported.
+Missing local card ids reject the import rather than silently omitting cards.
+Successful responses are cached for five minutes in `.cache/official-decks`;
+concurrent requests for the same code share one upstream request.
+
+Deployments must configure `UCG_API_SIGNING_KEY` as a server-only secret. Local
+development can reuse `.cache/signing-key.txt`. Neither the key nor API signing
+headers are returned to the browser. The official API host is fixed; pasted URLs
+are used only to extract and validate the code.

@@ -29,10 +29,12 @@ export const autoSortDeck = (
         return 1;
       case "kaiju":
         return 2;
-      case "scene":
+      case "boost":
         return 3;
-      default:
+      case "scene":
         return 4;
+      default:
+        return 5;
     }
   };
 
@@ -89,13 +91,27 @@ export const autoSortDeck = (
       return a.localeCompare(b, "ja");
     });
 
-  const sorted = [...deckCards].sort((a, b) => {
+  const groups = new Map<string, CardDetail[]>();
+  for (const card of deckCards) {
+    const key = card.group_key || card.id;
+    const group = groups.get(key) || [];
+    group.push(card);
+    groups.set(key, group);
+  }
+
+  const sorted = [...groups.values()].sort((groupA, groupB) => {
+    const a = groupA[0];
+    const b = groupB[0];
     const charA = a.character_name ?? "";
     const charB = b.character_name ?? "";
 
     // sceneは最後にまとめて表示
     if (a.feature_value === "scene" && b.feature_value !== "scene") return 1; // aがシーン
     if (b.feature_value === "scene" && a.feature_value !== "scene") return -1; // bがシーン
+
+    // ブーストはキャラクターカードの後、シーンの前にまとめる。
+    if (a.feature_value === "boost" && b.feature_value !== "boost") return 1;
+    if (b.feature_value === "boost" && a.feature_value !== "boost") return -1;
 
     // キャラ名の順序（charaOrderに従う）
     const indexA = charaOrder.indexOf(charA);
@@ -114,13 +130,14 @@ export const autoSortDeck = (
     const levelIndexB = levels.indexOf(levelB);
     if (levelIndexA !== levelIndexB) return levelIndexA - levelIndexB;
 
-    // レベルも同じなら、採用枚数順（降順）で
-    const countA = a.count ?? 1;
-    const countB = b.count ?? 1;
+    // 同じカードの全絵柄を合算して、グループ単位の採用枚数順にする。
+    const countA = groupA.reduce((sum, card) => sum + (card.count ?? 1), 0);
+    const countB = groupB.reduce((sum, card) => sum + (card.count ?? 1), 0);
     return countB - countA;
   });
 
-  return sorted;
+  // 同数では入力順を維持し、絵柄のID・採用枚数は変更しない。
+  return sorted.flatMap(group => [...group].sort((a, b) => (b.count ?? 1) - (a.count ?? 1)));
 };
 
 

@@ -116,7 +116,7 @@ export const ImageWithSkeleton = ({
         <DialogTrigger asChild>
           <button
             type="button"
-            className="absolute top-1 right-1 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-full bg-white/40"
+            className="absolute top-1 right-1 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-md bg-white/85 shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
             title={t("image.zoom")}
           >
             <ZoomIn className="w-5 h-5" />

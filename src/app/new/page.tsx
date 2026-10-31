@@ -1,4 +1,5 @@
 "use client";
+import { OfficialDeckImport } from "@/components/official-deck-import";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -69,19 +70,8 @@ export default function Home() {
     }
   }, [originalDeckCards, setOriginalDeckCards]);
 
-  const isOverMaxCardCount = (card: CardDetail, count: number) => {
-    const others = deckCards.filter(c => c.id !== card.id && c.group_key === card.group_key);
-    const limit = Math.min(card.limit_count ?? 4, ...others.map(c => c.limit_count ?? 4));
-    return cardCount >= 50 || count + others.reduce((sum,c) => sum + (c.count || 0), 0) > limit;
-  };
   const updateCardCount = (card: CardDetail, delta: number) => {
     setDeckCards((prev) => {
-      if (delta > 0) {
-        if (prev.reduce((sum,c) => sum + (c.count || 0), 0) >= 50) return prev;
-        const group = prev.filter(c => c.group_key === card.group_key);
-        const limit = Math.min(card.limit_count ?? 4, ...group.map(c => c.limit_count ?? 4));
-        if (group.reduce((sum,c) => sum + (c.count || 0), 0) + delta > limit) return prev;
-      }
       const index = prev.findIndex((c) => c.id === card.id);
       if (index === -1 && delta > 0) {
         // 新規追加
@@ -92,7 +82,6 @@ export default function Home() {
         const current = prev[index];
         const newCount = (current.count || 1) + delta;
 
-        if (delta > 0 && newCount > (card.limit_count ?? 4)) return prev; // 上限
         if (newCount <= 0) {
           // 削除
           return prev.filter((c) => c.id !== card.id);
@@ -188,14 +177,26 @@ export default function Home() {
     }
   };
   const artOverlay = (card: CardDetail, mode: "view" | "select") => (card.artwork_count ?? card.artworks?.length ?? 0) > 1 ? (
-    <button type="button" className="absolute top-1 left-1 z-10 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-full bg-white/40" title={mode === "select" ? "絵柄を変更" : "絵柄一覧"} onClick={event => { event.stopPropagation(); void openArts(card, mode); }}><Images className="w-5 h-5" /></button>
+    <button type="button" className="absolute top-1 left-1 z-10 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-md bg-white/85 shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" title={mode === "select" ? "絵柄を変更" : "絵柄一覧"} onClick={event => { event.stopPropagation(); void openArts(card, mode); }}><Images className="w-5 h-5" /></button>
   ) : undefined;
 
   const router = useRouter();
 
   const generateDeckCode = async () => {
+    setSaveError("");
     if (cardCount !== 50) {
-      alert(t("new.alert.deckMustBe50"));
+      setSaveError(`デッキは50枚で登録してください（現在${cardCount}枚）。`);
+      return;
+    }
+    const groups = new Map<string, {name:string; count:number; limit:number}>();
+    for (const card of deckCards) {
+      const key = card.group_key || card.id;
+      const previous = groups.get(key);
+      groups.set(key, {name:card.detail_name, count:(previous?.count || 0) + (card.count || 0), limit:Math.min(previous?.limit ?? Infinity, card.limit_count ?? 4)});
+    }
+    const invalid = [...groups.values()].filter(group => group.count > group.limit);
+    if (invalid.length) {
+      setSaveError(invalid.map(group => `${group.name}：${group.count}枚（採用上限${group.limit}枚）`).join("／"));
       return;
     }
     const data = {
@@ -236,7 +237,7 @@ export default function Home() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card className={activePane === "deck" ? "p-2" : "hidden md:block p-2"}>
+        <Card className={activePane === "deck" ? "min-w-0 p-2" : "hidden min-w-0 md:block p-2"}>
           <CardHeader className="hidden md:block">
             <CardTitle>
               <h1 className="text-2xl font-bold">
@@ -248,6 +249,7 @@ export default function Home() {
             <h2 className="text-xl font-bold">
               {t("new.cardCount", { count: cardCount })}
             </h2>
+            {deckCards.length === 0 && <details className="my-4 rounded border p-3"><summary className="cursor-pointer text-sm">公式デッキコードから展開</summary><div className="mt-3"><OfficialDeckImport onImport={cards => setDeckCards(cards)} /></div></details>}
             {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             {saveError && <p role="alert" className="my-2 text-sm text-red-700">{saveError}</p>}
             <Button
@@ -256,7 +258,7 @@ export default function Home() {
               }}
               className="w-full"
               type="submit"
-              disabled={cardCount !== 50 || saving}
+              disabled={saving}
             >
               {saving ? "保存中…" : t("new.generateDeckCode")}
             </Button>
@@ -273,80 +275,25 @@ export default function Home() {
             </Button>
             <div className="w-full my-4 h-[2px] bg-gray-300"></div>
             {deckCards.length > 0 ? (
-              <div className="card-grid mt-4">
+              <div className="card-grid grid mt-4">
                 {deckCards.map((card) => (
-                  <div key={card.id} className="w-full">
+                  <div key={card.id} className="min-w-0 w-full">
                     <div className="relative w-full aspect-[143/200]">
-                      <ImageWithSkeleton
-                        src={card.image_url}
-                        fallbackSrc={card.thumbnail_image_url}
-                        alt={card.detail_name}
-                        topLeftOverlay={artOverlay(card, "select")}
-                      />
-                      {!isEdge(card.id, "up", deckCards) && (
-                        <div className="absolute bottom-1/2 translate-y-1/2 left-0 transform mb-2 p-2">
-                          <div className="text-white bg-[#171717] rounded-sm py-1">
-                            <ChevronLeft
-                              onClick={() => {
-                                const newDeckCards = changeIndex(
-                                  card.id,
-                                  "up",
-                                  deckCards
-                                );
-                                setDeckCards(newDeckCards);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      {!isEdge(card.id, "down", deckCards) && (
-                        <div className="absolute bottom-1/2 translate-y-1/2 right-0 transform mb-2 p-2">
-                          <div className="text-white bg-[#171717] rounded-sm py-1">
-                            <ChevronRight
-                              onClick={() => {
-                                const newDeckCards = changeIndex(
-                                  card.id,
-                                  "down",
-                                  deckCards
-                                );
-                                setDeckCards(newDeckCards);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center justify-center mb-2">
-                        <Button
-                          onClick={() => updateCardCount(card, -1)}
-                          className="w-9 h-9 text-lg p-0 pb-1 rounded-full md:w-6 md:h-6 md:m-1"
-                          type="button"
-                          disabled={(card.count ?? 0) <= 0}
-                          variant="outline"
-                        >
-                          -
-                        </Button>
-
-                        <div className="bg-[#171717] text-white text-center rounded-sm w-8 h-8 m-1 flex items-center justify-center text-sm">
-                          {card.count ?? 0}
-                        </div>
-
-                        <Button
-                          onClick={() => updateCardCount(card, 1)}
-                          className="w-9 h-9 text-lg p-0 rounded-full md:w-6 md:h-6 md:m-1"
-                          type="button"
-                          disabled={isOverMaxCardCount(
-                            card,
-                            (card.count ?? 0) + 1
-                          )}
-                          variant={
-                            isOverMaxCardCount(card, (card.count ?? 0) + 1)
-                              ? "secondary"
-                              : "outline"
-                          }
-                        >
-                          +
-                        </Button>
+                    <ImageWithSkeleton
+                      src={card.image_url}
+                      fallbackSrc={card.thumbnail_image_url}
+                      alt={card.detail_name}
+                      topLeftOverlay={artOverlay(card, "select")}
+                    />
+                    {!isEdge(card.id, "up", deckCards) && <button type="button" aria-label={`${card.detail_name}を前に移動`} className="absolute left-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "up", prev))}><ChevronLeft className="h-5 w-5" /></button>}
+                    {!isEdge(card.id, "down", deckCards) && <button type="button" aria-label={`${card.detail_name}を後に移動`} className="absolute right-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "down", prev))}><ChevronRight className="h-5 w-5" /></button>}
+                    <div className="absolute bottom-1 left-1/2 z-10 w-[calc(100%_-_8px)] max-w-28 -translate-x-1/2 rounded-md bg-white/85 p-1 shadow-sm">
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1">
+                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={`${card.detail_name}を1枚減らす`} onClick={() => updateCardCount(card, -1)}>-</Button>
+                        <span className="min-w-6 text-center text-sm tabular-nums" aria-label={`採用枚数 ${card.count ?? 0}枚`}>{card.count ?? 0}</span>
+                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={`${card.detail_name}を1枚増やす`} onClick={() => updateCardCount(card, 1)}>+</Button>
                       </div>
+                    </div>
                     </div>
                   </div>
                 ))}
@@ -546,7 +493,6 @@ export default function Home() {
                   <CardComponent
                     key={card.id}
                     card={card}
-                    disabled={cardCount >= 50 || isOverMaxCardCount(card, (deckCards.find(c => c.id === card.id)?.count || 0) + 1)}
                     topLeftOverlay={artOverlay(card, "view")}
                     addCard={(card, delta) => updateCardCount(card, delta)}
                   />
@@ -578,8 +524,8 @@ export default function Home() {
                     <ImageWithSkeleton src={art.image_url} fallbackSrc={art.thumbnail_image_url} alt={art.detail_name} onClick={artModalMode === "select" ? selectArtwork : undefined} />
                   </div>
                   {artModalMode === "view" ? (
-                    <button type="button" className="mt-2 min-h-9 w-full rounded border text-xs disabled:text-muted-foreground" disabled={cardCount >= 50 || isOverMaxCardCount(art, (deckCards.find(c => c.id === art.id)?.count || 0) + 1)} onClick={selectArtwork}>
-                      {cardCount >= 50 || isOverMaxCardCount(art, (deckCards.find(c => c.id === art.id)?.count || 0) + 1) ? "上限に達しています" : "＋ この絵柄を追加"}
+                    <button type="button" className="mt-2 min-h-9 w-full rounded border text-xs disabled:text-muted-foreground" onClick={selectArtwork}>
+                      ＋ この絵柄を追加
                     </button>
                   ) : (
                     <button type="button" onClick={selectArtwork} className="sr-only focus:not-sr-only focus:mt-2 focus:w-full focus:rounded focus:border focus:p-1">
