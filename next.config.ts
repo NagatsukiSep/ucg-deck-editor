@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     domains: [
       "api.ultraman-cardgame.com",
       "img.ultraman-cardgame.com",
+      "tsuburaya-hk-prod.oss-accelerate.aliyuncs.com",
       "ucg-deck-editor.innovatz.jp",
       "ud-builder.innovatz.jp",
     ],

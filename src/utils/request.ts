@@ -1,12 +1,11 @@
-export async function get<T>(path: string): Promise<T[]> {
-  const response = await fetch(`/api/proxy/${path}`);
+export async function get<T>(path: string, options?: RequestInit): Promise<T[]> {
+  const response = await fetch(`/api/proxy/${path}`, options);
 
   if (response.ok) {
     const data: { data: { rows: T[] } } = await response.json();
     return data.data.rows;
   } else {
-    console.error("Failed to fetch data:", response.statusText);
-    return [];
+    throw new Error(`Request failed (${response.status})`);
   }
 }
 
@@ -23,7 +22,6 @@ export async function post<T, B>(path: string, body: B): Promise<T[]> {
     const data: { data: { rows: T[] } } = await response.json();
     return data.data.rows;
   } else {
-    console.error("Failed to fetch data:", response.statusText);
-    return [];
+    throw new Error(`Request failed (${response.status})`);
   }
 }

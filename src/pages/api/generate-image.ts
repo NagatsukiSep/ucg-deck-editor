@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import sharp from "sharp";
-import axios from "axios";
+import { cardImage } from "@/server/card-images";
 import path from "path";
 
 interface ImageInput {
@@ -73,8 +73,7 @@ export default async function handler(
     // URLまたはローカルパスから画像を取得してリサイズ
     const fetchImage = async (imagePath: string, isScene: boolean): Promise<Buffer> => {
       if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-        const response = await axios.get(imagePath, { responseType: "arraybuffer" });
-        return sharp(Buffer.from(response.data))
+        return sharp(await cardImage(imagePath))
           .rotate(isScene ? 90 : 0) // シーンカードは90度回転
           .resize(CARD_WIDTH, CARD_HEIGHT)
           .toBuffer();

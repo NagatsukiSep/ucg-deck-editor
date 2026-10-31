@@ -66,6 +66,11 @@ export const analyzeDeck = (cards: CardDetail[]): DeckAnalysis => {
         break;
       }
 
+      case "boost": {
+        const prev = typeof result["ブースト"] === "number" ? result["ブースト"] : 0;
+        result["ブースト"] = prev + (card.count ?? 0);
+        break;
+      }
       default:
         // 対応外はスキップ
         continue;

@@ -48,3 +48,7 @@ next-env.d.ts
 carddata/output/insert_cards_part_*.sql
 carddata/data.json
 output/insert_cards_part_*.sql
+
+# API import cache and generated review files
+carddata/.cache/
+carddata/output/

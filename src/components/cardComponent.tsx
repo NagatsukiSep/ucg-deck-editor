@@ -3,16 +3,20 @@
 import { useState } from "react";
 import { CardDetail } from "@/types/deckCard";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
+import { ReactNode } from "react";
 
 type Props = {
   card: CardDetail;
   addCard: (card: CardDetail, delta: number) => void;
+  topLeftOverlay?: ReactNode;
+  disabled?: boolean;
 };
 
-export const CardComponent = ({ card, addCard }: Props) => {
+export const CardComponent = ({ card, addCard, topLeftOverlay, disabled = false }: Props) => {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleClick = () => {
+    if (disabled) return;
     addCard(card, 1);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 150);
@@ -30,8 +34,12 @@ export const CardComponent = ({ card, addCard }: Props) => {
           fallbackSrc={card.thumbnail_image_url}
           alt={card.detail_name}
           onClick={handleClick}
+          actionLabel={`${card.detail_name}を追加`}
+          actionDisabled={disabled}
+          topLeftOverlay={topLeftOverlay}
         />
       </div>
+      {disabled && <p className="mt-1 text-center text-xs text-muted-foreground">上限に達しています</p>}
     </div>
   );
 };

@@ -26,6 +26,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   const params = use(props.params);
   const { deckCode } = params;
   const didRun = useRef(false);
+  const [cardVersion, setCardVersion] = useState(1);
+  const [loadError, setLoadError] = useState("");
   const [is404, setIs404] = useState(false);
   const [deckCards, setDeckCards] = useState<CardDetail[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -65,6 +67,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       } catch (error) {
         console.error(error);
         alert(t("deck.generateImageFailed"));
+      } finally {
+        setIsGeneratingImage(false);
       }
     },
     [t]
@@ -72,8 +76,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
 
   const getDeckData = useCallback(async () => {
     setLoadingDetails(true);
+    setLoadError(""); setIs404(false);
     try {
-      const data = await get<{ deck_cards: string }>(
+      const data = await get<{ deck_cards: string; card_data_version: number }>(
         `/deck?deck_code=${deckCode}`
       );
       if (data.length === 0) {
@@ -81,27 +86,30 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
         return;
       }
 
+      const version = data[0].card_data_version || 1;
+      setCardVersion(version);
       // deck_cards をパースして ID一覧と count マップ作成
       const parsed: { id: string; count: number }[] = JSON.parse(
         data[0].deck_cards
       );
-      const idToCount = new Map(parsed.map((card) => [card.id, card.count]));
+      const idToCount = new Map(parsed.map((card) => [String(card.id), card.count]));
       const cardIds = [...idToCount.keys()];
       const cardDetails = await get<CardDetail>(
-        `/card_detail?ids=${cardIds.join(",")}`
+        `/card_detail?ids=${cardIds.join(",")}&version=${version}`
       );
-      const enrichedCards: CardDetail[] = cardDetails.map((card) => ({
+      const byId = new Map(cardDetails.map(c => [String(c.id), c]));
+      const enrichedCards: CardDetail[] = cardIds.flatMap(id => byId.has(String(id)) ? [byId.get(String(id))!] : []).map((card) => ({
         ...card,
-        count: idToCount.get(card.id) ?? 0,
+        count: idToCount.get(String(card.id)) ?? 0,
       }));
 
       // state に保存
       setDeckCards(enrichedCards);
       generateCollage(enrichedCards);
     } catch (error) {
-      console.error("Failed to parse JSON:", error);
-    }
-    setLoadingDetails(false);
+      console.error("Failed to load deck:", error);
+      setLoadError("デッキを読み込めませんでした。通信状況を確認して再試行してください。");
+    } finally { setLoadingDetails(false); }
   }, [deckCode, generateCollage]);
 
   useEffect(() => {
@@ -137,6 +145,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   return (
     <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-bold mb-4">{t("deck.title")}</h1>
+      {loadingDetails && <p role="status">デッキを読み込み中…</p>}
+      {loadError && <div role="alert"><p>{loadError}</p><Button type="button" onClick={() => void getDeckData()}>再試行</Button></div>}
       {is404 && (
         <div>
           <p>{t("deck.notFound")}</p>
@@ -161,6 +171,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {cardVersion === 1 && <p className="mb-4 text-sm">2026/10/31以前に作成されたデッキは、閲覧・画像生成のみ利用できます。このデッキからの作成は利用できません。</p>}
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
               <div className="w-full lg:w-1/2">
                 <DeckBarChart analysis={deckAnalysis} />
@@ -208,7 +219,9 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
                     : t("deck.showImage")}
                 </Button>
                 <Button
+                  disabled={cardVersion !== 2}
                   onClick={() => {
+                    if (cardVersion !== 2) return;
                     setOriginalDeckCards(deckCards);
                     redirect("/new");
                   }}
@@ -221,10 +234,10 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             {loadingDetails ? (
               <p>{t("deck.loadingCards")}</p>
             ) : (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3">
+              <div className="card-grid mt-4">
                 {deckCards.map((card) => (
                   <div key={card.id} className="w-full">
-                    <div className="relative w-full p-2">
+                    <div className="relative w-full aspect-[143/200]">
                       <ImageWithSkeleton
                         src={card.image_url}
                         fallbackSrc={card.thumbnail_image_url}

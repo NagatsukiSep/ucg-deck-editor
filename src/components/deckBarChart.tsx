@@ -36,7 +36,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
       (entry) => [entry.value, entry.labelKey] as const
     )
   );
-  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", sceneKey];
+  const levelOrder = ["1", "2", "3", "4_hero", "4", "5", "6", "7", sceneKey, "boost"];
   const chartData: { name: string; [level: string]: number | string }[] = [];
   let maxTotal = 0;
 
@@ -45,7 +45,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     const displayName =
       name === sceneKey ? t("chart.scene") : labelKey ? t(labelKey) : name;
     if (typeof value === "number") {
-      chartData.push({ name: displayName, [sceneKey]: value });
+      chartData.push({ name: displayName, [name === "ブースト" ? "boost" : sceneKey]: value });
       maxTotal = Math.max(maxTotal, value);
       return;
     }
@@ -92,6 +92,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
     "6": "#D62828", // 怪獣Lv6: 深紅（強烈で危険）→ #D62828
     "7": "#6A040F", // 怪獣Lv7: 暗赤（ラスボス感）→ #6A040F
 
+    boost: "#8B5CF6",
     [sceneKey]: "#9E9E9E", // シーン: グレートーン（中立的、補助的）→ #9E9E9E
   };
 
@@ -102,6 +103,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
   const getLevelLabel = (level: string) => {
+    if (level === "boost") return "ブースト";
     if (level === sceneKey) return t("chart.scene");
     if (level === "4_hero") return `${t("chart.level")}4`;
     return `${t("chart.level")}${level}`;
