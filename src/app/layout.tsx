@@ -1,3 +1,5 @@
+import { requestLocale } from "@/server/locale";
+import { translations } from "@/i18n";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -17,12 +19,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Ultra Deck Builder - ウルトラマンカードゲーム デッキビルダー",
-  description:
-    "Ultra Deck Builderは、ウルトラマンカードゲーム（UCG）専用の非公式デッキ作成ツールです。直感的なUIでデッキ構築・共有が簡単にできます。",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await requestLocale();
+  return {
+  title: translations[locale]["meta.title"],
+  description: translations[locale]["meta.description"],
   applicationName: "Ultra Deck Builder",
-  manifest: "/manifest.webmanifest",
+  manifest: `/api/manifest?lang=${locale}`,
   icons: {
     icon: "/icon_origin.png",
     apple: "/icon_origin.png",
@@ -34,22 +37,24 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
   },
 };
+}
 
 export const viewport: Viewport = {
   themeColor: "#111827",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await requestLocale();
   return (
-    <html lang="ja">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <I18nProvider>
+        <I18nProvider initialLocale={locale}>
           <Header />
           <AppProvider>{children}</AppProvider>
         </I18nProvider>

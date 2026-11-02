@@ -155,7 +155,7 @@ export default function Home() {
       setSearchedCards(cards); setSearchedCardsCount(count[0]?.total_count || 0); setSearchedCardsPage(page);
       setFiltersOpen(false);
     } catch {
-      if (requestId === searchRequest.current) setSearchError("検索できませんでした。通信状況を確認して再試行してください。");
+      if (requestId === searchRequest.current) setSearchError(t("new.search.failed"));
     } finally { if (requestId === searchRequest.current) setSearching(false); }
   };
   useEffect(() => () => searchAbort.current?.abort(), []);
@@ -177,7 +177,7 @@ export default function Home() {
     }
   };
   const artOverlay = (card: CardDetail, mode: "view" | "select") => (card.artwork_count ?? card.artworks?.length ?? 0) > 1 ? (
-    <button type="button" className="absolute top-1 left-1 z-10 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-md bg-white/85 shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" title={mode === "select" ? "絵柄を変更" : "絵柄一覧"} onClick={event => { event.stopPropagation(); void openArts(card, mode); }}><Images className="w-5 h-5" /></button>
+    <button type="button" className="absolute top-1 left-1 z-10 flex items-center justify-center w-9 h-9 md:top-6 md:w-6 md:h-6 p-0 text-black rounded-md bg-white/85 shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black" title={mode === "select" ? t("image.changeArt") : t("image.viewArts")} onClick={event => { event.stopPropagation(); void openArts(card, mode); }}><Images className="w-5 h-5" /></button>
   ) : undefined;
 
   const router = useRouter();
@@ -185,7 +185,7 @@ export default function Home() {
   const generateDeckCode = async () => {
     setSaveError("");
     if (cardCount !== 50) {
-      setSaveError(`デッキは50枚で登録してください（現在${cardCount}枚）。`);
+      setSaveError(t("new.save.total", {count:cardCount}));
       return;
     }
     const groups = new Map<string, {name:string; count:number; limit:number}>();
@@ -196,7 +196,7 @@ export default function Home() {
     }
     const invalid = [...groups.values()].filter(group => group.count > group.limit);
     if (invalid.length) {
-      setSaveError(invalid.map(group => `${group.name}：${group.count}枚（採用上限${group.limit}枚）`).join("／"));
+      setSaveError(invalid.map(group => t("new.save.limit", {name:group.name,count:group.count,limit:group.limit})).join("／"));
       return;
     }
     const data = {
@@ -210,7 +210,7 @@ export default function Home() {
       if (!response[0]?.deck_code) throw new Error("Missing deck code");
       router.push(`/${response[0].deck_code}`);
     } catch {
-      setSaveError("デッキを保存できませんでした。通信状況や枚数を確認して再試行してください。");
+      setSaveError(t("new.save.failed"));
       savingRef.current = false; setSaving(false);
     }
   };
@@ -249,7 +249,7 @@ export default function Home() {
             <h2 className="text-xl font-bold">
               {t("new.cardCount", { count: cardCount })}
             </h2>
-            {deckCards.length === 0 && <details className="my-4 rounded border p-3"><summary className="cursor-pointer text-sm">公式デッキコードから展開</summary><div className="mt-3"><OfficialDeckImport onImport={cards => setDeckCards(cards)} /></div></details>}
+            {deckCards.length === 0 && <details className="my-4 rounded border p-3"><summary className="cursor-pointer text-sm">{t("official.expand")}</summary><div className="mt-3"><OfficialDeckImport onImport={cards => setDeckCards(cards)} /></div></details>}
             {deckCards.length > 0 && <DeckBarChart analysis={deckAnalysis} />}
             {saveError && <p role="alert" className="my-2 text-sm text-red-700">{saveError}</p>}
             <Button
@@ -260,7 +260,7 @@ export default function Home() {
               type="submit"
               disabled={saving}
             >
-              {saving ? "保存中…" : t("new.generateDeckCode")}
+              {saving ? t("new.saving") : t("new.generateDeckCode")}
             </Button>
             <Button
               onClick={() => {
@@ -285,13 +285,13 @@ export default function Home() {
                       alt={card.detail_name}
                       topLeftOverlay={artOverlay(card, "select")}
                     />
-                    {!isEdge(card.id, "up", deckCards) && <button type="button" aria-label={`${card.detail_name}を前に移動`} className="absolute left-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "up", prev))}><ChevronLeft className="h-5 w-5" /></button>}
-                    {!isEdge(card.id, "down", deckCards) && <button type="button" aria-label={`${card.detail_name}を後に移動`} className="absolute right-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "down", prev))}><ChevronRight className="h-5 w-5" /></button>}
+                    {!isEdge(card.id, "up", deckCards) && <button type="button" aria-label={t("card.moveBefore", {name:card.detail_name})} className="absolute left-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "up", prev))}><ChevronLeft className="h-5 w-5" /></button>}
+                    {!isEdge(card.id, "down", deckCards) && <button type="button" aria-label={t("card.moveAfter", {name:card.detail_name})} className="absolute right-1 top-1/2 z-10 flex h-9 w-8 -translate-y-1/2 items-center justify-center rounded-md bg-white/85 text-black shadow-sm hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black md:h-8 md:w-6" onClick={() => setDeckCards(prev => changeIndex(card.id, "down", prev))}><ChevronRight className="h-5 w-5" /></button>}
                     <div className="absolute bottom-1 left-1/2 z-10 w-[calc(100%_-_8px)] max-w-28 -translate-x-1/2 rounded-md bg-white/85 p-1 shadow-sm">
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1">
-                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={`${card.detail_name}を1枚減らす`} onClick={() => updateCardCount(card, -1)}>-</Button>
-                        <span className="min-w-6 text-center text-sm tabular-nums" aria-label={`採用枚数 ${card.count ?? 0}枚`}>{card.count ?? 0}</span>
-                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={`${card.detail_name}を1枚増やす`} onClick={() => updateCardCount(card, 1)}>+</Button>
+                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={t("card.decrease", {name:card.detail_name})} onClick={() => updateCardCount(card, -1)}>-</Button>
+                        <span className="min-w-6 text-center text-sm tabular-nums" aria-label={t("card.adopted", {count:card.count ?? 0})}>{card.count ?? 0}</span>
+                        <Button type="button" variant="outline" className="h-8 min-w-0 px-0 text-lg" aria-label={t("card.increase", {name:card.detail_name})} onClick={() => updateCardCount(card, 1)}>+</Button>
                       </div>
                     </div>
                     </div>
@@ -312,7 +312,7 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent className="min-w-0 px-3 pb-3 pt-4 sm:px-6 md:pt-0">
-            <Button type="button" variant="outline" className="mb-3 w-full md:hidden" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(v => !v)}>検索条件を{filtersOpen ? "閉じる" : "開く"}</Button>
+            <Button type="button" variant="outline" className="mb-3 w-full md:hidden" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(v => !v)}>{t(filtersOpen ? "new.search.closeFilters" : "new.search.openFilters")}</Button>
             <div className={filtersOpen ? "" : "hidden md:block"}>
             <div className="my-4 sm:mx-4">
               <RadioGroup
@@ -349,7 +349,7 @@ export default function Home() {
                   <RadioGroupItem value="scene" id="scene" />
                   <Label htmlFor="scene">{t("new.genres.scene")}</Label>
                 </div>
-                <div className="flex items-center space-x-2"><RadioGroupItem value="boost" id="boost" /><Label htmlFor="boost">ブースト</Label></div>
+                <div className="flex items-center space-x-2"><RadioGroupItem value="boost" id="boost" /><Label htmlFor="boost">{t("new.genres.boost")}</Label></div>
               </RadioGroup>
             </div>
 
@@ -464,7 +464,7 @@ export default function Home() {
                 }
                 className="min-w-0 flex-grow text-base md:text-sm"
               />
-              <Button type="button" variant={groupSameCards ? "default" : "outline"} className="min-h-11 shrink-0 sm:min-h-0" onClick={() => { const next = !groupSameCards; setGroupSameCards(next); void handleSearch(undefined, next); }}>同じカードをまとめる</Button>
+              <Button type="button" variant={groupSameCards ? "default" : "outline"} className="min-h-11 shrink-0 sm:min-h-0" onClick={() => { const next = !groupSameCards; setGroupSameCards(next); void handleSearch(undefined, next); }}>{t("new.search.groupSameCards")}</Button>
             </div>
 
             <Button
@@ -476,8 +476,8 @@ export default function Home() {
               {t("new.search.action")}
             </Button>
             </div>
-            {searching && <p role="status" className="my-3">検索中…</p>}
-            {searchError && <div role="alert" className="my-3 text-sm text-red-700">{searchError}<Button type="button" variant="outline" onClick={() => { const retry = retrySearch.current; if (retry) void runSearch(retry.page, groupSameCards, retry.query); }}>再試行</Button></div>}
+            {searching && <p role="status" className="my-3">{t("new.search.loading")}</p>}
+            {searchError && <div role="alert" className="my-3 text-sm text-red-700">{searchError}<Button type="button" variant="outline" onClick={() => { const retry = retrySearch.current; if (retry) void runSearch(retry.page, groupSameCards, retry.query); }}>{t("common.retry")}</Button></div>}
             <p>{t("new.search.results", { count: searchedCardsCount })}</p>
             <PaginationControls
               currentPage={searchedCardsPage}
@@ -505,7 +505,7 @@ export default function Home() {
         </Card>
       </div>
       <Dialog open={artModalCard !== null} onOpenChange={open => {if (!open) setArtModalCard(null);}}>
-        <DialogContent className="max-h-[90dvh] w-[calc(100%_-_2rem)] overflow-y-auto"><DialogHeader><DialogTitle>{artModalMode === "select" ? "絵柄を変更" : "絵柄一覧"}</DialogTitle><DialogDescription>{artModalCard?.detail_name}</DialogDescription></DialogHeader>
+        <DialogContent className="max-h-[90dvh] w-[calc(100%_-_2rem)] overflow-y-auto"><DialogHeader><DialogTitle>{artModalMode === "select" ? t("image.changeArt") : t("image.viewArts")}</DialogTitle><DialogDescription>{artModalCard?.detail_name}</DialogDescription></DialogHeader>
           <div className="card-grid">
             {artVariants.map(art => {
               const selectArtwork = () => {
@@ -525,11 +525,11 @@ export default function Home() {
                   </div>
                   {artModalMode === "view" ? (
                     <button type="button" className="mt-2 min-h-9 w-full rounded border text-xs disabled:text-muted-foreground" onClick={selectArtwork}>
-                      ＋ この絵柄を追加
+                      {t("image.addArt")}
                     </button>
                   ) : (
                     <button type="button" onClick={selectArtwork} className="sr-only focus:not-sr-only focus:mt-2 focus:w-full focus:rounded focus:border focus:p-1">
-                      この絵柄に変更
+                      {t("image.selectArt")}
                     </button>
                   )}
                 </div>

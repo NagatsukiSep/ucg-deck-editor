@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/i18n/I18nProvider";
 import { useState } from "react";
 import { CardDetail } from "@/types/deckCard";
 import { ImageWithSkeleton } from "@/components/image-with-skelton";
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export const CardComponent = ({ card, addCard, topLeftOverlay }: Props) => {
+  const { t } = useI18n();
   const [isAdded, setIsAdded] = useState(false);
 
   const handleClick = () => {
@@ -32,7 +34,7 @@ export const CardComponent = ({ card, addCard, topLeftOverlay }: Props) => {
           fallbackSrc={card.thumbnail_image_url}
           alt={card.detail_name}
           onClick={handleClick}
-          actionLabel={`${card.detail_name}を追加`}
+          actionLabel={t("card.add", {name:card.detail_name})}
           topLeftOverlay={topLeftOverlay}
         />
       </div>

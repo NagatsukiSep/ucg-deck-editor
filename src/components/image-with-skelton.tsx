@@ -110,7 +110,7 @@ export const ImageWithSkeleton = ({
           {cardImage}
         </button>
       ) : cardImage}
-      {failed && <span role="status" className="pointer-events-none absolute inset-0 flex items-center justify-center bg-muted p-2 text-center text-xs">画像を読み込めませんでした</span>}
+      {failed && <span role="status" className="pointer-events-none absolute inset-0 flex items-center justify-center bg-muted p-2 text-center text-xs">{t("image.failed")}</span>}
       {topLeftOverlay}
       <Dialog>
         <DialogTrigger asChild>

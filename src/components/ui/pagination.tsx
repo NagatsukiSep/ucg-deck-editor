@@ -1,17 +1,21 @@
+"use client"
+import { useI18n } from "@/i18n/I18nProvider"
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 
-const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
+const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => {
+  const { t } = useI18n()
+  return (
   <nav
     role="navigation"
-    aria-label="pagination"
+    aria-label={t("pagination.navigation")}
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
   />
-)
+)}
 Pagination.displayName = "Pagination"
 
 const PaginationContent = React.forwardRef<

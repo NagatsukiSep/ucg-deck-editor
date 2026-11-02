@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/i18n/I18nProvider";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ type AdminPageClientProps = {
 };
 
 export function AdminPageClient({ authenticated }: AdminPageClientProps) {
+  const { t } = useI18n();
   const [password, setPassword] = useState("");
   const [importPage, setImportPage] = useState("1");
   const [promoOnly, setPromoOnly] = useState(false);
@@ -29,7 +31,7 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
     setError("");
 
     if (!password.trim()) {
-      setError("パスワードを入力してください。");
+      setError(t("admin.passwordRequired"));
       return;
     }
 
@@ -45,14 +47,14 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
 
       const data = (await response.json()) as { error?: string };
       if (!response.ok) {
-        setError(data.error ?? "認証に失敗しました。");
+        setError(t(response.status === 401 ? "admin.invalidPassword" : response.status === 403 ? "admin.forbidden" : "admin.authFailed"));
         return;
       }
 
       window.location.reload();
     } catch (loginError) {
       console.error("認証に失敗しました:", loginError);
-      setError("認証に失敗しました。");
+      setError(t("admin.authFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +67,7 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
 
     const parsedPage = Number(importPage);
     if (!Number.isInteger(parsedPage) || parsedPage < 1) {
-      setError("ページ番号は 1 以上の整数で入力してください。");
+      setError(t("admin.pageInvalid"));
       return;
     }
 
@@ -89,16 +91,16 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
       };
 
       if (!response.ok) {
-        setError(data.error ?? "カード取込に失敗しました。");
+        setError(t(response.status === 400 ? "admin.pageInvalid" : response.status === 403 ? "admin.forbidden" : "admin.importFailed"));
         return;
       }
 
       setMessage(
-        `${data.promoOnly ? "プロモ" : "通常"} page ${data.page} の ${data.fetched} 件を処理しました。登録件数: ${data.beforeCount} -> ${data.afterCount}`
+        t("admin.importSuccess", {category:t(data.promoOnly ? "admin.promo" : "admin.regular"), page:data.page ?? parsedPage, fetched:data.fetched ?? 0, before:data.beforeCount ?? 0, after:data.afterCount ?? 0})
       );
     } catch (importError) {
       console.error("カード取込に失敗しました:", importError);
-      setError("カード取込に失敗しました。");
+      setError(t("admin.importFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -107,11 +109,12 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
   const handleLogout = async () => {
     try {
       setIsSubmitting(true);
-      await fetch("/api/admin/logout", { method: "POST" });
+      const response = await fetch("/api/admin/logout", { method: "POST" });
+      if (!response.ok) throw new Error("Sign-out request failed");
       window.location.reload();
     } catch (logoutError) {
       console.error("ログアウトに失敗しました:", logoutError);
-      setError("ログアウトに失敗しました。");
+      setError(t("admin.logoutFailed"));
       setIsSubmitting(false);
     }
   };
@@ -121,16 +124,16 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
       {!authenticated ? (
         <Card>
           <CardHeader>
-            <h1 className="text-2xl font-semibold">管理画面ログイン</h1>
+            <h1 className="text-2xl font-semibold">{t("admin.loginTitle")}</h1>
             <CardDescription>
-              管理用パスワードを入力してください。
+              {t("admin.loginDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="adminPassword" className="text-sm font-medium">
-                  パスワード
+                  {t("admin.password")}
                 </Label>
                 <Input
                   id="adminPassword"
@@ -141,7 +144,7 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "認証中..." : "ログイン"}
+                {isSubmitting ? t("admin.authenticating") : t("admin.login")}
               </Button>
               {error && <p className="text-sm text-red-600">{error}</p>}
             </form>
@@ -150,16 +153,16 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
       ) : (
         <Card>
           <CardHeader>
-            <h1 className="text-2xl font-semibold">管理者カード取込</h1>
+            <h1 className="text-2xl font-semibold">{t("admin.title")}</h1>
             <CardDescription>
-              外部カードAPIから TiDB Cloud に取り込みます。
+              {t("admin.description")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleImportCards} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="importPage" className="text-sm font-medium">
-                  ページ番号
+                  {t("admin.page")}
                 </Label>
                 <Input
                   id="importPage"
@@ -176,10 +179,10 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
                   checked={promoOnly}
                   onChange={(e) => setPromoOnly(e.target.checked)}
                 />
-                プロモのみ取得する
+                {t("admin.promoOnly")}
               </label>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "取込中..." : "カードを取り込む"}
+                {isSubmitting ? t("admin.importing") : t("admin.import")}
               </Button>
               <Button
                 type="button"
@@ -188,7 +191,7 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
                 onClick={handleLogout}
                 disabled={isSubmitting}
               >
-                ログアウト
+                {t("admin.logout")}
               </Button>
               {message && <p className="text-sm text-green-600">{message}</p>}
               {error && <p className="text-sm text-red-600">{error}</p>}

@@ -48,8 +48,8 @@ const getInitialLocale = () => {
   return "en";
 };
 
-export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+export const I18nProvider = ({ children, initialLocale = DEFAULT_LOCALE }: { children: React.ReactNode; initialLocale?: Locale }) => {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   useEffect(() => {
     setLocaleState(getInitialLocale());
@@ -59,6 +59,12 @@ export const I18nProvider = ({ children }: { children: React.ReactNode }) => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("locale", locale);
       document.documentElement.lang = locale;
+      document.cookie = `udb-locale=${locale}; Path=/; Max-Age=31536000; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
+      document.title = translations[locale]["meta.title"];
+      const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+      if (description) description.content = translations[locale]["meta.description"];
+      const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+      if (manifest) manifest.href = `/api/manifest?lang=${locale}`;
     }
   }, [locale]);
 

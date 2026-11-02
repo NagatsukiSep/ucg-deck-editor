@@ -12,10 +12,10 @@ export function officialCode(input: string): string {
   let code = input.trim();
   if (code.startsWith('https://')) {
     const url = new URL(code);
-    if (url.hostname !== 'app-admin.ultraman-cardgame.com' || url.pathname !== '/toc-api/v1/app/cardGroup/getPublishDetail') throw new OfficialDeckError('公式デッキコード、または公式デッキ取得URLを入力してください。', 400);
+    if (url.hostname !== 'app-admin.ultraman-cardgame.com' || url.pathname !== '/toc-api/v1/app/cardGroup/getPublishDetail') throw new OfficialDeckError('official.error.url', 400);
     code = url.searchParams.get('code') || '';
   }
-  if (!/^[A-Za-z0-9_-]{8,100}$/.test(code)) throw new OfficialDeckError('公式デッキコードを確認してください。', 400);
+  if (!/^[A-Za-z0-9_-]{8,100}$/.test(code)) throw new OfficialDeckError('official.error.code', 400);
   return code;
 }
 async function fetchDetail(code: string): Promise<unknown> {
@@ -23,7 +23,7 @@ async function fetchDetail(code: string): Promise<unknown> {
   try { if (Date.now() - (await stat(cache)).mtimeMs < 5 * 60 * 1000) return JSON.parse(await readFile(cache, 'utf8')); } catch { /* Cache miss. */ }
   let key: string;
   try { key = await officialSigningKey(); }
-  catch { throw new OfficialDeckError('公式サービスの接続情報を取得できませんでした。時間をおいて再試行してください。', 503); }
+  catch { throw new OfficialDeckError('official.error.signing', 503); }
   const timestamp = String(Date.now()), nonce = String(randomInt(1000000));
   // Match the official client's low-byte UTF-16 signature encoding.
   const utf16 = Buffer.from(JSON.stringify({code}) + nonce + timestamp + key, 'utf16le');
@@ -35,10 +35,10 @@ async function fetchDetail(code: string): Promise<unknown> {
     response = await fetch(`https://app-admin.ultraman-cardgame.com/toc-api/v1/app/cardGroup/getPublishDetail?${new URLSearchParams({code})}`, {
       headers:{'api-access-token':'', l:'ja_JP', tid:'1', v:'1.1', timestamp, nonce, signature}, signal:AbortSignal.timeout(15000), cache:'no-store'
     });
-  } catch { throw new OfficialDeckError('公式サービスに接続できませんでした。時間をおいて再試行してください。'); }
-  if (!response.ok) throw new OfficialDeckError('公式サービスからデッキを取得できませんでした。');
+  } catch { throw new OfficialDeckError('official.error.connection'); }
+  if (!response.ok) throw new OfficialDeckError('official.error.fetch');
   const result = await response.json();
-  if (result.code !== 0 || !result.data) throw new OfficialDeckError('デッキが存在しないか、非公開・削除済みです。コードを確認してください。',404);
+  if (result.code !== 0 || !result.data) throw new OfficialDeckError('official.error.missing',404);
   try { await mkdir(path.dirname(cache), {recursive:true}); const temp = `${cache}.${process.pid}.tmp`; await writeFile(temp, JSON.stringify(result.data)); await rename(temp,cache); } catch { /* Cache is optional. */ }
   return result.data;
 }
@@ -48,22 +48,22 @@ export async function importOfficialDeck(input: string) {
   if (!pending) { pending = fetchDetail(code); inflight.set(code,pending); }
   let raw: unknown;
   try { raw = await pending; } finally { if (inflight.get(code) === pending) inflight.delete(code); }
-  if (!raw || typeof raw !== 'object') throw new OfficialDeckError('公式デッキの形式を確認できませんでした。');
+  if (!raw || typeof raw !== 'object') throw new OfficialDeckError('official.error.format');
   const detail = raw as Record<string, unknown>;
   const quantities = new Map<string,number>();
   for (const key of ['superHeroList','superMonsterList','sceneList','superMachineList','speedUpCardList']) {
     const list = detail[key];
     if (list == null) continue;
-    if (!Array.isArray(list)) throw new OfficialDeckError('公式デッキの形式を確認できませんでした。');
+    if (!Array.isArray(list)) throw new OfficialDeckError('official.error.format');
     for (const card of list) {
-      if (!card || !Number.isSafeInteger(card.id) || !Number.isInteger(card.count) || card.count < 1 || card.count > 50) throw new OfficialDeckError('公式デッキのカード情報が不正です。');
+      if (!card || !Number.isSafeInteger(card.id) || !Number.isInteger(card.count) || card.count < 1 || card.count > 50) throw new OfficialDeckError('official.error.card');
       const id = String(card.id); quantities.set(id, (quantities.get(id) || 0) + card.count);
     }
   }
   const total = [...quantities.values()].reduce((a,b)=>a+b,0);
-  if (total < 1 || total > 50) throw new OfficialDeckError('公式デッキのカード枚数を確認してください。',422);
+  if (total < 1 || total > 50) throw new OfficialDeckError('official.error.count',422);
   const all = new Map((await catalog()).map(card=>[card.id,card]));
   const missing = [...quantities.keys()].filter(id=>!all.has(id));
-  if (missing.length) throw new OfficialDeckError('このデッキには未登録のカードが含まれています。カードデータの更新が必要です。',422);
+  if (missing.length) throw new OfficialDeckError('official.error.unknown',422);
   return {code, name:typeof detail.name === 'string' ? detail.name : '', cards:[...quantities].map(([id,count])=>({...all.get(id)!,count})), total};
 }

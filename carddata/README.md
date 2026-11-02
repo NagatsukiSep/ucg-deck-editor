@@ -153,3 +153,24 @@ the in-memory cache. An official application format change may require updating
 the extractor or configuring the environment variable. Neither the key nor API signing
 headers are returned to the browser. The official API host is fixed; pasted URLs
 are used only to extract and validate the code.
+
+### Verified character-name translations
+
+`character-name-sources.json` records official regional card references for all
+81 kaiju names currently in the Japanese catalog (checked 2026-11-01). English
+labels come from the US card catalog (tenant 2, `en_US`); Korean labels come from
+the Korean catalog (tenant 7, `ko_KR`). Cards are matched by their common card
+number and labels use the regional detail's `characterName`, preserving spelling,
+spacing and capitalization. This avoids relying on franchise names or inferred
+transliterations that differ from the card game's own terminology. Raw responses
+are cached under `.cache/regional` and are not committed. Translation tests check
+that the dictionaries match the recorded official names.
+
+English names were verified for all 81 entries. Korean names were verified for
+78 entries; Emi, Gigantron and Destroyer remain Japanese in the official Korean
+regional responses. These three are marked `untranslated_in_official_data` and
+the original API labels are preserved in the source record. As of 2026-11-02,
+the UI uses `에미` for Emi, verified in Bandai Namco Korea's official product
+listing. For Gigantron and Destroyer it uses the user-approved transliterations
+`자이간트론` and `디스트로이어`. These display overrides are explicitly recorded
+as external-source verification or transliteration, not official card-game names.

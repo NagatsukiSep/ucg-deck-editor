@@ -31,6 +31,7 @@ type Props = {
 const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const { t } = useI18n();
   const sceneKey = "scene";
+  const fallbackLabels: Record<string, string> = {"不明ヒーロー":t("chart.unknownHero"), "不明怪獣":t("chart.unknownKaiju"), "不明メカ":t("chart.unknownMecha")};
   const characterLabelMap = new Map(
     [...ultraCharacter, ...ultraMechaCharacter, ...kaijuCharacter].map(
       (entry) => [entry.value, entry.labelKey] as const
@@ -43,7 +44,7 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   Object.entries(analysis).forEach(([name, value]) => {
     const labelKey = characterLabelMap.get(name);
     const displayName =
-      name === sceneKey ? t("chart.scene") : labelKey ? t(labelKey) : name;
+      name === "ブースト" ? t("new.genres.boost") : name === sceneKey ? t("chart.scene") : labelKey ? t(labelKey) : fallbackLabels[name] || name;
     if (typeof value === "number") {
       chartData.push({ name: displayName, [name === "ブースト" ? "boost" : sceneKey]: value });
       maxTotal = Math.max(maxTotal, value);
@@ -103,7 +104,8 @@ const HeroLevelBarChartAbsolute: React.FC<Props> = ({ analysis }) => {
   const chartHeight = chartData.length * (barHeight + barMargin) + axisHeight;
 
   const getLevelLabel = (level: string) => {
-    if (level === "boost") return "ブースト";
+    if (level === "不明") return t("chart.unknownLevel");
+    if (level === "boost") return t("new.genres.boost");
     if (level === sceneKey) return t("chart.scene");
     if (level === "4_hero") return `${t("chart.level")}4`;
     return `${t("chart.level")}${level}`;

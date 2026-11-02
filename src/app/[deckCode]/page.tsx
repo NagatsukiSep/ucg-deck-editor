@@ -108,7 +108,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       generateCollage(enrichedCards);
     } catch (error) {
       console.error("Failed to load deck:", error);
-      setLoadError("デッキを読み込めませんでした。通信状況を確認して再試行してください。");
+      setLoadError(t("deck.load.failed"));
     } finally { setLoadingDetails(false); }
   }, [deckCode, generateCollage]);
 
@@ -145,8 +145,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
   return (
     <div className="container mx-auto p-4 ">
       <h1 className="text-2xl font-bold mb-4">{t("deck.title")}</h1>
-      {loadingDetails && <p role="status">デッキを読み込み中…</p>}
-      {loadError && <div role="alert"><p>{loadError}</p><Button type="button" onClick={() => void getDeckData()}>再試行</Button></div>}
+      {loadingDetails && <p role="status">{t("deck.load.loading")}</p>}
+      {loadError && <div role="alert"><p>{loadError}</p><Button type="button" onClick={() => void getDeckData()}>{t("common.retry")}</Button></div>}
       {is404 && (
         <div>
           <p>{t("deck.notFound")}</p>
@@ -171,7 +171,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {cardVersion === 1 && <p className="mb-4 text-sm">2026/10/31以前に作成されたデッキは、閲覧・画像生成のみ利用できます。このデッキからの作成は利用できません。</p>}
+            {cardVersion === 1 && <p className="mb-4 text-sm">{t("deck.legacyNotice")}</p>}
             <div className="flex flex-col lg:flex-row lg:items-start gap-4">
               <div className="w-full lg:w-1/2">
                 <DeckBarChart analysis={deckAnalysis} />

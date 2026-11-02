@@ -1,0 +1,1801 @@
+{
+  "verified_on": "2026-11-01",
+  "source": "Official ULTRAMAN CARD GAME / ULTRA LEAGUE regional card catalog",
+  "method": "Match Japanese and regional card numbers (code), then read characterName from regional card detail. English: US tenant 2. Korean: tenant 7. Values preserve official spelling and case. A regional response containing Japanese text is marked untranslated_in_official_data, not verified as a Korean translation.",
+  "characters": [
+    {
+      "japanese": "アントラー",
+      "translation_key": "character.kaiju.antlar",
+      "en": {
+        "characterName": "ANTLAR",
+        "code": "BP09-064",
+        "id": 4351,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4351",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "앤틀러",
+        "code": "BP09-064",
+        "id": 16189,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16189",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "イザク",
+      "translation_key": "character.kaiju.izak",
+      "en": {
+        "characterName": "IZAC",
+        "code": "BP02-093",
+        "id": 381,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=381",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "이자크",
+        "code": "BP02-093",
+        "id": 1858,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1858",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "イフ",
+      "translation_key": "character.kaiju.if",
+      "en": {
+        "characterName": "IF",
+        "code": "BP06-082",
+        "id": 1776,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1776",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "이프",
+        "code": "BP06-082",
+        "id": 10975,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10975",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "インペライザー",
+      "translation_key": "character.kaiju.imperizer",
+      "en": {
+        "characterName": "INPELAIZER",
+        "code": "BP09-077",
+        "id": 4364,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4364",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "인페라이저",
+        "code": "BP09-077",
+        "id": 16202,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16202",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "エミ",
+      "translation_key": "character.kaiju.emi",
+      "en": {
+        "characterName": "EMI",
+        "code": "EXD01-013",
+        "id": 411,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=411",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "エミ",
+        "code": "EXD01-013",
+        "id": 1888,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1888",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "untranslated_in_official_data",
+        "displayName": "에미",
+        "displayNameStatus": "verified_external",
+        "displayNameUpdatedOn": "2026-11-02",
+        "displayNameSource": "https://www.bnkrmall.co.kr/plan/p_content.do?idx=862"
+      }
+    },
+    {
+      "japanese": "エレキング",
+      "translation_key": "character.kaiju.eleking",
+      "en": {
+        "characterName": "ELEKING",
+        "code": "BP03-078",
+        "id": 796,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=796",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "에레킹",
+        "code": "BP03-078",
+        "id": 4697,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4697",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "カルミラ",
+      "translation_key": "character.kaiju.carmeara",
+      "en": {
+        "characterName": "CARMEARA",
+        "code": "BP08-091",
+        "id": 4112,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4112",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "카르미라",
+        "code": "BP08-091",
+        "id": 14238,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14238",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ガイガレード",
+      "translation_key": "character.kaiju.gaigareid",
+      "en": {
+        "characterName": "GAIGARAID",
+        "code": "BP04-093",
+        "id": 1102,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1102",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "가이가레이드",
+        "code": "BP04-093",
+        "id": 8225,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8225",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ガタノゾーア",
+      "translation_key": "character.kaiju.gatanothor",
+      "en": {
+        "characterName": "GATANOTHOR",
+        "code": "BP05-083",
+        "id": 1277,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1277",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "가타노조아",
+        "code": "BP05-083",
+        "id": 9887,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9887",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ガッツ星人",
+      "translation_key": "character.kaiju.guts",
+      "en": {
+        "characterName": "ALIEN GUTS",
+        "code": "Y26-P028",
+        "id": 3485,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3485",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "거츠 성인",
+        "code": "Y26-P028",
+        "id": 13637,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13637",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ガヴァドン",
+      "translation_key": "character.kaiju.gavadon",
+      "en": {
+        "characterName": "GAVADON",
+        "code": "UD01-009",
+        "id": 1678,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1678",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "가바돈",
+        "code": "Y25-P009",
+        "id": 11034,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=11034",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ガーゴルゴン",
+      "translation_key": "character.kaiju.gargorgon",
+      "en": {
+        "characterName": "GARGORGON",
+        "code": "BP04-095",
+        "id": 1104,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1104",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "가고르곤",
+        "code": "BP04-095",
+        "id": 8227,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8227",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "キリエロイド",
+      "translation_key": "character.kaiju.kyrieloid",
+      "en": {
+        "characterName": "KYRIELOID",
+        "code": "BP03-080",
+        "id": 798,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=798",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "키리에로이드",
+        "code": "BP03-080",
+        "id": 4699,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4699",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "キングオブモンス",
+      "translation_key": "character.kaiju.kingOfMons",
+      "en": {
+        "characterName": "KING OF MONS",
+        "code": "SD01-013",
+        "id": 86,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=86",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "킹 오브 몬스",
+        "code": "SD01-013",
+        "id": 750,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=750",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "キングジョー",
+      "translation_key": "character.kaiju.kingJoe",
+      "en": {
+        "characterName": "KING JOE",
+        "code": "BP07-069",
+        "id": 3185,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3185",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "킹죠",
+        "code": "BP07-069",
+        "id": 13341,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13341",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ギャラクトロン",
+      "translation_key": "character.kaiju.galactron",
+      "en": {
+        "characterName": "GALACTRON",
+        "code": "BP04-096",
+        "id": 1105,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1105",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "갤럭트론",
+        "code": "BP04-096",
+        "id": 8228,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8228",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ギルアーク",
+      "translation_key": "character.kaiju.gilArc",
+      "en": {
+        "characterName": "GUIL ARC",
+        "code": "BP08-097",
+        "id": 4120,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4120",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "길 아크",
+        "code": "BP08-097",
+        "id": 14246,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14246",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ギルバグ",
+      "translation_key": "character.kaiju.gilbug",
+      "en": {
+        "characterName": "GUILEBAKU",
+        "code": "BP08-093",
+        "id": 4115,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4115",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "기르바그",
+        "code": "BP08-093",
+        "id": 14241,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14241",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ギヴァス",
+      "translation_key": "character.kaiju.givas",
+      "en": {
+        "characterName": "GIVAS",
+        "code": "SD03-015",
+        "id": 1167,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1167",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "기바스",
+        "code": "SD03-015",
+        "id": 6807,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=6807",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "クィーンモネラ",
+      "translation_key": "character.kaiju.queenMonera",
+      "en": {
+        "characterName": "QUEEN MONERA",
+        "code": "BP09-070",
+        "id": 4357,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4357",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "퀸 모네라",
+        "code": "BP09-070",
+        "id": 16195,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16195",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "クトゥーラ",
+      "translation_key": "character.kaiju.kutuura",
+      "en": {
+        "characterName": "KUTUURA",
+        "code": "BP05-089",
+        "id": 1283,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1283",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "크투라",
+        "code": "BP05-089",
+        "id": 9893,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9893",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "グライム",
+      "translation_key": "character.kaiju.graim",
+      "en": {
+        "characterName": "GRAIM",
+        "code": "SD03-016",
+        "id": 1168,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1168",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "그라임",
+        "code": "SD03-016",
+        "id": 6808,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=6808",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "グルジオキング",
+      "translation_key": "character.kaiju.grigioKing",
+      "en": {
+        "characterName": "GRIGIO KING",
+        "code": "BP08-071",
+        "id": 4085,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4085",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "그루지오 킹",
+        "code": "BP08-071",
+        "id": 14211,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14211",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "グルジオボーン",
+      "translation_key": "character.kaiju.grigioBone",
+      "en": {
+        "characterName": "GRIGIO BONE",
+        "code": "BP02-095",
+        "id": 383,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=383",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "그루지오본",
+        "code": "BP02-095",
+        "id": 1860,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1860",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "グレゴール人",
+      "translation_key": "character.kaiju.gregorl",
+      "en": {
+        "characterName": "GREGORE",
+        "code": "BP05-085",
+        "id": 1279,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1279",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "그레고르인",
+        "code": "BP05-085",
+        "id": 9889,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9889",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゲネガーグ",
+      "translation_key": "character.kaiju.genegarg",
+      "en": {
+        "characterName": "GENEGARG",
+        "code": "BP01-099",
+        "id": 151,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=151",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "게네가그",
+        "code": "BP01-099",
+        "id": 1025,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1025",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゲバルガ",
+      "translation_key": "character.kaiju.gebalga",
+      "en": {
+        "characterName": "GEBALGA",
+        "code": "BP02-096",
+        "id": 384,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=384",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "게바르가",
+        "code": "BP02-096",
+        "id": 1861,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1861",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "コッヴ",
+      "translation_key": "character.kaiju.cOV",
+      "en": {
+        "characterName": "C.O.V.",
+        "code": "BP07-075",
+        "id": 3192,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3192",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "코브",
+        "code": "BP07-075",
+        "id": 13348,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13348",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゴモラ",
+      "translation_key": "character.kaiju.gomora",
+      "en": {
+        "characterName": "GOMORA",
+        "code": "BP03-074",
+        "id": 792,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=792",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "고모라",
+        "code": "BP03-074",
+        "id": 4693,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4693",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゴルザ",
+      "translation_key": "character.kaiju.golza",
+      "en": {
+        "characterName": "GOLZA",
+        "code": "BP08-067",
+        "id": 4080,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4080",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "고르자",
+        "code": "BP08-067",
+        "id": 14206,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14206",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゴルバー",
+      "translation_key": "character.kaiju.golba",
+      "en": {
+        "characterName": "GOLBA",
+        "code": "BP01-100",
+        "id": 152,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=152",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "고르바",
+        "code": "BP01-100",
+        "id": 1026,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1026",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "サタンビゾー",
+      "translation_key": "character.kaiju.satanBizor",
+      "en": {
+        "characterName": "SATAN BIZOR",
+        "code": "SD01-012",
+        "id": 70,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=70",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "사탄비조",
+        "code": "SD01-012",
+        "id": 563,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=563",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "サンダーキラー",
+      "translation_key": "character.kaiju.thunderKiller",
+      "en": {
+        "characterName": "THUNDER KILLER",
+        "code": "BP03-089",
+        "id": 807,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=807",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "썬더 킬러",
+        "code": "BP03-089",
+        "id": 4708,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4708",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ザディーメ",
+      "translation_key": "character.kaiju.zadime",
+      "en": {
+        "characterName": "ZADIME",
+        "code": "BP02-097",
+        "id": 385,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=385",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "자디메",
+        "code": "BP02-097",
+        "id": 1862,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1862",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ザムシャー",
+      "translation_key": "character.kaiju.zamshaa",
+      "en": {
+        "characterName": "ZAMSHER",
+        "code": "BP02-094",
+        "id": 382,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=382",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "자무샤",
+        "code": "BP02-094",
+        "id": 1859,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1859",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "シェパードン",
+      "translation_key": "character.kaiju.shepardon",
+      "en": {
+        "characterName": "SHEPHERDON",
+        "code": "BP05-090",
+        "id": 1284,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1284",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "셰파돈",
+        "code": "BP05-090",
+        "id": 9894,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9894",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "シャゴン",
+      "translation_key": "character.kaiju.shagong",
+      "en": {
+        "characterName": "SHAGONG",
+        "code": "BP01-092",
+        "id": 145,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=145",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "샤공",
+        "code": "BP01-092",
+        "id": 1019,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1019",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ジャイガントロン",
+      "translation_key": "character.kaiju.gigantotron",
+      "en": {
+        "characterName": "GIGANTRON",
+        "code": "EXD01-016",
+        "id": 414,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=414",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "ジャイガントロン",
+        "code": "EXD01-016",
+        "id": 1891,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1891",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "untranslated_in_official_data",
+        "displayName": "자이간트론",
+        "displayNameStatus": "transliteration",
+        "displayNameUpdatedOn": "2026-11-02",
+        "displayNameNote": "User-approved Korean transliteration; not verified as an official Korean name."
+      }
+    },
+    {
+      "japanese": "ジャグラス ジャグラー",
+      "translation_key": "character.kaiju.jugglusJuggler",
+      "en": {
+        "characterName": "JUGGLUS JUGGLER",
+        "code": "BP09-079",
+        "id": 4366,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4366",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "저글러스 저글러",
+        "code": "BP09-079",
+        "id": 16204,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16204",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "スイード",
+      "translation_key": "character.kaiju.sweed",
+      "en": {
+        "characterName": "SWEED",
+        "code": "BP08-095",
+        "id": 4117,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4117",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "스위드",
+        "code": "BP08-095",
+        "id": 14243,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14243",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "スカルゴモラ",
+      "translation_key": "character.kaiju.skullGomora",
+      "en": {
+        "characterName": "SKULL GOMORA",
+        "code": "BP03-088",
+        "id": 806,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=806",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "스컬 고모라",
+        "code": "BP03-088",
+        "id": 4707,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4707",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "スフィアザウルス",
+      "translation_key": "character.kaiju.spheresaurus",
+      "en": {
+        "characterName": "SPHERESAURUS",
+        "code": "BP01-094",
+        "id": 45,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=45",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "스피아자우루스",
+        "code": "BP01-094",
+        "id": 538,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=538",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "スラン星人",
+      "translation_key": "character.kaiju.sran",
+      "en": {
+        "characterName": "ALIEN SRAN",
+        "code": "BP07-081",
+        "id": 3200,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3200",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "스란 성인",
+        "code": "BP07-081",
+        "id": 13356,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13356",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゼットン",
+      "translation_key": "character.kaiju.zetton",
+      "en": {
+        "characterName": "ZETTON",
+        "code": "BP07-056",
+        "id": 3167,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3167",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "젯톤",
+        "code": "BP07-056",
+        "id": 13323,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13323",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゾメラ",
+      "translation_key": "character.kaiju.zomera",
+      "en": {
+        "characterName": "ZOMERA",
+        "code": "BP06-098",
+        "id": 1792,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1792",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "조메라",
+        "code": "BP06-098",
+        "id": 10991,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10991",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ゾヴァラス",
+      "translation_key": "character.kaiju.zovaras",
+      "en": {
+        "characterName": "ZOVARAS",
+        "code": "BP05-104",
+        "id": 1298,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1298",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "조바라스",
+        "code": "BP05-104",
+        "id": 9908,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9908",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "タガヌラー",
+      "translation_key": "character.kaiju.taganular",
+      "en": {
+        "characterName": "TAGANULAR",
+        "code": "BP06-096",
+        "id": 1790,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1790",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "타가누라",
+        "code": "BP06-096",
+        "id": 10989,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10989",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "タルタロス",
+      "translation_key": "character.kaiju.tartarus",
+      "en": {
+        "characterName": "TARTARUS",
+        "code": "BP09-089",
+        "id": 4376,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4376",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "타르타로스",
+        "code": "BP09-089",
+        "id": 16214,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16214",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ダークメフィスト",
+      "translation_key": "character.kaiju.darkMephisto",
+      "en": {
+        "characterName": "DARK MEPHISTO",
+        "code": "BP07-078",
+        "id": 3197,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3197",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "다크 메피스토",
+        "code": "BP07-078",
+        "id": 13353,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13353",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ダークメフィスト（ツヴァイ）",
+      "translation_key": "character.kaiju.darkMephistoZwei",
+      "en": {
+        "characterName": "DARK MEPHISTO (ZWEI)",
+        "code": "BP07-080",
+        "id": 3199,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3199",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "다크 메피스토 (쯔바이)",
+        "code": "BP07-080",
+        "id": 13355,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13355",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ダークルギエル",
+      "translation_key": "character.kaiju.darkLugiel",
+      "en": {
+        "characterName": "DARK LUGIEL",
+        "code": "BP08-070",
+        "id": 4084,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4084",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "다크 루기엘",
+        "code": "BP08-070",
+        "id": 14210,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14210",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ダークロプスゼロ",
+      "translation_key": "character.kaiju.darklopsZero",
+      "en": {
+        "characterName": "DARKLOPS ZERO",
+        "code": "BP06-093",
+        "id": 1787,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1787",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "다크롭스 제로",
+        "code": "BP06-093",
+        "id": 10986,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10986",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "テラフェイザー",
+      "translation_key": "character.kaiju.terraphaser",
+      "en": {
+        "characterName": "TERRAPHASER",
+        "code": "BP05-099",
+        "id": 1293,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1293",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "테라페이저",
+        "code": "BP05-099",
+        "id": 9903,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9903",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "テレスドン",
+      "translation_key": "character.kaiju.telesdon",
+      "en": {
+        "characterName": "TELESDON",
+        "code": "BP09-066",
+        "id": 4353,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4353",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "테레스돈",
+        "code": "BP09-066",
+        "id": 16191,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16191",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ディノゾール",
+      "translation_key": "character.kaiju.dinozaur",
+      "en": {
+        "characterName": "DINOZOLE",
+        "code": "BP01-093",
+        "id": 146,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=146",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "디노졸",
+        "code": "BP01-093",
+        "id": 1020,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1020",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "デストロイヤー",
+      "translation_key": "character.kaiju.destroyer",
+      "en": {
+        "characterName": "DESTROYER",
+        "code": "EXD01-018",
+        "id": 416,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=416",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "デストロイヤー",
+        "code": "EXD01-018",
+        "id": 1893,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1893",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "untranslated_in_official_data",
+        "displayName": "디스트로이어",
+        "displayNameStatus": "transliteration",
+        "displayNameUpdatedOn": "2026-11-02",
+        "displayNameNote": "User-approved Korean transliteration; not verified as an official Korean name."
+      }
+    },
+    {
+      "japanese": "デスフェイサー",
+      "translation_key": "character.kaiju.deathfacer",
+      "en": {
+        "characterName": "DEATHFACER",
+        "code": "BP09-068",
+        "id": 4355,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4355",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "데스페이사",
+        "code": "BP09-068",
+        "id": 16193,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16193",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "トライガロン",
+      "translation_key": "character.kaiju.trigaron",
+      "en": {
+        "characterName": "TRIGARON",
+        "code": "BP05-100",
+        "id": 1294,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1294",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "트라이가론",
+        "code": "BP05-100",
+        "id": 9904,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9904",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "トリガーダーク",
+      "translation_key": "character.kaiju.triggerDark",
+      "en": {
+        "characterName": "TRIGGER DARK",
+        "code": "BP08-092",
+        "id": 4113,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4113",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "트리거 다크",
+        "code": "BP08-092",
+        "id": 14239,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14239",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "トレギア",
+      "translation_key": "character.kaiju.tregear",
+      "en": {
+        "characterName": "TREGEAR",
+        "code": "BP09-086",
+        "id": 4373,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4373",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "트레기어",
+        "code": "BP09-086",
+        "id": 16211,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16211",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ドグリド",
+      "translation_key": "character.kaiju.doglid",
+      "en": {
+        "characterName": "DUGRID",
+        "code": "BP04-097",
+        "id": 1106,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1106",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "더그리드",
+        "code": "BP04-097",
+        "id": 8229,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8229",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ネオダランビア",
+      "translation_key": "character.kaiju.neoDarambia",
+      "en": {
+        "characterName": "NEO DARAMBIA",
+        "code": "BP02-092",
+        "id": 380,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=380",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "네오 다란비아",
+        "code": "BP02-092",
+        "id": 1857,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1857",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ネロンガ",
+      "translation_key": "character.kaiju.neronga",
+      "en": {
+        "characterName": "NERONGA",
+        "code": "BP09-062",
+        "id": 4349,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4349",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "네론가",
+        "code": "BP09-062",
+        "id": 16187,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16187",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "バザンガ",
+      "translation_key": "character.kaiju.bazanga",
+      "en": {
+        "characterName": "BAZANGA",
+        "code": "BP01-095",
+        "id": 147,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=147",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "바잔가",
+        "code": "BP01-095",
+        "id": 1021,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1021",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "バルタン星人",
+      "translation_key": "character.kaiju.baltan",
+      "en": {
+        "characterName": "ALIEN BALTAN",
+        "code": "BP03-072",
+        "id": 790,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=790",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "발탄성인",
+        "code": "BP03-072",
+        "id": 4691,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4691",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "バルタン星人（BV）",
+      "translation_key": "character.kaiju.baltanBV",
+      "en": {
+        "characterName": "ALIEN BALTAN (BV)",
+        "code": "BP09-075",
+        "id": 4362,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4362",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "발탄 성인(BV)",
+        "code": "BP09-075",
+        "id": 16200,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16200",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "パズズ",
+      "translation_key": "character.kaiju.pazuzu",
+      "en": {
+        "characterName": "PAZUZU",
+        "code": "BP05-088",
+        "id": 1282,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1282",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "파즈즈",
+        "code": "BP05-088",
+        "id": 9892,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9892",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ファイブキング",
+      "translation_key": "character.kaiju.fiveKing",
+      "en": {
+        "characterName": "FIVE KING",
+        "code": "BP04-094",
+        "id": 1103,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1103",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "파이브킹",
+        "code": "BP04-094",
+        "id": 8226,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8226",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ヘルベロス",
+      "translation_key": "character.kaiju.hellberus",
+      "en": {
+        "characterName": "HELLBERUS",
+        "code": "BP07-082",
+        "id": 3201,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3201",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "헬베로스",
+        "code": "BP07-082",
+        "id": 13357,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13357",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ベムスター",
+      "translation_key": "character.kaiju.bemstar",
+      "en": {
+        "characterName": "BEMSTAR",
+        "code": "BP06-079",
+        "id": 1773,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1773",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "벰스타",
+        "code": "BP06-079",
+        "id": 10972,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10972",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ベムラー",
+      "translation_key": "character.kaiju.bemular",
+      "en": {
+        "characterName": "BEMULAR",
+        "code": "BP09-060",
+        "id": 4347,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4347",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "베무라",
+        "code": "BP09-060",
+        "id": 16185,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16185",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ベリアル",
+      "translation_key": "character.kaiju.belial",
+      "en": {
+        "characterName": "BELIAL",
+        "code": "BP06-084",
+        "id": 1778,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1778",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "베리알",
+        "code": "BP06-084",
+        "id": 10977,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10977",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ペダニウムゼットン",
+      "translation_key": "character.kaiju.pedaniumZetton",
+      "en": {
+        "characterName": "PEDANIUM ZETTON",
+        "code": "BP03-090",
+        "id": 808,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=808",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "페다니움 젯톤",
+        "code": "BP03-090",
+        "id": 4709,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4709",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "メトロン星人",
+      "translation_key": "character.kaiju.metron",
+      "en": {
+        "characterName": "ALIEN METRON",
+        "code": "BP07-065",
+        "id": 3181,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3181",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "메트론 성인",
+        "code": "BP07-065",
+        "id": 13337,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13337",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "メフィラス星人",
+      "translation_key": "character.kaiju.mephilas",
+      "en": {
+        "characterName": "ALIEN MEFILAS",
+        "code": "BP07-047",
+        "id": 3156,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3156",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "메피라스 성인",
+        "code": "BP07-047",
+        "id": 13312,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13312",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "メルバ",
+      "translation_key": "character.kaiju.melba",
+      "en": {
+        "characterName": "MELBA",
+        "code": "BP08-068",
+        "id": 4081,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4081",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "메르바",
+        "code": "BP08-068",
+        "id": 14207,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=14207",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "リドリアス",
+      "translation_key": "character.kaiju.lidorias",
+      "en": {
+        "characterName": "LIDORIAS",
+        "code": "BP09-072",
+        "id": 4359,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=4359",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "리도리아스",
+        "code": "BP09-072",
+        "id": 16197,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=16197",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "レイキュバス",
+      "translation_key": "character.kaiju.reicubas",
+      "en": {
+        "characterName": "REICUBAS",
+        "code": "BP06-080",
+        "id": 1774,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1774",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "레이큐바스",
+        "code": "BP06-080",
+        "id": 10973,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=10973",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "レキネス",
+      "translation_key": "character.kaiju.rekiness",
+      "en": {
+        "characterName": "REKINESS",
+        "code": "SD03-017",
+        "id": 1169,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1169",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "레키네스",
+        "code": "BP04-098",
+        "id": 8230,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=8230",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "レッドキング",
+      "translation_key": "character.kaiju.redKing",
+      "en": {
+        "characterName": "RED KING",
+        "code": "BP07-041",
+        "id": 3149,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=3149",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "레드킹",
+        "code": "BP07-041",
+        "id": 13305,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=13305",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    },
+    {
+      "japanese": "ヴァルジェネス",
+      "translation_key": "character.kaiju.valgeness",
+      "en": {
+        "characterName": "VALGENESS",
+        "code": "BP05-101",
+        "id": 1295,
+        "endpoint": "https://app-admin-us.ultraman-cardgame.com/toc-api/v1/app/card/get?id=1295",
+        "locale": "en_US",
+        "tenant": "2",
+        "status": "verified"
+      },
+      "ko": {
+        "characterName": "발제네스",
+        "code": "BP05-101",
+        "id": 9905,
+        "endpoint": "https://app-admin.ultraman-cardgame.com/toc-api/v1/app/card/get?id=9905",
+        "locale": "ko_KR",
+        "tenant": "7",
+        "status": "verified"
+      }
+    }
+  ]
+}
