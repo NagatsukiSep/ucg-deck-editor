@@ -54,6 +54,8 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
               count: card.count,
               isScene: card.feature_value === "scene",
             })),
+            deckUrl: `${window.location.origin}/${deckCode}`,
+            deckCode,
           }),
         });
 
@@ -63,7 +65,6 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
 
         const blob = await response.blob();
         setImageUrl(URL.createObjectURL(blob));
-        setIsGeneratingImage(false);
       } catch (error) {
         console.error(error);
         alert(t("deck.generateImageFailed"));
