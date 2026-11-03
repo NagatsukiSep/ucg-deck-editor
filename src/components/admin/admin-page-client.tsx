@@ -45,7 +45,6 @@ export function AdminPageClient({ authenticated }: AdminPageClientProps) {
         body: JSON.stringify({ password }),
       });
 
-      const data = (await response.json()) as { error?: string };
       if (!response.ok) {
         setError(t(response.status === 401 ? "admin.invalidPassword" : response.status === 403 ? "admin.forbidden" : "admin.authFailed"));
         return;

@@ -110,7 +110,7 @@ export default function Home(props: { params: Promise<{ deckCode: string }> }) {
       console.error("Failed to load deck:", error);
       setLoadError(t("deck.load.failed"));
     } finally { setLoadingDetails(false); }
-  }, [deckCode, generateCollage]);
+  }, [deckCode, generateCollage, t]);
 
   useEffect(() => {
     const analysis = analyzeDeck(deckCards);
